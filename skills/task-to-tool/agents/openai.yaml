@@ -1,0 +1,4 @@
+interface:
+  display_name: "방금 작업을 도구로"
+  short_description: "방금 작업을 도구로 — 짧은 한국어 요청으로 로컬 작업을 간편하게 처리합니다"
+  default_prompt: "$task-to-tool — 방금 한 거 다음에도 쓰게 만들어줘"

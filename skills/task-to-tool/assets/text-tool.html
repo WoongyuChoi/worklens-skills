@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<title>반복 텍스트 작업 도구</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f4f6f8;color:#1d3040;font:16px system-ui,-apple-system,"Malgun Gothic",sans-serif}main{max-width:1100px;margin:auto;padding:36px 24px}h1{font-size:32px;margin:12px 0}p{line-height:1.6}.brand{font-size:14px;letter-spacing:.06em;color:#536b7b}.options{display:flex;flex-wrap:wrap;gap:20px;background:white;border:1px solid #d6e1e8;border-radius:10px;padding:20px;margin:24px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}label{display:block}textarea{width:100%;height:330px;resize:vertical;margin-top:10px;border:1px solid #b9cbd6;border-radius:8px;padding:16px;font:15px/1.6 ui-monospace,Consolas,monospace;color:#1d3040;background:white}button{font:inherit;border:1px solid #b9cbd6;border-radius:7px;padding:11px 17px;background:white;color:#1d3040;cursor:pointer}.primary{background:#18526b;color:white;border-color:#18526b}.actions{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}button:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid #c76f22;outline-offset:3px}#status{min-height:28px;color:#355b6b}.hint{color:#536b7b;font-size:14px}button:disabled{opacity:.45;cursor:default}@media(max-width:680px){main{padding:24px 14px}.grid{grid-template-columns:1fr}textarea{height:230px}h1{font-size:26px}}
+</style></head><body><main><div class="brand">WORKLENS / TASK TO TOOL</div><h1>반복 텍스트 작업을 한 번에</h1><p>여러 줄의 값을 정리하는 예시 도구입니다. 원하는 처리만 선택하세요. 아무것도 선택하지 않으면 원문을 그대로 돌려줍니다.</p>
+<div class="options"><label><input type="checkbox" id="trim"> 각 줄 앞뒤 공백 제거</label><label><input type="checkbox" id="blank"> 빈 줄 제거</label><label><input type="checkbox" id="dedupe"> 같은 줄 중복 제거</label></div>
+<div class="grid"><label for="input">입력<textarea id="input" spellcheck="false" placeholder="정리할 내용을 붙여넣으세요"></textarea></label><label for="output">결과<textarea id="output" readonly spellcheck="false" placeholder="실행 결과가 표시됩니다"></textarea></label></div>
+<div class="actions"><button class="primary" id="run">처리하기</button><button id="sample">예시 넣기</button><button id="reset">초기화</button><button id="copy" disabled>결과 복사</button><button id="download" disabled>텍스트 내려받기</button></div>
+<div id="status" role="status" aria-live="polite">입력은 자동 저장하거나 외부로 전송하지 않습니다.</div>
+<p class="hint">정렬하거나 숫자로 변환하지 않습니다. 중복 제거는 첫 번째 값을 남기며, 대소문자를 구분합니다. 처리 옵션을 켜면 줄바꿈은 LF로 통일됩니다.</p>
+</main><script>
+"use strict";
+const $=id=>document.getElementById(id);
+function transform(text,options){
+ if(!options.trim&&!options.blank&&!options.dedupe)return text;
+ if(!text)return "";
+ let lines=text.split(/\r\n|\n|\r/);if(options.trim)lines=lines.map(x=>x.trim());if(options.blank)lines=lines.filter(x=>x!=="");if(options.dedupe)lines=[...new Set(lines)];return lines.join("\n");
+}
+function invalidate(){$("output").value="";$("copy").disabled=true;$("download").disabled=true;$("status").textContent="입력 또는 옵션이 바뀌었습니다. 처리하기를 눌러 주세요.";}
+$("run").onclick=()=>{const value=$("input").value;if(value.length>1000000){invalidate();$("status").textContent="입력이 1,000,000자를 초과합니다. 나눠서 처리해 주세요.";return;}
+ const output=transform(value,{trim:$("trim").checked,blank:$("blank").checked,dedupe:$("dedupe").checked});$("output").value=output;$("copy").disabled=false;$("download").disabled=false;$("status").textContent=value===""?"빈 입력입니다. 결과도 비어 있습니다.":"처리했습니다. 결과를 확인한 뒤 복사하거나 내려받으세요.";};
+$("input").oninput=invalidate;["trim","blank","dedupe"].forEach(id=>$(id).onchange=invalidate);
+$("sample").onclick=()=>{$("input").value=" 0012 \n0013\n0012\n\n0014";["trim","blank","dedupe"].forEach(id=>$(id).checked=false);invalidate();};
+$("reset").onclick=()=>{$("input").value="";["trim","blank","dedupe"].forEach(id=>$(id).checked=false);invalidate();$("status").textContent="초기화했습니다.";};
+$("copy").onclick=async()=>{try{await navigator.clipboard.writeText($("output").value);$("status").textContent="결과를 복사했습니다.";}catch{$("output").focus();$("output").select();$("status").textContent="자동 복사를 사용할 수 없습니다. 선택된 결과를 Ctrl+C로 복사하세요.";}};
+$("download").onclick=()=>{const url=URL.createObjectURL(new Blob([$ ("output").value],{type:"text/plain;charset=utf-8"})),a=document.createElement("a");a.href=url;a.download="worklens-result.txt";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$("status").textContent="텍스트 파일 내려받기를 요청했습니다.";};
+</script></body></html>

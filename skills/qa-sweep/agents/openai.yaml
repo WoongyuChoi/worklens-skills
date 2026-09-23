@@ -1,0 +1,4 @@
+interface:
+  display_name: "근거 있는 마무리 QA"
+  short_description: "근거 있는 마무리 QA — 짧은 한국어 요청으로 로컬 작업을 간편하게 처리합니다"
+  default_prompt: "$qa-sweep — 방금 작업 QA 해줘"

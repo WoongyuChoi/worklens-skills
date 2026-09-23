@@ -1,0 +1,4 @@
+interface:
+  display_name: "프로젝트 방식 기억"
+  short_description: "프로젝트 방식 기억 — 짧은 한국어 요청으로 로컬 작업을 간편하게 처리합니다"
+  default_prompt: "$project-playbook — 다음부터 이 방식으로 해줘"

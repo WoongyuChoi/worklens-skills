@@ -1,0 +1,4 @@
+interface:
+  display_name: "흐름과 관계 도식화"
+  short_description: "흐름과 관계 도식화 — 짧은 한국어 요청으로 로컬 작업을 간편하게 처리합니다"
+  default_prompt: "$diagram-maker — 이 흐름 그림으로 보여줘"

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<title>업무 현황 화면 시안</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f6f8;color:#1c2d3e;font:16px system-ui,-apple-system,"Malgun Gothic",sans-serif}.shell{max-width:1180px;margin:auto;padding:36px 24px}.brand{color:#4f697a;font-size:14px;letter-spacing:.06em}h1{font-size:34px;margin:10px 0}p{line-height:1.6}.muted{color:#586c7d}.top,.toolbar{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:28px 0}.summary article,.panel{background:white;border:1px solid #d9e2e8;border-radius:12px;padding:22px}.summary strong{display:block;font-size:32px;margin-top:8px}.toolbar{justify-content:flex-start}input,select,button{font:inherit;padding:11px 14px;border-radius:7px;border:1px solid #b8c9d3;background:white;color:inherit}button{cursor:pointer}.primary{background:#18526b;color:white;border-color:#18526b}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #c76f22;outline-offset:3px}#search{flex:1;min-width:170px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{text-align:left;padding:16px 12px;border-bottom:1px solid #e1e8ec}th{font-size:14px;color:#586c7d}td:first-child{font-weight:600}.badge{display:inline-block;background:#edf3f6;padding:6px 10px;border-radius:6px;white-space:nowrap}.done{background:#e1f2ec;color:#196546}#notice{min-height:24px;color:#246048;margin:12px 0}#empty{text-align:center;padding:32px;color:#586c7d}dialog{width:min(520px,calc(100% - 28px));border:1px solid #bacbd5;border-radius:14px;padding:26px;color:#1c2d3e}dialog::backdrop{background:#172e4280}dialog h2{margin-top:0}form label{display:grid;gap:7px;margin:18px 0}.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}#error{color:#a32337;min-height:24px}.mock{border-left:3px solid #bd7c2f;padding-left:12px;font-size:14px;color:#586c7d}@media(max-width:640px){.shell{padding:22px 14px}h1{font-size:27px}.summary{gap:8px}.summary article{padding:14px}.summary strong{font-size:25px}.panel{padding:14px}th,td{padding:12px 8px;min-width:90px}}
+</style></head><body><main class="shell">
+<div class="brand">WORKLENS / SCREEN PROTOTYPE</div>
+<div class="top"><div><h1>업무 현황</h1><p class="muted">현재 진행 상황을 확인하고 업무 내용을 정리합니다.</p></div><button id="add" class="primary">업무 추가</button></div>
+<p class="mock">화면 시안입니다. 예시 데이터만 사용하며 저장 내용은 새로고침하면 초기화됩니다.</p>
+<section class="summary" aria-label="현황 요약"><article>전체<strong id="total">0</strong></article><article>진행 중<strong id="active">0</strong></article><article>완료<strong id="done">0</strong></article></section>
+<section class="panel"><div class="toolbar"><input id="search" type="search" placeholder="업무명 또는 담당자 검색" aria-label="업무 검색"><select id="filter" aria-label="상태 필터"><option value="">모든 상태</option><option>대기</option><option>진행 중</option><option>완료</option></select><button id="reset">예시 초기화</button></div>
+<div id="notice" role="status" aria-live="polite"></div><div class="table-wrap"><table><thead><tr><th>업무</th><th>담당자</th><th>상태</th><th>수정</th></tr></thead><tbody id="rows"></tbody></table></div><div id="empty" hidden>검색 결과가 없습니다. 검색어나 상태를 바꿔 보세요.</div></section>
+<dialog id="dialog" aria-labelledby="dialogTitle"><h2 id="dialogTitle">업무 추가</h2><form id="form" novalidate><label>업무명<input id="title" maxlength="80" autocomplete="off"></label><label>담당자<input id="owner" maxlength="40" autocomplete="off"></label><label>상태<select id="status"><option>대기</option><option>진행 중</option><option>완료</option></select></label><div id="error" role="alert"></div><div class="actions"><button id="cancel" type="button">취소</button><button class="primary" type="submit">임시 저장</button></div></form></dialog>
+</main><script>
+"use strict";
+const $=id=>document.getElementById(id);
+const seed=[{id:1,title:"업로드 결과 확인",owner:"담당자 A",status:"진행 중"},{id:2,title:"조회 화면 검토",owner:"담당자 B",status:"완료"},{id:3,title:"집계 기준 확인",owner:"담당자 C",status:"대기"}];
+let tasks=seed.map(x=>({...x})),editing=null,nextId=4;
+function render(){
+ $("total").textContent=tasks.length;$("active").textContent=tasks.filter(x=>x.status==="진행 중").length;$("done").textContent=tasks.filter(x=>x.status==="완료").length;
+ const q=$("search").value.toLocaleLowerCase(),status=$("filter").value;
+ const list=tasks.filter(x=>(!status||x.status===status)&&(x.title+" "+x.owner).toLocaleLowerCase().includes(q));
+ $("rows").replaceChildren();$("empty").hidden=list.length>0;
+ list.forEach(t=>{const tr=document.createElement("tr");[t.title,t.owner,t.status].forEach((s,i)=>{const td=document.createElement("td");if(i===2){const b=document.createElement("span");b.className="badge"+(s==="완료"?" done":"");b.textContent=s;td.append(b);}else td.textContent=s;tr.append(td);});const td=document.createElement("td"),b=document.createElement("button");b.textContent="수정";b.setAttribute("aria-label",t.title+" 수정");b.onclick=()=>open(t.id);td.append(b);tr.append(td);$("rows").append(tr);});
+}
+function open(id=null){editing=id;const t=tasks.find(x=>x.id===id);$("dialogTitle").textContent=t?"업무 수정":"업무 추가";$("title").value=t?t.title:"";$("owner").value=t?t.owner:"";$("status").value=t?t.status:"대기";$("error").textContent="";$("dialog").showModal();$("title").focus();}
+$("add").onclick=()=>open();$("cancel").onclick=()=>$("dialog").close();
+$("form").onsubmit=e=>{e.preventDefault();const title=$("title").value.trim(),owner=$("owner").value.trim(),status=$("status").value;
+ if(!title||!owner){$("error").textContent="업무명과 담당자를 모두 입력해 주세요.";(!title?$("title"):$("owner")).focus();return;}
+ if(tasks.some(x=>x.id!==editing&&x.title===title)){$("error").textContent="같은 이름의 업무가 있습니다.";$("title").focus();return;}
+ if(editing!==null){const t=tasks.find(x=>x.id===editing);Object.assign(t,{title,owner,status});}else tasks.push({id:nextId++,title,owner,status});
+ $("dialog").close();render();$("notice").textContent="화면에 임시 저장했습니다. 새로고침하면 예시 상태로 돌아갑니다.";
+};
+$("search").oninput=render;$("filter").onchange=render;
+$("reset").onclick=()=>{tasks=seed.map(x=>({...x}));nextId=4;$("search").value="";$("filter").value="";$("notice").textContent="예시 데이터로 초기화했습니다.";render();};
+render();
+</script></body></html>

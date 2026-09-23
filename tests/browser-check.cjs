@@ -1,0 +1,55 @@
+// Development QA only; requires an already-installed Playwright and Chromium.
+const {chromium}=require("playwright");
+const assert=require("node:assert/strict"),path=require("node:path"),fs=require("node:fs"),{pathToFileURL}=require("node:url");
+const root=path.resolve(__dirname,"..");
+const asset=(skill,name)=>pathToFileURL(path.join(root,"skills",skill,"assets",name)).href;
+const checks=[];
+(async()=>{
+ fs.mkdirSync(path.join(root,"test-results"),{recursive:true});
+ const browser=await chromium.launch({headless:true,...(process.env.WORKLENS_CHROMIUM?{executablePath:process.env.WORKLENS_CHROMIUM}:{})});
+ try{
+ const page=await browser.newPage({viewport:{width:1280,height:900}}),errors=[],requests=[];
+ page.on("pageerror",e=>errors.push(e.message));page.on("request",r=>{if(/^https?:/i.test(r.url()))requests.push(r.url());});
+ const load=async(name,text)=>{await page.locator("#file").setInputFiles({name,mimeType:"text/plain",buffer:Buffer.from(text)});await page.waitForFunction(()=>!document.getElementById("message").textContent.includes("읽고 있습니다"));};
+ await page.goto(asset("file-explorer","viewer.html"));
+ await page.click("#sample");assert.equal(await page.locator("#count").textContent(),"3");assert((await page.locator("tbody").textContent()).includes("0012"));checks.push("CSV sample and leading zeros");
+ await load("quoted.csv",fs.readFileSync(path.join(__dirname,"fixtures/sample.csv"),"utf8"));
+ assert.equal(await page.locator("#count").textContent(),"3");assert((await page.locator("tbody").textContent()).includes("두 줄\n설명"));checks.push("Quoted CSV delimiters, newlines and escaped quotes");
+ await page.fill("#query","없는 값");assert.equal(await page.locator("#matched").textContent(),"0");await page.click("#clear");assert.equal(await page.locator("#matched").textContent(),"3");checks.push("Search and empty results");
+ await load("large-id.json",fs.readFileSync(path.join(__dirname,"fixtures/large-id.json"),"utf8"));
+ const json=await page.locator("tbody").textContent();assert(json.includes("900719925474099312345"));assert(json.includes("1.2300"));assert(json.includes("[필드 없음]"));checks.push("JSON numeric lexemes, missing values and leading zeros");
+ await load("headerless.csv","0012,담당자 A\n0013,담당자 B");await page.selectOption("#header","no");await page.waitForFunction(()=>document.getElementById("count").textContent==="2");assert((await page.locator("tbody").textContent()).includes("0012"));await page.selectOption("#header","yes");checks.push("Headerless CSV retains first record");
+ await load("nulls.json",'[{"x":null},{"x":"[null]"},{"x":"[필드 없음]"},{}]');const cells=await page.locator("tbody td").allTextContents();assert.equal(new Set(cells).size,4);checks.push("JSON null, literal text and absent fields are distinct");
+ await load("types.json",'[{"x":null},{"x":[null]},{"x":"null"},{"x":"[null]"},{"x":false},{"x":"false"}]');assert.equal(new Set(await page.locator("tbody td").allTextContents()).size,6);checks.push("JSON scalar and array values stay distinct");
+ await load("invalid.json","{1:2}");assert((await page.locator("#message").getAttribute("class")).includes("error"));checks.push("Reject invalid JSON numeric keys");
+ await load("invalid.csv",'a,b\n"unterminated');assert((await page.locator("#message").getAttribute("class")).includes("error"));assert.equal(await page.locator("#count").textContent(),"0");checks.push("Malformed CSV clears stale result");
+ await load("ragged.csv","a,b\n1,2,3");assert((await page.locator("#message").textContent()).includes("열 수"));checks.push("Ragged CSV rejects column shifting");
+ await load("literal.csv",'value\n"<img src=x onerror=alert(1)>"');assert.equal(await page.locator("tbody img").count(),0);assert((await page.locator("tbody").textContent()).includes("<img"));checks.push("Input markup is inert");
+ await load("sample.xml",fs.readFileSync(path.join(__dirname,"fixtures/sample.xml"),"utf8"));assert((await page.locator("tbody").textContent()).includes("/items/item[1]/@code"));checks.push("XML paths and attributes");
+ await load("doctype.xml",'<!DOCTYPE x [<!ENTITY a "bad">]><x>&a;</x>');assert((await page.locator("#message").textContent()).includes("DOCTYPE"));checks.push("Reject XML DOCTYPE");
+ await load("pages.csv","id\n"+Array.from({length:205},(_,i)=>String(i)).join("\n"));assert.equal(await page.locator("tbody tr").count(),100);await page.click("#next");assert.equal(await page.locator("#pageInfo").textContent(),"2 / 3 페이지");await page.click("#next");assert.equal(await page.locator("tbody tr").count(),5);checks.push("Pagination limits DOM rows");
+ await load("empty.txt","");assert((await page.locator("#message").textContent()).includes("비어"));checks.push("Empty input");
+ await load("large.txt","x".repeat(5*1024*1024+1));assert((await page.locator("#message").textContent()).includes("5 MiB"));checks.push("File-size bound");
+ await page.click("#sample");
+ await page.screenshot({path:path.join(root,"test-results/viewer.png"),fullPage:true});
+ await page.goto(asset("screen-prototype","prototype.html"));
+ assert.equal(await page.locator("#total").textContent(),"3");await page.click("#add");await page.click('button[type="submit"]');assert((await page.locator("#error").textContent()).includes("모두 입력"));checks.push("Prototype validation");
+ await page.fill("#title","새 업무");await page.fill("#owner","검증 담당");await page.selectOption("#status",{label:"완료"});await page.click('button[type="submit"]');assert.equal(await page.locator("#total").textContent(),"4");assert.equal(await page.locator("#done").textContent(),"2");checks.push("Prototype create and counters");
+ await page.getByRole("button",{name:"새 업무 수정",exact:true}).click();await page.fill("#title","<img src=x onerror=alert(1)>");await page.click('button[type="submit"]');assert.equal(await page.locator("tbody img").count(),0);checks.push("Prototype edit and inert user input");
+ await page.fill("#search","없는 결과");assert(await page.locator("#empty").isVisible());await page.click("#reset");assert.equal(await page.locator("#total").textContent(),"3");checks.push("Prototype empty state and reset");
+ await page.click("#add");await page.keyboard.press("Escape");assert(!(await page.locator("#dialog").isVisible()));checks.push("Prototype dialog keyboard cancellation");
+ await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await page.setViewportSize({width:1280,height:900});checks.push("Narrow viewport avoids page overflow");
+ await page.screenshot({path:path.join(root,"test-results/prototype.png"),fullPage:true});
+ await page.goto(asset("task-to-tool","text-tool.html"));
+ await page.fill("#input","0012\n0012\n 0013 ");await page.click("#run");assert.equal(await page.locator("#output").inputValue(),"0012\n0012\n 0013 ");checks.push("Text tool identity by default");
+ await page.check("#trim");await page.check("#dedupe");await page.click("#run");assert.equal(await page.locator("#output").inputValue(),"0012\n0013");checks.push("Explicit text transformation preserves order and codes");
+ await page.fill("#input","");assert(await page.locator("#copy").isDisabled());await page.click("#run");assert.equal(await page.locator("#output").inputValue(),"");checks.push("Text edits invalidate output and empty input works");
+ await page.click("#sample");await page.click("#run");
+ const downloadPromise=page.waitForEvent("download");await page.click("#download");const download=await downloadPromise;const downloaded=await download.path();assert.equal(fs.readFileSync(downloaded,"utf8"),await page.locator("#output").inputValue());checks.push("Downloaded text matches visible output");
+ await page.screenshot({path:path.join(root,"test-results/tool.png"),fullPage:true});
+ await page.goto(asset("diagram-maker","diagram-shell.html"));assert.equal(await page.locator("svg").count(),1);await page.screenshot({path:path.join(root,"test-results/diagram.png"),fullPage:true});checks.push("Inline SVG renders offline");
+ assert.deepEqual(errors,[]);assert.deepEqual(requests,[]);checks.push("No browser errors or external HTTP requests across assets");
+ fs.writeFileSync(path.join(root,"test-results/browser-results.json"),JSON.stringify({checks:checks.length,passed:checks},null,2)+"\n");
+ console.log("PASS: "+checks.length+" browser checks\n"+checks.map(x=>"  "+x).join("\n"));
+ }finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1});

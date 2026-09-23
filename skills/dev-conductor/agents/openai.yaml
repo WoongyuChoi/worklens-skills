@@ -1,0 +1,4 @@
+interface:
+  display_name: "개발부터 검증까지"
+  short_description: "개발부터 검증까지 — 짧은 한국어 요청으로 로컬 작업을 간편하게 처리합니다"
+  default_prompt: "$dev-conductor — 이 기능 개발하고 검증까지 해줘"

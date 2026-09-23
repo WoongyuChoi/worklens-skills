@@ -1,0 +1,4 @@
+interface:
+  display_name: "클릭하는 화면 시안"
+  short_description: "클릭하는 화면 시안 — 짧은 한국어 요청으로 로컬 작업을 간편하게 처리합니다"
+  default_prompt: "$screen-prototype — 이 기능 화면으로 보여줘"

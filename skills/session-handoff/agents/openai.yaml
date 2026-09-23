@@ -1,0 +1,4 @@
+interface:
+  display_name: "중단한 작업 이어받기"
+  short_description: "중단한 작업 이어받기 — 짧은 한국어 요청으로 로컬 작업을 간편하게 처리합니다"
+  default_prompt: "$session-handoff — 하던 작업 이어서 해줘"

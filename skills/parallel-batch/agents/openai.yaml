@@ -1,0 +1,4 @@
+interface:
+  display_name: "반복 작업 나눠 처리"
+  short_description: "반복 작업 나눠 처리 — 짧은 한국어 요청으로 로컬 작업을 간편하게 처리합니다"
+  default_prompt: "$parallel-batch — 이 방식으로 나머지도 처리해줘"

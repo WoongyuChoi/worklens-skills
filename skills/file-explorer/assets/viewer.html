@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; font-src 'none'; form-action 'none'; base-uri 'none'">
+<title>파일 한눈에 보기</title>
+<style>
+:root{color-scheme:light;font-family:system-ui,-apple-system,"Malgun Gothic",sans-serif;color:#192b3a;background:#f3f6f8}*{box-sizing:border-box}body{margin:0}main{max-width:1240px;margin:auto;padding:36px 24px}header{border-bottom:2px solid #cddae2;margin-bottom:24px;padding-bottom:22px}h1{font-size:32px;margin:5px 0 10px}p{line-height:1.6}.eyebrow{font-size:14px;color:#46677b;letter-spacing:.06em}button,.picker{border:1px solid #b7c9d4;background:white;color:#192b3a;padding:11px 16px;border-radius:8px;font:inherit;cursor:pointer;display:inline-block}button:disabled{opacity:.45;cursor:default}.primary{background:#164f68;color:white;border-color:#164f68}input,select{font:inherit;padding:10px;border:1px solid #b7c9d4;border-radius:6px;background:white;max-width:100%}input[type=search]{min-width:240px;flex:1}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #c56822;outline-offset:3px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px}.field{display:grid;gap:5px;font-size:14px}.stats{display:flex;gap:32px;padding:24px 0;flex-wrap:wrap}.stats b{font-size:27px;display:block}.stats span{color:#536d7d;font-size:14px}.panel{background:white;border:1px solid #d3dfe6;border-radius:12px;padding:20px}.scroll{overflow:auto;max-height:550px;margin-top:18px}table{border-collapse:collapse;width:100%;font-size:15px}th,td{padding:12px 14px;text-align:left;vertical-align:top;border-bottom:1px solid #e1e8ec;white-space:pre-wrap;max-width:420px;overflow-wrap:anywhere}th{background:#edf3f6;position:sticky;top:0;z-index:1}td{min-width:100px}#message{min-height:26px;margin:14px 0;color:#355468}#message.error{color:#9d2538;font-weight:600}#empty{padding:40px 12px;text-align:center;color:#536d7d}.pager{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;flex-wrap:wrap}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:350px;overflow:auto;font-size:14px;background:#edf3f6;padding:16px}details{margin-top:24px}summary{cursor:pointer}small{color:#536d7d}#file{width:100%;max-width:290px;font-size:14px}@media(max-width:600px){main{padding:22px 14px}h1{font-size:26px}.panel{padding:14px}input[type=search]{min-width:0;width:100%}.stats{gap:20px}}
+</style>
+</head>
+<body><main>
+<header><div class="eyebrow">WORKLENS / FILE EXPLORER</div><h1>파일을 한눈에 살펴보세요</h1><p>표와 구조를 확인하고 필요한 값을 검색합니다. 선택한 파일은 이 브라우저 안에서만 읽습니다.</p></header>
+<section class="toolbar" aria-label="파일 선택">
+<label class="field">파일 열기<input id="file" type="file" accept=".csv,.tsv,.json,.xml,.txt,.log"></label>
+<label class="field">문자 인코딩<select id="encoding"><option value="utf-8">UTF-8</option><option value="euc-kr">EUC-KR / CP949</option></select></label>
+<label class="field">구분자<select id="delimiter"><option value="auto">자동</option><option value=",">쉼표</option><option value="tab">탭</option><option value=";">세미콜론</option><option value="|">세로줄</option></select></label>
+<label class="field">CSV / TSV 첫 행<select id="header"><option value="yes">열 이름으로 사용</option><option value="no">데이터로 포함</option></select></label>
+<button id="sample" class="primary">예시로 살펴보기</button>
+</section>
+<div id="message" role="status" aria-live="polite">CSV, TSV, JSON, XML, 텍스트를 지원합니다. 파일은 최대 5 MiB입니다.</div>
+<div class="stats"><div><b id="count">0</b><span>전체 레코드</span></div><div><b id="matched">0</b><span>검색 결과</span></div><div><b id="columns">0</b><span>열</span></div></div>
+<section class="panel">
+<div class="toolbar"><input id="query" type="search" aria-label="전체 값 검색" placeholder="찾을 내용을 입력하세요"><button id="clear">검색 초기화</button></div>
+<div id="empty">파일을 선택하거나 예시로 시작하세요.</div>
+<div class="scroll"><table id="table" hidden><thead></thead><tbody></tbody></table></div>
+<div class="pager"><span id="pageInfo">0 / 0 페이지</span><div><button id="prev" disabled>이전</button> <button id="next" disabled>다음</button></div></div>
+</section>
+<details><summary>원문 확인</summary><pre id="raw">아직 선택한 파일이 없습니다.</pre><small id="rawNote">원문과 표의 표현이 다르면 원문을 기준으로 확인하세요.</small></details>
+<p><small>숫자와 식별자는 계산하지 않고 문자 그대로 표시합니다. 최대 20,000개 레코드, 페이지당 100개를 표시합니다.</small></p>
+</main>
+<script>
+"use strict";
+const $=id=>document.getElementById(id), MAX=20000, PAGE=100;
+let headers=[], rows=[], filtered=[], page=0, currentFile=null, source="", sourceName="", serial=0;
+function msg(text,error=false){$("message").textContent=text;$("message").className=error?"error":"";}
+function clean(){headers=[];rows=[];filtered=[];page=0;source="";$("raw").textContent="표시할 원문이 없습니다.";$("rawNote").textContent="";render();}
+function csv(text,sep){
+ const out=[];let row=[],value="",quoted=false,closed=false,start=true;
+ function field(){row.push(value);value="";closed=false;start=true;}
+ function record(){field();out.push(row);row=[];if(out.length>MAX+1)throw Error("레코드가 20,000개를 초과합니다. 파일을 나눠 주세요.");}
+ for(let i=0;i<text.length;i++){const c=text[i];
+  if(quoted){if(c==='"'){if(text[i+1]==='"'){value+='"';i++;}else{quoted=false;closed=true;}}else value+=c;continue;}
+  if(c===sep){field();continue;}
+  if(c==="\n"||c==="\r"){if(c==="\r"&&text[i+1]==="\n")i++;record();continue;}
+  if(closed)throw Error("닫는 따옴표 다음에는 구분자나 줄바꿈이 필요합니다.");
+  if(c==='"'){if(!start)throw Error("따옴표 위치가 올바르지 않습니다.");quoted=true;start=false;}
+  else{value+=c;start=false;}
+ }
+ if(quoted)throw Error("닫히지 않은 따옴표가 있습니다.");
+ if(value!==""||row.length||closed)record();
+ return out;
+}
+function detect(text,name){
+ const chosen=$("delimiter").value;if(chosen!=="auto")return chosen==="tab"?"\t":chosen;
+ if(/\.tsv$/i.test(name))return "\t";
+ const sample=text.slice(0,20000), scores=[",","\t",";","|"].map(s=>{
+  let counts=[],n=0,q=false;
+  for(let i=0;i<sample.length;i++){let c=sample[i];if(c==='"'){if(q&&sample[i+1]==='"')i++;else q=!q;}else if(!q&&c===s)n++;else if(!q&&c==="\n"){counts.push(n);n=0;if(counts.length===8)break;}}
+  if(!counts.length)counts=[n];const good=counts.filter(x=>x>0);return [s,good.length?Math.min(...good)*good.length:0];
+ });scores.sort((a,b)=>b[1]-a[1]);return scores[0][0];
+}
+// Quote number tokens outside JSON strings before parsing to preserve the exact lexeme.
+function losslessJSON(text){
+ JSON.parse(text); // Validate original syntax before replacing numeric tokens.
+ let result="",inString=false;
+ for(let i=0;i<text.length;){const c=text[i];
+  if(inString){result+=c;i++;if(c==="\\"){if(i<text.length)result+=text[i++];}else if(c==='"')inString=false;continue;}
+  if(c==='"'){inString=true;result+=c;i++;continue;}
+  if(c==="-"||/[0-9]/.test(c)){const m=text.slice(i).match(/^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/);if(!m)throw Error("JSON 숫자 형식이 올바르지 않습니다.");result+=JSON.stringify(m[0]);i+=m[0].length;continue;}
+  result+=c;i++;
+ }
+ return JSON.parse(result);
+}
+function cell(v){return v===null?"null":typeof v==="object"?JSON.stringify(v):typeof v==="string"?JSON.stringify(v):String(v);}
+function parse(text,name){
+ text=text.replace(/^\uFEFF/,"");if(!text.trim())throw Error("파일이 비어 있습니다.");
+ let h=[],r=[],kind="";
+ const ext=name.toLowerCase().split(".").pop();
+ if(ext==="json"||(/^\s*[\[{]/.test(text)&&!["csv","tsv","txt","log"].includes(ext))){
+  let obj;try{obj=losslessJSON(text);}catch{throw Error("JSON 형식을 읽을 수 없습니다. 원본 문법을 확인하세요.");}
+  kind="JSON";
+  if(Array.isArray(obj)){
+   if(obj.length>MAX)throw Error("레코드가 20,000개를 초과합니다.");
+   if(obj.every(v=>v!==null&&typeof v==="object"&&!Array.isArray(v))){
+    h=[...new Set(obj.flatMap(v=>Object.keys(v)))];if(h.length>200)throw Error("열이 200개를 초과합니다.");
+    r=obj.map(v=>h.map(k=>Object.prototype.hasOwnProperty.call(v,k)?cell(v[k]):"[필드 없음]"));
+    if(!h.length&&obj.length){h=["값"];r=obj.map(v=>[JSON.stringify(v)]);}
+   }else{h=["순서","값"];r=obj.map((v,i)=>[String(i+1),cell(v)]);}
+  }else if(obj!==null&&typeof obj==="object"){h=["경로","값"];r=Object.entries(obj).map(([k,v])=>[k,cell(v)]);}
+  else{h=["값"];r=[[cell(obj)]];}
+ }else if(ext==="xml"){
+  if(/<!DOCTYPE/i.test(text))throw Error("DOCTYPE이 포함된 XML은 읽지 않습니다.");
+  const doc=new DOMParser().parseFromString(text,"application/xml");
+  if(doc.querySelector("parsererror"))throw Error("XML 형식이 올바르지 않습니다.");
+  kind="XML";h=["경로","값"];let stack=[[doc.documentElement,"/"+doc.documentElement.tagName]],visits=0;
+  while(stack.length){const [el,path]=stack.pop();if(++visits>MAX)throw Error("XML 요소가 20,000개를 초과합니다.");
+   for(const a of el.attributes)r.push([path+"/@"+a.name,a.value]);
+   const direct=Array.from(el.childNodes).filter(n=>n.nodeType===3||n.nodeType===4).map(n=>n.nodeValue).join("");
+   if(direct.trim()||!el.children.length)r.push([path,direct]);
+   const counts=new Map(),children=Array.from(el.children).map(child=>{const n=(counts.get(child.tagName)||0)+1;counts.set(child.tagName,n);return [child,path+"/"+child.tagName+"["+String(n)+"]"];});for(let i=children.length-1;i>=0;i--)stack.push(children[i]);
+   if(r.length>MAX)throw Error("XML 표시 레코드가 20,000개를 초과합니다.");
+  }
+ }else if(ext==="csv"||ext==="tsv"){
+  kind=ext.toUpperCase();const parsed=csv(text,detect(text,name));if(!parsed.length)throw Error("표시할 행이 없습니다.");
+  const hasHeader=$("header").value==="yes";
+  h=hasHeader?parsed.shift().map((x,i)=>(x||"이름 없는 열")+" ["+String(i+1)+"]"):parsed[0].map((_,i)=>"열 "+String(i+1));
+  if(h.length>200)throw Error("열이 200개를 초과합니다.");
+  const bad=parsed.findIndex(x=>x.length!==h.length);if(bad>=0)throw Error(String(bad+(hasHeader?2:1))+"번째 레코드의 열 수가 기준과 다릅니다.");
+  r=parsed;
+ }else if(["txt","log",""].includes(ext)){kind="텍스트";h=["행","내용"];r=text.split(/\r\n|\n|\r/).map((x,i)=>[String(i+1),x]);}
+ else throw Error("지원하지 않는 형식입니다. CSV, TSV, JSON, XML, TXT로 내보내 주세요.");
+ if(r.length>MAX)throw Error("레코드가 20,000개를 초과합니다.");
+ headers=h;rows=r;source=text;$("raw").textContent=text.slice(0,100000);
+ $("rawNote").textContent=text.length>100000?"원문은 처음 100,000자만 표시합니다. 전체 내용은 원본 파일에서 확인하세요.":"원문 전체를 표시합니다.";
+ $("query").value="";filter();msg(name+" · "+kind+" · "+rows.length.toLocaleString("ko-KR")+"개 레코드"+(["CSV","TSV"].includes(kind)?($("header").value==="yes"?" · 첫 행은 열 이름으로 사용":" · 첫 행도 데이터에 포함"):kind==="JSON"?" · 값은 인용 표시, 숫자도 원문 보존을 위해 문자로 표시":""));
+}
+function filter(){const q=$("query").value.toLocaleLowerCase();filtered=rows.filter(r=>r.some(v=>v.toLocaleLowerCase().includes(q)));page=0;render();}
+function render(){
+ $("count").textContent=rows.length.toLocaleString("ko-KR");$("matched").textContent=filtered.length.toLocaleString("ko-KR");$("columns").textContent=headers.length;
+ const head=$("table").querySelector("thead"),body=$("table").querySelector("tbody");head.replaceChildren();body.replaceChildren();
+ const tr=document.createElement("tr");headers.forEach(h=>{const el=document.createElement("th");el.scope="col";el.textContent=h;tr.append(el);});head.append(tr);
+ filtered.slice(page*PAGE,(page+1)*PAGE).forEach(row=>{const tr=document.createElement("tr");row.forEach(v=>{const td=document.createElement("td");td.textContent=v;tr.append(td);});body.append(tr);});
+ $("table").hidden=!filtered.length;$("empty").hidden=filtered.length>0;$("empty").textContent=rows.length?"검색 결과가 없습니다. 검색어를 바꿔 보세요.":"표시할 레코드가 없습니다.";
+ const pages=Math.ceil(filtered.length/PAGE);$("pageInfo").textContent=(pages?page+1:0)+" / "+pages+" 페이지";
+ $("prev").disabled=page===0;$("next").disabled=page+1>=pages;
+}
+async function readFile(file){
+ const token=++serial;clean();if(!file)return;
+ if(file.size>5*1024*1024){msg("파일이 5 MiB를 초과합니다. 파일을 나눠 주세요.",true);return;}
+ msg("파일을 읽고 있습니다.");
+ try{const buffer=await file.arrayBuffer();if(token!==serial)return;const text=new TextDecoder($("encoding").value,{fatal:true}).decode(buffer);sourceName=file.name;parse(text,sourceName);}
+ catch(e){if(token!==serial)return;clean();msg(e instanceof TypeError?"문자 인코딩을 읽을 수 없습니다. 인코딩을 바꿔 주세요.":e.message,true);}
+}
+$("file").addEventListener("change",e=>{currentFile=e.target.files[0];readFile(currentFile);});
+$("encoding").addEventListener("change",()=>{if(currentFile)readFile(currentFile);});
+$("delimiter").addEventListener("change",()=>{if(currentFile)readFile(currentFile);else if(source){try{parse(source,sourceName);}catch(e){clean();msg(e.message,true);}}});
+$("header").addEventListener("change",()=>{if(currentFile)readFile(currentFile);else if(source){try{parse(source,sourceName);}catch(e){clean();msg(e.message,true);}}});
+$("query").addEventListener("input",filter);$("clear").addEventListener("click",()=>{$("query").value="";filter();});
+$("prev").addEventListener("click",()=>{page--;render();});$("next").addEventListener("click",()=>{page++;render();});
+$("sample").addEventListener("click",()=>{serial++;currentFile=null;$("file").value="";$("delimiter").value="auto";$("header").value="yes";sourceName="예시.csv";parse('코드,업무,상태\n0012,자료 확인,진행 중\n0013,화면 검토,완료\n0014,"검색, 필터 검증",대기\n',sourceName);});
+</script></body></html>
