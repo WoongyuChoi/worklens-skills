@@ -1,0 +1,8 @@
+{
+  "left": "id,name,amount\n001,샘플A,100\n002,샘플B,200",
+  "right": "id,name,amount\n002,샘플B,250\n003,샘플C,300",
+  "format": "csv",
+  "keys": [
+    "id"
+  ]
+}

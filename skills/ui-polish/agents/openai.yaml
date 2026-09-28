@@ -1,0 +1,4 @@
+interface:
+  display_name: "기존 화면 다듬기"
+  short_description: "기존 화면 다듬기 — 짧은 요청으로 근거 있는 결과와 재사용 파일을 만듭니다"
+  default_prompt: "$ui-polish — 이 화면 좀 덜 답답하게 다듬어줘"

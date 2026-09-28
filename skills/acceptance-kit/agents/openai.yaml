@@ -1,0 +1,4 @@
+interface:
+  display_name: "현업 확인표"
+  short_description: "현업 확인표 — 짧은 요청으로 근거 있는 결과와 재사용 파일을 만듭니다"
+  default_prompt: "$acceptance-kit — 현업한테 확인받을 표 만들어줘"

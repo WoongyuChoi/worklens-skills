@@ -1,0 +1,4 @@
+interface:
+  display_name: "문서와 구현 대조"
+  short_description: "문서와 구현 대조 — 짧은 요청으로 근거 있는 결과와 재사용 파일을 만듭니다"
+  default_prompt: "$doc-drift — 이 설명서 지금 코드랑 맞아?"

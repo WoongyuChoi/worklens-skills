@@ -1,0 +1,4 @@
+interface:
+  display_name: "데이터 대조"
+  short_description: "데이터 대조 — 짧은 요청으로 근거 있는 결과와 재사용 파일을 만듭니다"
+  default_prompt: "$data-reconcile — 이 두 파일 안 맞는 것만 찾아줘"

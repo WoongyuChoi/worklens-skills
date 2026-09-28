@@ -2,7 +2,7 @@
 const fs=require("node:fs"),path=require("node:path"),vm=require("node:vm"),assert=require("node:assert/strict");
 const root=path.resolve(__dirname,".."),base=path.join(root,"skills");
 const names=fs.readdirSync(base).filter(n=>fs.statSync(path.join(base,n)).isDirectory());
-assert.equal(names.length,10,"Expected ten initial skills");
+assert.equal(names.length,20,"Expected twenty implemented skills");
 let assets=0;
 for(const name of names){
  const dir=path.join(base,name),content=fs.readFileSync(path.join(dir,"SKILL.md"),"utf8");
@@ -11,7 +11,7 @@ for(const name of names){
  assert(content.includes("## Working contract"));assert(content.includes("Korean"));assert(content.includes("offline"));
  assert(content.split("\n").length<500);assert(!/\bTODO\b|\[TODO/.test(content));
  assert(!/[\u3040-\u30ff\u4e00-\u9fff]/.test(content),"Unexpected Japanese/Han characters: "+name);
- for(const m of content.matchAll(/(?:assets|references)\/[a-z0-9-]+\.(?:md|html)/g))assert(fs.existsSync(path.join(dir,m[0])),"Missing resource: "+name+"/"+m[0]);
+ for(const m of content.matchAll(/(?:assets|references|scripts)\/[a-z0-9-]+\.(?:md|html|json|csv|cjs)/g))assert(fs.existsSync(path.join(dir,m[0])),"Missing resource: "+name+"/"+m[0]);
  const assetDir=path.join(dir,"assets");
  if(!fs.existsSync(assetDir))continue;
  for(const file of fs.readdirSync(assetDir).filter(n=>n.endsWith(".html"))){

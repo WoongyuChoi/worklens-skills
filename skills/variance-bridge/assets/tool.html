@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'">
+<title>숫자 변동 분해 · Worklens</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f4f6f8;color:#162638;font-family:system-ui,"Malgun Gothic",sans-serif;font-size:17px;line-height:1.65}main{max-width:1100px;margin:auto;padding:32px 22px}h1{font-size:30px;line-height:1.3;margin:0 0 12px}h2{font-size:23px}p{margin:10px 0 20px}.panel{background:white;border:1px solid #cdd5dd;border-radius:12px;padding:24px;margin-top:20px}label{display:block;font-weight:650;margin:16px 0 7px}input,textarea,select,button{font:inherit}input[type=text],textarea,select{width:100%;border:1px solid #8597a8;border-radius:6px;padding:10px;background:#fff;color:#162638}textarea{min-height:145px;resize:vertical;font-family:ui-monospace,"Malgun Gothic",monospace;font-size:15px}input[type=file]{max-width:100%;margin-bottom:8px}button{border:1px solid #526579;border-radius:6px;padding:9px 18px;cursor:pointer;background:white;color:#19334d;margin:8px 8px 0 0}button[type=submit]{background:#164f80;color:white;border-color:#164f80}button:disabled{opacity:.5;cursor:default}:focus-visible{outline:3px solid #ce7414;outline-offset:3px}.help{font-size:15px;color:#40556a}.check{font-weight:400}.scroll{overflow:auto}table{width:100%;border-collapse:collapse;font-size:15px}th,td{text-align:left;padding:12px;border-bottom:1px solid #ccd5df;vertical-align:top;white-space:pre-wrap;overflow-wrap:anywhere}th{background:#eaf0f6}#summary{font-weight:700}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-family:ui-monospace,"Malgun Gothic",monospace;font-size:15px}pre:empty{display:none}@media(max-width:600px){main{padding:22px 12px}.panel{padding:16px}h1{font-size:26px}}
+</style><main><h1>숫자 변동 분해</h1><p>같은 단위의 금액이나 건수를 비교하고 항목별 증감과 전체 합계를 검산합니다.</p><p class="help">파일 하나당 2 MiB · UTF-8 · 외부 전송 없음 · 원본 변경 없음</p>
+<form class="panel"><label for="left">기준 표</label><input id="left-file" type="file" aria-label="기준 표 파일 열기"><textarea id="left" spellcheck="false"></textarea><label for="right">비교 표</label><input id="right-file" type="file" aria-label="비교 표 파일 열기"><textarea id="right" spellcheck="false"></textarea><label for="key">항목 열</label><input id="key" type="text" placeholder="항목"><label for="value">값 열</label><input id="value" type="text" placeholder="금액"><label for="delimiter">CSV 구분자</label><select id="delimiter"><option value=",">쉼표</option><option value="tab">탭</option><option value=";">세미콜론</option><option value="|">세로선</option></select><p class="help">CSV 첫 행은 열 이름입니다. 한 항목은 한 행이어야 합니다. 소수는 정확하게 계산하며 천 단위 쉼표·지수 표기·비율·평균은 입력하지 마세요.</p><button type="submit">실행</button><button id="example" type="button">합성 예시 넣기</button></form>
+<section class="panel" aria-labelledby="output-title"><h2 id="output-title">결과</h2><p id="summary" role="status" aria-live="polite"></p><p id="note" class="help"></p><div id="result" class="scroll"></div><pre id="masked"></pre><button id="json-save" type="button" disabled>전체 JSON 저장</button><button id="csv-save" type="button" disabled>표 CSV 저장</button><button id="text-save" type="button" disabled>처리한 텍스트 저장</button><p class="help">CSV는 수식으로 해석될 수 있는 셀 앞에 작은따옴표를 붙입니다. 정확한 결과 값은 JSON을 사용하세요. 입력을 바꾸면 기존 결과는 무효화됩니다.</p></section></main>
+<script>
+const Worklens=(()=>{
+// Original Worklens helpers; embedded into each independently portable tool.
+const MAX_BYTES=2*1024*1024, MAX_ROWS=10000;
+function need(ok,message){if(!ok)throw new Error(message);}
+function textInput(value){need(typeof value==='string','텍스트 입력이 필요합니다.');need(new TextEncoder().encode(value).length<=MAX_BYTES,'입력 하나는 UTF-8 기준 2 MiB 이하여야 합니다.');return value.replace(/^\uFEFF/,'');}
+function parseCSV(raw,delimiter=','){
+ const text=textInput(raw);need([',','\t',';','|'].includes(delimiter),'지원하지 않는 구분자입니다.');
+ let rows=[],row=[],value='',quoted=false,closed=false,start=true;
+ const field=()=>{row.push(value);value='';closed=false;start=true;};
+ const record=()=>{field();rows.push(row);row=[];need(rows.length<=MAX_ROWS+1,'데이터는 10,000행 이하여야 합니다.');};
+ for(let i=0;i<text.length;i++){const c=text[i];if(quoted){if(c==='"'){if(text[i+1]==='"'){value+='"';i++;}else{quoted=false;closed=true;}}else value+=c;continue;}
+  if(c===delimiter){field();continue;}if(c==='\n'||c==='\r'){if(c==='\r'&&text[i+1]==='\n')i++;record();continue;}
+  need(!closed,'닫는 따옴표 뒤에는 구분자 또는 줄바꿈이 필요합니다.');
+  if(c==='"'){need(start,'CSV 따옴표 위치를 확인하세요.');quoted=true;start=false;}else{value+=c;start=false;}
+ }
+ need(!quoted,'닫히지 않은 CSV 따옴표가 있습니다.');if(value!==''||row.length||closed)record();
+ need(rows.length>0,'입력이 비어 있습니다.');const headers=rows.shift();
+ need(headers.length<=200,'열은 200개 이하여야 합니다.');need(headers.every(h=>h.trim()!==''),'빈 열 이름이 있습니다.');need(new Set(headers).size===headers.length,'중복 열 이름이 있습니다.');
+ rows.forEach((r,i)=>need(r.length===headers.length,(i+2)+'번째 레코드의 열 수가 다릅니다.'));
+ return {headers,rows};
+}
+// Lossless JSON AST: duplicate keys and excessive nesting are rejected.
+function jsonTree(raw){
+ const text=textInput(raw);let i=0,nodes=0;const ws=()=>{while(/[\t\n\r ]/.test(text[i]||'x'))i++;};
+ function string(){const begin=i++;for(;i<text.length;i++){if(text[i]==='\\'){i++;continue;}if(text[i]==='"'){i++;try{return JSON.parse(text.slice(begin,i));}catch{throw Error('JSON 문자열을 확인하세요.');}}}throw Error('닫히지 않은 JSON 문자열입니다.');}
+ function read(depth){need(depth<=64&&++nodes<=150000,'JSON 구조가 너무 큽니다.');ws();const c=text[i];
+  if(c==='"')return {kind:'string',value:string()};
+  if(c==='{'||c==='['){const obj=c==='{',end=obj?'}':']';i++;ws();const values=[],seen=new Set();if(text[i]===end){i++;return {kind:obj?'object':'array',value:values};}
+   while(true){ws();if(obj){need(text[i]==='"','JSON 객체 키가 필요합니다.');const k=string();need(!seen.has(k),'중복 JSON 키가 있습니다: '+k);seen.add(k);ws();need(text[i++]===':','JSON 콜론이 필요합니다.');values.push([k,read(depth+1)]);}else values.push(read(depth+1));ws();if(text[i]===end){i++;break;}need(text[i++ ]===',','JSON 구분자를 확인하세요.');}
+   return {kind:obj?'object':'array',value:values};
+  }
+  for(const [literal,kind,value] of [['true','boolean',true],['false','boolean',false],['null','null',null]])if(text.startsWith(literal,i)){i+=literal.length;return {kind,value};}
+  const m=text.slice(i).match(/^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/);need(m,'JSON 값이 올바르지 않습니다.');i+=m[0].length;return {kind:'number',value:m[0]};
+ }
+ const value=read(0);ws();need(i===text.length,'JSON 뒤에 불필요한 문자가 있습니다.');return value;
+}
+function canonical(v){if(v.kind==='object')return '{'+v.value.slice().sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:0).map(([k,x])=>JSON.stringify(k)+':'+canonical(x)).join(',')+'}';if(v.kind==='array')return '['+v.value.map(canonical).join(',')+']';return v.kind==='number'?v.value:JSON.stringify(v.value);}
+function scalarDisplay(v){return v.kind==='string'?v.value:canonical(v);}
+function table(raw,format='csv',delimiter=','){
+ if(format==='csv'||format==='tsv'){const t=parseCSV(raw,format==='tsv'?'\t':delimiter);return {...t,rows:t.rows.map(r=>r.map(value=>({kind:'string',value}))) };}
+ need(format==='json','형식은 CSV, TSV, JSON 중에서 선택하세요.');const a=jsonTree(raw);need(a.kind==='array'&&a.value.every(v=>v.kind==='object'),'JSON은 객체 배열이어야 합니다.');need(a.value.length<=MAX_ROWS,'데이터는 10,000행 이하여야 합니다.');
+ const headers=[...new Set(a.value.flatMap(v=>v.value.map(([k])=>k)))];need((headers.length>0||a.value.length===0)&&headers.length<=200,'JSON 열 수는 1~200개여야 합니다.');
+ return {headers,rows:a.value.map(v=>{const m=new Map(v.value);return headers.map(k=>m.get(k));})};
+}
+function shown(v){return v===undefined?'[필드 없음]':canonical(v);}
+function atom(v){return v===undefined?'missing':v.kind+':'+canonical(v);}
+function decimal(value){const s=String(value);need(/^[+-]?\d+(?:\.\d+)?$/.test(s)&&s.replace(/[^0-9]/g,'').length<=100,'일반 십진수 문자열이 필요합니다: '+s.slice(0,40));let [a,b='']=s.replace(/^[+-]/,'').split('.');return {n:BigInt(a+b)*(s.startsWith('-')?-1n:1n),scale:b.length};}
+function atScale(d,scale){return d.n*10n**BigInt(scale-d.scale);}
+function formatDecimal(n,scale){const sign=n<0n?'-':'';let s=(n<0n?-n:n).toString().padStart(scale+1,'0');return sign+(scale?s.slice(0,-scale)+'.'+s.slice(-scale):s);}
+function csvExport(headers,rows){const safe=v=>{let s=v===undefined?'':String(v);if(/^[\s]*[=+@-]|^[\t\r\n]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';};return [headers,...rows].map(r=>r.map(safe).join(',')).join('\r\n');}
+function result(summary,headers,rows,extra={}){return {summary,headers,rows,csv:csvExport(headers,rows),...extra};}
+
+function run(q){
+ const a=parseCSV(q.left,q.delimiter||','),b=parseCSV(q.right,q.delimiter||',');need(typeof q.key==='string'&&typeof q.value==='string'&&q.key!==q.value,'항목 열과 금액/건수 열을 지정하세요.');
+ for(const t of [a,b])need(t.headers.includes(q.key)&&t.headers.includes(q.value),'지정한 열을 찾을 수 없습니다.');
+ let scale=0;const load=t=>{const m=new Map();for(const r of t.rows){const key=r[t.headers.indexOf(q.key)];need(key.trim()!=='','빈 항목 이름이 있습니다.');need(!m.has(key),'중복 항목은 먼저 집계해야 합니다: '+key);const d=decimal(r[t.headers.indexOf(q.value)]);scale=Math.max(scale,d.scale);m.set(key,d);}return m;};
+ const left=load(a),right=load(b);let start=0n,end=0n,total=0n;const entries=[];
+ for(const key of new Set([...left.keys(),...right.keys()])){const x=left.has(key)?atScale(left.get(key),scale):0n,y=right.has(key)?atScale(right.get(key),scale):0n;start+=x;end+=y;total+=y-x;entries.push({key,x,y,d:y-x,presence:!left.has(key)?'신규 항목':!right.has(key)?'제외 항목':'양쪽 있음'});}
+ need(start+total===end,'합계 검산에 실패했습니다.');entries.sort((a,b)=>{const x=a.d<0n?-a.d:a.d,y=b.d<0n?-b.d:b.d;return x>y?-1:x<y?1:a.key<b.key?-1:a.key>b.key?1:0;});
+ const f=n=>formatDecimal(n,scale),rows=entries.map(e=>[e.key,f(e.x),f(e.y),f(e.d),e.presence]);
+ return result('기준 '+f(start)+' + 증감 '+f(total)+' = 비교 '+f(end)+' · 검산 일치',['항목','기준','비교','증감','상태'],rows,{totals:{start:f(start),delta:f(total),end:f(end)},note:'항목별 수학적 기여도입니다. 실제 업무 원인을 추정하지 않습니다. 같은 단위의 가산 값만 입력하세요. 비율·평균은 직접 합산하지 마세요.'});
+}
+
+return {run,csvExport};
+})();
+
+
+const $=id=>document.getElementById(id);let current=null,generation=0;const fileTickets={};
+const sample={"left":"항목,금액\n유형A,100.50\n유형B,200.00","right":"항목,금액\n유형A,120.50\n유형B,180.00\n유형C,10.00","key":"항목","value":"금액"},fields=[["key","항목 열","항목","text"],["value","값 열","금액","text"]];
+function clearOutput(){current=null;generation++;$('summary').textContent='입력을 확인한 뒤 실행하세요.';$('note').textContent='';$('result').replaceChildren();$('masked').textContent='';for(const id of ['json-save','csv-save','text-save'])$(id).disabled=true;}
+function render(r){current=r;$('summary').textContent=r.summary;$('note').textContent=r.note||r.comparison||'';
+ const table=document.createElement('table'),head=document.createElement('thead'),hr=document.createElement('tr');for(const h of r.headers){const cell=document.createElement('th');cell.scope='col';cell.textContent=h;hr.append(cell);}head.append(hr);table.append(head);const body=document.createElement('tbody');
+ for(const row of r.rows.slice(0,200)){const tr=document.createElement('tr');for(const value of row){const cell=document.createElement('td');cell.textContent=String(value);tr.append(cell);}body.append(tr);}table.append(body);$('result').replaceChildren(table);
+ if(r.rows.length>200)$('note').textContent+=' 화면은 처음 200개 항목입니다. 전체 결과는 파일로 저장하세요.';
+ if(r.schema){const extra=document.createElement('p');extra.textContent='기준에만 있는 열: '+(r.schema.leftOnly.join(', ')||'없음')+' / 비교에만 있는 열: '+(r.schema.rightOnly.join(', ')||'없음');$('result').append(extra);}
+ $('masked').textContent=r.text===undefined?'':r.text;
+ $('json-save').disabled=false;$('csv-save').disabled=false;$('text-save').disabled=r.text===undefined;
+}
+function request(){if($('request'))return JSON.parse($('request').value);const q={};for(const id of ['left','right','text','format'])if($(id))q[id]=$(id).value;
+ for(const [id,label,placeholder,mode] of fields){const raw=$(id).value;q[id]=mode==='comma'?raw.split(',').map(v=>v.trim()).filter(Boolean):mode==='lines'?raw.split(/\r?\n/).filter(v=>v.length):raw;}
+ if($('delimiter'))q.delimiter=$('delimiter').value==='tab'?'\t':$('delimiter').value;if($('patterns'))q.patterns=$('patterns').checked;return q;
+}
+for(const control of document.querySelectorAll('textarea,input,select'))control.addEventListener('input',()=>{fileTickets[control.id]=(fileTickets[control.id]||0)+1;clearOutput();});
+for(const id of ['left','right','text','request'])if($(id+'-file'))$(id+'-file').addEventListener('change',async()=>{clearOutput();const version=fileTickets[id]=(fileTickets[id]||0)+1,f=$(id+'-file').files[0];if(!f)return;$(id).value='';try{if(f.size>2*1024*1024)throw Error('파일 하나는 2 MiB 이하여야 합니다.');const content=new TextDecoder('utf-8',{fatal:true}).decode(await f.arrayBuffer());if(version!==fileTickets[id])return;$(id).value=content;clearOutput();}catch(e){if(version===fileTickets[id])$('summary').textContent='파일 열기 실패: UTF-8 파일인지 확인하세요. '+e.message;}});
+function fill(){clearOutput();for(const id of ['left','right','text','request']){fileTickets[id]=(fileTickets[id]||0)+1;if($(id+'-file'))$(id+'-file').value='';}if($('request'))$('request').value=JSON.stringify(sample,null,2);else {for(const id of ['left','right','text','format'])if($(id))$(id).value=sample[id]||'';for(const [id,label,placeholder,mode] of fields)$(id).value=Array.isArray(sample[id])?sample[id].join(mode==='lines'?'\n':','):sample[id]||'';if($('delimiter'))$('delimiter').value=',';if($('patterns'))$('patterns').checked=true;}}
+function save(content,extension,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='variance-bridge-result.'+extension;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+document.querySelector('form').addEventListener('submit',event=>{event.preventDefault();clearOutput();try{render(Worklens.run(request()));}catch(e){$('summary').textContent='처리 실패: '+e.message;}});
+$('example').addEventListener('click',fill);
+$('json-save').addEventListener('click',()=>{if(current)save(JSON.stringify(current,null,2),'json','application/json;charset=utf-8');});
+$('csv-save').addEventListener('click',()=>{if(current)save('\uFEFF'+current.csv,'csv','text/csv;charset=utf-8');});
+$('text-save').addEventListener('click',()=>{if(current?.text!==undefined)save(current.text,'txt','text/plain;charset=utf-8');});
+clearOutput();
+
+</script></html>

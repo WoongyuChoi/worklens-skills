@@ -1,0 +1,4 @@
+interface:
+  display_name: "테스트 데이터 세트"
+  short_description: "테스트 데이터 세트 — 짧은 요청으로 근거 있는 결과와 재사용 파일을 만듭니다"
+  default_prompt: "$fixture-factory — 이 입력 테스트할 데이터 만들어줘"

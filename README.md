@@ -2,13 +2,13 @@
 
 **짧게 요청하고, 한눈에 파악하고, 확인한 결과를 받습니다.**
 
-폐쇄망의 Qwen CLI에서 쓸 수 있도록 구성한 스킬 10개입니다.
+폐쇄망의 Qwen CLI에서 쓸 수 있도록 구성한 스킬 20개입니다.
 실행 지침은 영어, 사용자가 보는 질문과 결과는 한국어입니다.
 Git, CI/CD, DB 연결이나 패키지 설치를 기본 전제로 삼지 않습니다.
 
 **✅ 기존 10개 사내 반영 완료** — 2026-09-28 사용자 확인.
-실무 적용 가능 평가는 **6/10개**입니다. 반영 여부와 유용성 평가는 구분합니다.
-[반영 상태와 피드백](docs/ADOPTION.md) · [추가 발굴 후보 10개](docs/NEXT-SKILLS.md)
+기존 10개의 실무 적용 가능 평가는 **6/10개**입니다. 반영 여부와 유용성 평가는 구분합니다.
+[반영 상태와 피드백](docs/ADOPTION.md) · [2차 추가 10개의 설계와 출처](docs/NEXT-SKILLS.md)
 
 ## 무엇을 말하면 되나요?
 
@@ -26,6 +26,23 @@ Git, CI/CD, DB 연결이나 패키지 설치를 기본 전제로 삼지 않습�
 | 규칙 기억 | 다음부터 이 프로젝트에서는 이렇게 해줘 | [project-playbook](skills/project-playbook/SKILL.md) | ✅ 완료 |
 
 dev-conductor와 parallel-batch는 사용자 피드백에 따라 신규 도입 추천 우선순위를 낮췄습니다.
+
+## 2차 추가 — 구현 완료, 사내 반영 대기
+
+새 10개는 2026-09-28 추가했습니다. 아래의 대기는 스킬 제작 상태가 아니라 사내 반입 상태입니다.
+
+| 하고 싶은 일 | 이렇게 요청하세요 | 스킬 | 사내 반영 |
+|---|---|---|---|
+| 데이터 대조 | 이 두 파일 안 맞는 것만 찾아줘 | [data-reconcile](skills/data-reconcile/SKILL.md) | ☐ 대기 |
+| 테스트 데이터 세트 | 이 입력 테스트할 데이터 만들어줘 | [fixture-factory](skills/fixture-factory/SKILL.md) | ☐ 대기 |
+| 기존 화면 다듬기 | 이 화면 좀 덜 답답하게 다듬어줘 | [ui-polish](skills/ui-polish/SKILL.md) | ☐ 대기 |
+| 업무 조건표 | 이 로직 조건별로 표로 뽑아줘 | [rule-matrix](skills/rule-matrix/SKILL.md) | ☐ 대기 |
+| 환경설정 대조 | 개발이랑 운영 설정 다른 것만 보여줘 | [config-compare](skills/config-compare/SKILL.md) | ☐ 대기 |
+| 문서와 구현 대조 | 이 설명서 지금 코드랑 맞아? | [doc-drift](skills/doc-drift/SKILL.md) | ☐ 대기 |
+| 숫자 변동 분해 | 이번 숫자 왜 달라졌는지 풀어줘 | [variance-bridge](skills/variance-bridge/SKILL.md) | ☐ 대기 |
+| 현업 확인표 | 현업한테 확인받을 표 만들어줘 | [acceptance-kit](skills/acceptance-kit/SKILL.md) | ☐ 대기 |
+| 조건 조합 압축 | 조합이 너무 많으니 줄여줘 | [pairwise-cases](skills/pairwise-cases/SKILL.md) | ☐ 대기 |
+| 로그와 샘플 가명처리 | 식별정보 가려서 공유본 만들어줘 | [sample-mask](skills/sample-mask/SKILL.md) | ☐ 대기 |
 
 이번 요청에서 명시한 경로, 현재 대화, 현재 프로젝트 폴더 순으로 대상을 찾습니다.
 후보가 여러 개면 짧은 선택 질문을 합니다. CLI가 IDE에서 선택한 파일을 안다고 가정하지 않습니다.
@@ -46,6 +63,25 @@ GitHub 파일 화면 자체는 HTML 실행 화면이 아닙니다.
 | [텍스트 도구](skills/task-to-tool/assets/text-tool.html) | 명시적으로 선택한 공백/빈 줄/중복 처리, 결과 복사, 파일 저장 |
 | [도식 예시](skills/diagram-maker/assets/diagram-shell.html) | 외부 라이브러리 없는 SVG 흐름도 |
 
+## 계산용 도구 5개
+
+스킬이 대화와 파일에서 입력을 파악하고 아래 도구로 계산합니다.
+Node.js 18+가 이미 있으면 `scripts/tool.cjs`를 CLI에서 실행할 수 있습니다.
+없으면 각 폴더의 `assets/tool.html`을 브라우저에서 열 수 있으며, 추가 설치는 필요하지 않습니다.
+도구를 만들어 전달한 것과 사용자 데이터 처리를 완료한 것은 구분합니다.
+
+| 도구 | 지원 범위 |
+|---|---|
+| [데이터 대조](skills/data-reconcile/assets/tool.html) | CSV/TSV/JSON, 복합 키, 누락/중복/값 차이 |
+| [환경설정 대조](skills/config-compare/assets/tool.html) | JSON/단순 properties, 기본값 숨김, 변수 미해결 표시 |
+| [숫자 변동 분해](skills/variance-bridge/assets/tool.html) | 항목별 CSV, 정확한 십진수 증감과 합계 검산 |
+| [조건 조합 압축](skills/pairwise-cases/assets/tool.html) | 제외 조건·필수 조합을 반영한 조건 쌍 커버리지 |
+| [로그·샘플 가명처리](skills/sample-mask/assets/tool.html) | 지정 문자열과 식별정보 후보를 일관된 토큰으로 치환 |
+
+입력 파일은 UTF-8, 하나당 2 MiB이며 도구별 추가 한도가 있습니다.
+JSON 결과는 원래 값을 보존하고, CSV 결과는 스프레드시트 수식 오해를 막기 위해 일부 셀 앞에 작은따옴표를 붙입니다.
+환경설정의 최종 런타임 값, 완전 익명화, 모든 테스트 조합 검증은 보장하지 않습니다.
+
 ## 폐쇄망에 가져가기
 
 1. GitHub의 **Code → Download ZIP**으로 내려받습니다.
@@ -62,7 +98,7 @@ Windows cmd에서 압축을 푼 저장소 폴더에 들어간 뒤, 예를 들어
 
     xcopy "skills\file-explorer" "%USERPROFILE%\.qwen\skills\file-explorer" /E /I /-Y
 
-10개를 모두 복사하려면:
+20개 전체를 복사하려면:
 
     xcopy "skills" "%USERPROFILE%\.qwen\skills" /E /I /-Y
 

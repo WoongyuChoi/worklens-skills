@@ -1,0 +1,8 @@
+{
+  "left": "{\"timeout\":30,\"db\":{\"password\":\"예시값-A\"}}",
+  "right": "{\"timeout\":60,\"db\":{\"password\":\"예시값-B\"},\"host\":\"${HOST}\"}",
+  "format": "json",
+  "publicKeys": [
+    "/timeout"
+  ]
+}
