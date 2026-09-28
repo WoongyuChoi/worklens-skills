@@ -6,20 +6,26 @@
 실행 지침은 영어, 사용자가 보는 질문과 결과는 한국어입니다.
 Git, CI/CD, DB 연결이나 패키지 설치를 기본 전제로 삼지 않습니다.
 
+**✅ 기존 10개 사내 반영 완료** — 2026-09-28 사용자 확인.
+실무 적용 가능 평가는 **6/10개**입니다. 반영 여부와 유용성 평가는 구분합니다.
+[반영 상태와 피드백](docs/ADOPTION.md) · [추가 발굴 후보 10개](docs/NEXT-SKILLS.md)
+
 ## 무엇을 말하면 되나요?
 
-| 하고 싶은 일 | 이렇게 요청하세요 | 스킬 |
-|---|---|---|
-| 파일 탐색 | 이 파일 좀 보기 좋게 | [file-explorer](skills/file-explorer/SKILL.md) |
-| 화면 시안 | 이 기능 화면으로 보여줘 | [screen-prototype](skills/screen-prototype/SKILL.md) |
-| 반복 작업 도구 | 방금 한 거 다음에도 쓰게 만들어줘 | [task-to-tool](skills/task-to-tool/SKILL.md) |
-| 리더용 요약 | 팀장님께 보여주게 한눈에 정리해줘 | [visual-brief](skills/visual-brief/SKILL.md) |
-| 흐름과 관계 | 이 흐름 그림으로 보여줘 | [diagram-maker](skills/diagram-maker/SKILL.md) |
-| 개발과 검증 | 이 기능 개발하고 QA까지 해줘 | [dev-conductor](skills/dev-conductor/SKILL.md) |
-| 작업 QA | 방금 만든 거 진짜 동작하는지 봐줘 | [qa-sweep](skills/qa-sweep/SKILL.md) |
-| 일괄 처리 | 이 방식으로 나머지도 처리해줘 | [parallel-batch](skills/parallel-batch/SKILL.md) |
-| 다음 세션 | 하던 작업 이어서 해줘 | [session-handoff](skills/session-handoff/SKILL.md) |
-| 규칙 기억 | 다음부터 이 프로젝트에서는 이렇게 해줘 | [project-playbook](skills/project-playbook/SKILL.md) |
+| 하고 싶은 일 | 이렇게 요청하세요 | 스킬 | 사내 반영 |
+|---|---|---|---|
+| 파일 탐색 | 이 파일 좀 보기 좋게 | [file-explorer](skills/file-explorer/SKILL.md) | ✅ 완료 |
+| 화면 시안 | 이 기능 화면으로 보여줘 | [screen-prototype](skills/screen-prototype/SKILL.md) | ✅ 완료 |
+| 반복 작업 도구 | 방금 한 거 다음에도 쓰게 만들어줘 | [task-to-tool](skills/task-to-tool/SKILL.md) | ✅ 완료 |
+| 리더용 요약 | 팀장님께 보여주게 한눈에 정리해줘 | [visual-brief](skills/visual-brief/SKILL.md) | ✅ 완료 |
+| 흐름과 관계 | 이 흐름 그림으로 보여줘 | [diagram-maker](skills/diagram-maker/SKILL.md) | ✅ 완료 |
+| 개발과 검증 | 이 기능 개발하고 QA까지 해줘 | [dev-conductor](skills/dev-conductor/SKILL.md) | ✅ 완료 |
+| 작업 QA | 방금 만든 거 진짜 동작하는지 봐줘 | [qa-sweep](skills/qa-sweep/SKILL.md) | ✅ 완료 |
+| 일괄 처리 | 이 방식으로 나머지도 처리해줘 | [parallel-batch](skills/parallel-batch/SKILL.md) | ✅ 완료 |
+| 다음 세션 | 하던 작업 이어서 해줘 | [session-handoff](skills/session-handoff/SKILL.md) | ✅ 완료 |
+| 규칙 기억 | 다음부터 이 프로젝트에서는 이렇게 해줘 | [project-playbook](skills/project-playbook/SKILL.md) | ✅ 완료 |
+
+dev-conductor와 parallel-batch는 사용자 피드백에 따라 신규 도입 추천 우선순위를 낮췄습니다.
 
 이번 요청에서 명시한 경로, 현재 대화, 현재 프로젝트 폴더 순으로 대상을 찾습니다.
 후보가 여러 개면 짧은 선택 질문을 합니다. CLI가 IDE에서 선택한 파일을 안다고 가정하지 않습니다.
@@ -77,6 +83,9 @@ HTML은 외부 CDN, 폰트, 서버 없이 file://로 열립니다.
 XLSX나 PDF를 직접 파싱하는 템플릿은 아닙니다.
 
 ## 개발과 QA는 어떻게 나누나요?
+
+현재 사용자 환경에서는 dev-conductor와 parallel-batch의 효용이 낮다는 피드백이 있습니다.
+아래 내용은 구현된 동작 설명이며, 신규 도입의 우선 추천 항목은 아닙니다.
 
 dev-conductor는 요청을 파악하고 관련 파일을 읽은 다음 구현, 검토, 실제 검증을 연결합니다.
 기본은 **작성 담당 1명과 읽기 전용 검토 최대 2개**입니다.
