@@ -1,0 +1,11 @@
+Framework: Spring Batch 5.1
+Job name: accountAdjustment
+Step: applyAdjustment
+Failed launch: valueDate=2026-10-30 (identifying), run.id=41 (identifying)
+Proposed launch: valueDate=2026-10-30 (identifying), run.id=42 (identifying)
+One sequential chunk step, chunk size 2, restartable, no skip/retry, no external effects.
+Reader: fixed snapshot input.txt, stable order by account_id, ItemStream registered.
+Reader state: nextIndex stored per StepExecution; same-instance restart restores last committed index.
+New JobInstance starts with nextIndex=0; failed chunk restores last committed index on restart.
+Business data, processed_entry and JobRepository checkpoint use the same DataSource and transaction.
+The failed JobExecution status is FAILED. There is no startLimit restriction.

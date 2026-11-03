@@ -1,0 +1,4 @@
+interface:
+  display_name: "배치 재시작 점검"
+  short_description: "배치 재시작 점검 — 폐쇄망에서 근거와 한계를 확인해 실무 결과를 만듭니다"
+  default_prompt: "$batch-restart-check — 중간에 죽었다 다시 돌리면 중복되는지 봐줘"

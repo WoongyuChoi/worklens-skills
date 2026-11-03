@@ -1,0 +1,8 @@
+<mapper namespace="sample.InvoiceMapper">
+  <select id="find" resultType="map">
+    SELECT invoice_id, counterparty_code, amount FROM invoice WHERE invoice_id = #{id}
+  </select>
+  <insert id="insert">
+    INSERT INTO invoice(invoice_id, counterparty_code, amount) VALUES(#{id}, #{code}, #{amount})
+  </insert>
+</mapper>

@@ -1,0 +1,14 @@
+{
+  "sources": [
+    {
+      "name": "app-synthetic.log",
+      "offsetMinutes": null,
+      "text": "2026-11-03T09:00:00+09:00 request=0012 조회 시작\n2026-11-03T00:00:02Z request=0012 timeout\n  at demo.Client.read(Client.java:52)\n2026-11-03 09:00:03 request=0012 시간대 미확인"
+    },
+    {
+      "name": "operator-synthetic.log",
+      "offsetMinutes": 540,
+      "text": "2026-11-03 09:00:05 설정 확인; 복구 성공 여부 미확인"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "장애 증거 타임라인"
+  short_description: "장애 증거 타임라인 — 폐쇄망에서 근거와 한계를 확인해 실무 결과를 만듭니다"
+  default_prompt: "$incident-evidence — 로그와 조치 기록으로 장애 순서 정리해줘"

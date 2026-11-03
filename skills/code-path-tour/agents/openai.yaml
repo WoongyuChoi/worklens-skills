@@ -1,0 +1,4 @@
+interface:
+  display_name: "실제 코드 경로 안내"
+  short_description: "실제 코드 경로 안내 — 폐쇄망에서 근거와 한계를 확인해 실무 결과를 만듭니다"
+  default_prompt: "$code-path-tour — 이 조회가 화면부터 SQL까지 어떻게 이어지는지 보여줘"

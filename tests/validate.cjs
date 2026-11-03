@@ -2,7 +2,7 @@
 const fs=require("node:fs"),path=require("node:path"),vm=require("node:vm"),assert=require("node:assert/strict");
 const root=path.resolve(__dirname,".."),base=path.join(root,"skills");
 const names=fs.readdirSync(base).filter(n=>fs.statSync(path.join(base,n)).isDirectory());
-assert.equal(names.length,20,"Expected twenty implemented skills");
+assert.equal(names.length,40,"Expected forty implemented skills");
 let assets=0;
 for(const name of names){
  const dir=path.join(base,name),content=fs.readFileSync(path.join(dir,"SKILL.md"),"utf8");

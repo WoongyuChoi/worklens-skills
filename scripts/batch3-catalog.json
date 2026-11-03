@@ -1,0 +1,142 @@
+[
+  {
+    "name": "encoding-boundary",
+    "category": "00_common",
+    "title": "한글·바이트 경계 진단",
+    "prompt": "한글에서 전문 길이가 왜 안 맞는지 봐줘",
+    "priority": false
+  },
+  {
+    "name": "schedule-lens",
+    "category": "00_common",
+    "title": "배치 일정 미리보기",
+    "prompt": "이 배치들이 월말에 언제 겹치는지 보여줘",
+    "priority": false
+  },
+  {
+    "name": "design-decision",
+    "category": "10_design",
+    "title": "설계 대안 비교",
+    "prompt": "이 책임을 어디에 둘지 현재 코드로 비교해줘",
+    "priority": false
+  },
+  {
+    "name": "a11y-focus",
+    "category": "10_design",
+    "title": "키보드·포커스 점검",
+    "prompt": "이 팝업과 트리를 키보드로 쓸 수 있게 봐줘",
+    "priority": false
+  },
+  {
+    "name": "api-change-impact",
+    "category": "20_dev",
+    "title": "API 변경 영향",
+    "prompt": "이 DTO 바꾸면 어느 화면이 깨지는지 봐줘",
+    "priority": true
+  },
+  {
+    "name": "mapper-contract-check",
+    "category": "20_dev",
+    "title": "MyBatis 매핑 점검",
+    "prompt": "Mapper랑 XML 안 맞는 데 찾아줘",
+    "priority": true
+  },
+  {
+    "name": "bug-variant-hunt",
+    "category": "20_dev",
+    "title": "동일 버그 재탐색",
+    "prompt": "방금 고친 버그 다른 데도 남아 있는지 찾아줘",
+    "priority": true
+  },
+  {
+    "name": "sql-plan-review",
+    "category": "20_dev",
+    "title": "SQL 실행계획 판독",
+    "prompt": "이 SQL 왜 느린지 계획과 같이 봐줘",
+    "priority": true
+  },
+  {
+    "name": "db-change-preflight",
+    "category": "20_dev",
+    "title": "DB 변경 사전 검토",
+    "prompt": "이 컬럼 변경하면 어디가 깨지는지 봐줘",
+    "priority": false
+  },
+  {
+    "name": "transaction-boundary",
+    "category": "20_dev",
+    "title": "트랜잭션 경계 추적",
+    "prompt": "여기서 예외 나면 어디까지 롤백되는지 봐줘",
+    "priority": true
+  },
+  {
+    "name": "batch-restart-check",
+    "category": "20_dev",
+    "title": "배치 재시작 점검",
+    "prompt": "중간에 죽었다 다시 돌리면 중복되는지 봐줘",
+    "priority": true
+  },
+  {
+    "name": "thread-dump-lens",
+    "category": "20_dev",
+    "title": "스레드 덤프 판독",
+    "prompt": "서버가 멈춘 것 같은데 덤프 비교해줘",
+    "priority": false
+  },
+  {
+    "name": "dependency-conflict-lens",
+    "category": "20_dev",
+    "title": "의존성 충돌 추적",
+    "prompt": "왜 이 버전 JAR가 선택됐는지 찾아줘",
+    "priority": false
+  },
+  {
+    "name": "async-state-guard",
+    "category": "20_dev",
+    "title": "비동기 화면 상태 보호",
+    "prompt": "조직을 바꾸면 이전 조회 결과가 덮어쓰는 문제를 봐줘",
+    "priority": true
+  },
+  {
+    "name": "business-time-boundary",
+    "category": "20_dev",
+    "title": "업무 날짜 경계 진단",
+    "prompt": "전월 집계가 자정과 월말에서 왜 빠지는지 봐줘",
+    "priority": false
+  },
+  {
+    "name": "legacy-characterization",
+    "category": "30_test",
+    "title": "기존 동작 고정",
+    "prompt": "고치기 전에 현재 결과부터 고정해줘",
+    "priority": true
+  },
+  {
+    "name": "invariant-tests",
+    "category": "30_test",
+    "title": "업무 불변식 검증",
+    "prompt": "입력이 달라도 반드시 맞을 관계를 시험해줘",
+    "priority": false
+  },
+  {
+    "name": "assertion-audit",
+    "category": "30_test",
+    "title": "테스트 검증력 점검",
+    "prompt": "이 테스트가 진짜 버그를 잡는지 봐줘",
+    "priority": false
+  },
+  {
+    "name": "code-path-tour",
+    "category": "90_doc",
+    "title": "실제 코드 경로 안내",
+    "prompt": "이 조회가 화면부터 SQL까지 어떻게 이어지는지 보여줘",
+    "priority": false
+  },
+  {
+    "name": "incident-evidence",
+    "category": "90_doc",
+    "title": "장애 증거 타임라인",
+    "prompt": "로그와 조치 기록으로 장애 순서 정리해줘",
+    "priority": false
+  }
+]

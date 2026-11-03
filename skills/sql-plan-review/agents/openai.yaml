@@ -1,0 +1,4 @@
+interface:
+  display_name: "SQL 실행계획 판독"
+  short_description: "SQL 실행계획 판독 — 폐쇄망에서 근거와 한계를 확인해 실무 결과를 만듭니다"
+  default_prompt: "$sql-plan-review — 이 SQL 왜 느린지 계획과 같이 봐줘"

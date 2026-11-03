@@ -1,0 +1,4 @@
+interface:
+  display_name: "배치 일정 미리보기"
+  short_description: "배치 일정 미리보기 — 폐쇄망에서 근거와 한계를 확인해 실무 결과를 만듭니다"
+  default_prompt: "$schedule-lens — 이 배치들이 월말에 언제 겹치는지 보여줘"

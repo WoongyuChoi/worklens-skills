@@ -1,0 +1,4 @@
+interface:
+  display_name: "업무 불변식 검증"
+  short_description: "업무 불변식 검증 — 폐쇄망에서 근거와 한계를 확인해 실무 결과를 만듭니다"
+  default_prompt: "$invariant-tests — 입력이 달라도 반드시 맞을 관계를 시험해줘"

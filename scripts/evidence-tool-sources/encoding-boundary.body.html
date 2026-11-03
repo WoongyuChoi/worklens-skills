@@ -1,0 +1,5 @@
+<h2>검사할 문자 또는 원본 바이트</h2>
+<div class="fields"><label>입력 방식<select id="mode"><option value="text">텍스트 → UTF-8</option><option value="hex">16진수 원본 바이트</option><option value="file">원본 파일 바이트</option></select></label><label>바이트 디코딩 문자셋<select id="charset"><option value="utf-8">UTF-8</option><option value="euc-kr">EUC-KR (브라우저 디코더)</option><option value="utf-16le">UTF-16LE</option><option value="utf-16be">UTF-16BE</option><option value="windows-1252">Windows-1252</option></select></label><label>자를 바이트 수 (선택)<input id="limit" type="number" min="0" max="131072" placeholder="예: 5"></label></div>
+<label>텍스트 / 공백 구분 16진수<textarea id="input" spellcheck="false" placeholder="가A😀 또는 EA B0 80 41 F0 9F 98 80"></textarea></label>
+<label>원본 파일 (파일 방식에서 사용, 최대 128 KiB)<input id="file" type="file"></label>
+<p class="note">텍스트 입력은 UTF-8로만 인코딩합니다. EUC-KR/MS949 인코딩이나 깨진 텍스트 복원을 하지 않습니다. 원본 바이트를 넣고 문자셋을 명시해야 디코딩 결과를 비교할 수 있습니다.</p>

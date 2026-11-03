@@ -1,0 +1,11 @@
+Command: :web:dependencyInsight --dependency sample:format-engine --configuration runtimeClasspath
+sample:format-engine:4.1
+Selection reasons:
+  Forced
+  By constraint
+sample:format-engine:4.6 -> 4.1
+  web runtimeClasspath
+sample:format-engine:4.4 -> 4.1
+  project :business-platform -> web runtimeClasspath
+sample:format-engine:4.3 -> 4.1
+  sample:invoice-client:2.0 -> web runtimeClasspath

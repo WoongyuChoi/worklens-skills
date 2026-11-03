@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'">
+<title>실제 코드 경로 안내 · Worklens</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6f8;color:#182a3b;font:16px/1.65 system-ui,"Malgun Gothic",sans-serif}main{max-width:1260px;padding:30px 24px;margin:auto}h1{font-size:30px;line-height:1.35;margin:0 0 12px}h2{font-size:23px;margin:4px 0 14px}h3{font-size:18px}p{margin:8px 0 16px}.tag{font-size:13px;color:#285b72;letter-spacing:.05em}.panel{background:#fff;border:1px solid #cbd6df;border-radius:12px;margin-top:18px;padding:22px}.help{color:#455d70;font-size:14px}.warn{padding:12px;background:#fff4d8;border-left:4px solid #b86b00}.status{font-weight:700;color:#173f57}label{display:block;font-weight:650;margin:10px 0 6px}textarea,input,button{font:inherit}textarea,input[type=search]{width:100%;border:1px solid #7b94a7;border-radius:6px;padding:10px}textarea{min-height:250px;resize:vertical;font:14px/1.5 ui-monospace,monospace}input[type=file]{max-width:100%}button{border:1px solid #5d768a;border-radius:6px;padding:8px 14px;margin:5px 6px 0 0;color:#173f57;background:white;cursor:pointer}button[type=submit]{background:#195d78;color:#fff}button:disabled{opacity:.5;cursor:default}:focus-visible{outline:3px solid #c9760b;outline-offset:3px}summary{font-weight:650;cursor:pointer}.layout{display:grid;grid-template-columns:minmax(220px,290px) minmax(0,1fr);gap:22px}.steps{padding:0;list-style:none;max-height:650px;overflow:auto}.steps button{width:100%;text-align:left;overflow-wrap:anywhere;line-height:1.45;margin:0 0 8px}.steps button[aria-current=step]{background:#e5f0f5;border-color:#195d78;font-weight:700}.badge{display:inline-block;background:#e7eef5;border-radius:20px;padding:3px 11px;font-size:13px}.source{overflow-wrap:anywhere;white-space:pre-wrap;font-size:14px}.codebox{background:#102737;color:#e4eff8;border-radius:8px;overflow:auto;padding:14px 12px;font:14px/1.6 ui-monospace,monospace;max-height:510px}.codebox ol{margin:0;padding-left:5em}.codebox li{padding-left:10px;white-space:pre;min-height:1.6em}.codebox li::marker{color:#8eacbd}#explanation{white-space:pre-wrap;overflow-wrap:anywhere}.link-card{border-top:1px solid #d5dfe7;padding:12px 0}.link-card p{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}.toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:6px}#viewer[hidden]{display:none}@media(max-width:750px){main{padding:18px 12px}.panel{padding:16px}.layout{grid-template-columns:1fr}.steps{max-height:240px}h1{font-size:25px}.codebox{font-size:12px}}
+</style></head><body><main><div class="tag">WORKLENS · 90_DOC</div><h1>실제 코드 경로 안내</h1><p>파일·줄·호출 근거를 따라 읽는 오프라인 안내입니다. 입력한 소스는 실행하지 않습니다.</p>
+<section class="panel"><details id="editor" open><summary>안내 JSON 열기·수정</summary><form><label for="tour-file">JSON 파일 · UTF-8 2 MiB 이하</label><input id="tour-file" type="file" accept=".json,application/json"><label for="request">안내 JSON</label><textarea id="request" spellcheck="false" aria-describedby="input-help"></textarea><p id="input-help" class="help">실제 읽은 코드만 source로 표시하세요. observed는 코드를 확인했다는 뜻이며 실행 확인이 아닙니다. 자료가 없으면 gap 단계를 사용합니다.</p><button type="submit">안내 열기</button><button id="example" type="button">합성 예시 넣기</button></form></details><p id="status" role="status" aria-live="polite" class="status">JSON을 넣고 안내를 여세요.</p><button id="save-json" type="button" disabled>자료 JSON 저장</button><button id="save-html" type="button" disabled>현재 안내를 단일 HTML로 저장</button><p class="help">HTML 저장에는 현재 검증한 JSON이 포함됩니다. 파일 하나를 다시 열면 같은 안내가 표시됩니다. 편집 후에는 다시 '안내 열기'를 눌러야 합니다.</p></section>
+<section id="viewer" class="panel" hidden aria-labelledby="tour-title"><span id="provenance" class="badge"></span><h2 id="tour-title"></h2><p id="scope"></p><p id="revision" class="help"></p><ul id="warnings" class="help"></ul><div class="layout"><nav aria-label="안내 단계"><label for="search">단계·파일·코드 검색</label><input id="search" type="search" placeholder="메서드나 경로 검색"><p id="search-status" class="help" aria-live="polite"></p><ol id="step-list" class="steps"></ol></nav><article aria-labelledby="step-title"><div class="toolbar"><button id="previous" type="button">이전</button><button id="next" type="button">다음</button><span id="position" class="help"></span></div><h2 id="step-title"></h2><span id="evidence" class="badge"></span><p id="anchor" class="source"></p><p id="symbol" class="source"></p><p id="explanation"></p><div id="source-code" class="codebox"></div><h3>이어지는 코드와 연결 근거</h3><div id="links"></div></article></div></section>
+</main><script type="application/json" id="embedded-tour">null</script><script>
+/* BEGIN WORKLENS CORE */
+const Worklens = (() => {
+  'use strict';
+  const MAX_BYTES = 2 * 1024 * 1024;
+  const need = (ok, message) => { if (!ok) throw new Error(message); };
+  function keys(value, allowed, label) {
+    need(value !== null && typeof value === 'object' && !Array.isArray(value), label + ': 객체가 필요합니다.');
+    for (const key of Object.keys(value)) need(allowed.includes(key), label + ': 알 수 없는 필드 ' + key);
+    for (const key of allowed) need(Object.hasOwn(value, key), label + ': 필요한 필드 ' + key);
+  }
+  function string(value, label, max = 2000, empty = false) {
+    need(typeof value === 'string' && value.length <= max && (empty || value.trim().length > 0), label + ': 문자열 길이를 확인하세요.');
+    return value;
+  }
+  function parseJSON(raw, maxBytes = MAX_BYTES) {
+    need(typeof raw === 'string' && new TextEncoder().encode(raw).length <= maxBytes, '입력은 UTF-8 기준 허용 용량(일반 JSON 2 MiB) 이하여야 합니다.');
+    let i = 0, nodes = 0;
+    const ws = () => { while (/[\t\n\r ]/.test(raw[i] || 'x')) i++; };
+    function quoted() {
+      const start = i++;
+      for (; i < raw.length; i++) {
+        if (raw[i] === '\\') { i++; continue; }
+        if (raw[i] === '"') { i++; return JSON.parse(raw.slice(start, i)); }
+      }
+      throw new Error('닫히지 않은 JSON 문자열입니다.');
+    }
+    function read(depth) {
+      need(depth < 24 && ++nodes <= 30000, 'JSON 구조가 너무 큽니다.'); ws();
+      if (raw[i] === '"') return quoted();
+      if (raw[i] === '{' || raw[i] === '[') {
+        const obj = raw[i++] === '{', end = obj ? '}' : ']', out = obj ? Object.create(null) : [], seen = new Set(); ws();
+        if (raw[i] === end) { i++; return out; }
+        while (true) {
+          ws();
+          if (obj) {
+            need(raw[i] === '"', 'JSON 키가 필요합니다.'); const key = quoted();
+            need(!seen.has(key), '중복 JSON 키: ' + key); seen.add(key); ws(); need(raw[i++] === ':', 'JSON 콜론이 필요합니다.'); out[key] = read(depth + 1);
+          } else out.push(read(depth + 1));
+          ws(); if (raw[i] === end) { i++; return out; }
+          need(raw[i++] === ',', 'JSON 구분자를 확인하세요.');
+        }
+      }
+      for (const [word, value] of [['true', true], ['false', false], ['null', null]]) if (raw.startsWith(word, i)) { i += word.length; return value; }
+      const m = raw.slice(i).match(/^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/);
+      need(m, 'JSON 값이 올바르지 않습니다.'); i += m[0].length; return Number(m[0]);
+    }
+    const value = read(0); ws(); need(i === raw.length, 'JSON 뒤에 불필요한 문자가 있습니다.'); return value;
+  }
+  function sourceLines(code) {
+    const lines = code.split(/\r\n|\n|\r/);
+    if (lines.at(-1) === '') lines.pop(); return lines;
+  }
+  function run(input) {
+    const q = typeof input === 'string' ? parseJSON(input) : input;
+    keys(q, ['schemaVersion', 'title', 'scope', 'provenance', 'revision', 'entryStep', 'steps'], '안내');
+    need(q.schemaVersion === 1, 'schemaVersion 1만 지원합니다.');
+    string(q.title, 'title', 200); string(q.scope, 'scope', 4000); string(q.revision, 'revision', 500); string(q.entryStep, 'entryStep', 80);
+    need(['source', 'synthetic'].includes(q.provenance), 'provenance는 source 또는 synthetic입니다.');
+    need(Array.isArray(q.steps) && q.steps.length >= 1 && q.steps.length <= 100, '단계는 1~100개여야 합니다.');
+    const ids = new Set(); let edgeCount = 0;
+    const steps = q.steps.map(s => {
+      keys(s, ['id', 'title', 'path', 'startLine', 'endLine', 'symbol', 'code', 'explanation', 'evidence', 'links'], '단계');
+      string(s.id, '단계 id', 80); need(!ids.has(s.id), '중복 단계 id: ' + s.id); ids.add(s.id);
+      string(s.title, '단계 title', 200); string(s.symbol, 'symbol', 500); string(s.explanation, 'explanation', 6000);
+      string(s.path, 'path', 500, true); string(s.code, 'code', 20000, true);
+      need(['observed', 'inferred', 'gap'].includes(s.evidence), '단계 evidence는 observed, inferred, gap입니다.');
+      if (s.evidence === 'gap') {
+        need(s.path === '' && s.code === '' && s.startLine === null && s.endLine === null, 'gap 단계는 경로·코드를 비우고 줄 번호를 null로 두세요.');
+      } else {
+        need(s.path.length > 0 && !/^(?:[a-zA-Z][a-zA-Z\d+.-]*:|[/\\])/.test(s.path) && !s.path.split(/[/\\]/).includes('..') && !/[\u0000-\u001f]/.test(s.path), '코드 경로는 URL·절대 경로·상위 이동 없는 상대 경로여야 합니다.');
+        need(Number.isSafeInteger(s.startLine) && Number.isSafeInteger(s.endLine) && s.startLine >= 1 && s.endLine >= s.startLine && s.endLine <= 10000000, '실제 줄 범위를 정수로 지정하세요.');
+        need(s.code.length > 0 && sourceLines(s.code).length === s.endLine - s.startLine + 1, '발췌 줄 수와 startLine/endLine이 다릅니다: ' + s.id);
+      }
+      need(Array.isArray(s.links) && s.links.length <= 20, '단계별 연결은 20개 이하여야 합니다.'); edgeCount += s.links.length;
+      const links = s.links.map(link => {
+        keys(link, ['to', 'label', 'evidence', 'reason'], '연결'); string(link.to, '연결 to', 80); string(link.label, '연결 label', 300); string(link.reason, '연결 reason', 3000);
+        need(['observed', 'inferred'].includes(link.evidence), '연결 evidence는 observed 또는 inferred입니다.');
+        return {to: link.to, label: link.label, evidence: link.evidence, reason: link.reason};
+      });
+      return {id: s.id, title: s.title, path: s.path, startLine: s.startLine, endLine: s.endLine, symbol: s.symbol, code: s.code, explanation: s.explanation, evidence: s.evidence, links};
+    });
+    need(edgeCount <= 500, '전체 연결은 500개 이하여야 합니다.'); need(ids.has(q.entryStep), 'entryStep이 존재하지 않습니다.');
+    for (const step of steps) for (const link of step.links) need(ids.has(link.to), '연결 대상이 없습니다: ' + step.id + ' → ' + link.to);
+    const byId = new Map(steps.map(s => [s.id, s])), reachable = new Set(), queue = [q.entryStep];
+    while (queue.length) { const id = queue.pop(); if (reachable.has(id)) continue; reachable.add(id); for (const link of byId.get(id).links) queue.push(link.to); }
+    const stats = {stepCount: steps.length, edgeCount, observedCount: steps.filter(s => s.evidence === 'observed').length, inferredCount: steps.filter(s => s.evidence === 'inferred').length, gapCount: steps.filter(s => s.evidence === 'gap').length, inferredEdgeCount: steps.reduce((n, s) => n + s.links.filter(l => l.evidence === 'inferred').length, 0), unreachableIds: steps.filter(s => !reachable.has(s.id)).map(s => s.id)};
+    const tour = {schemaVersion: 1, title: q.title, scope: q.scope, provenance: q.provenance, revision: q.revision, entryStep: q.entryStep, steps};
+    const warnings = ['입력 자료의 구조만 확인했습니다. 실제 파일·현재 줄 번호·실행 결과는 별도 확인이 필요합니다.'];
+    if (q.provenance === 'synthetic') warnings.unshift('합성 예시입니다. 실제 사내 코드나 실행 결과가 아닙니다.');
+    if (stats.unreachableIds.length) warnings.push('진입 단계에서 연결되지 않은 단계: ' + stats.unreachableIds.join(', '));
+    if (stats.gapCount || stats.inferredCount || stats.inferredEdgeCount) warnings.push('추론 또는 자료 공백이 있습니다. 연결 근거를 읽고 해석하세요.');
+    return {tour, stats, warnings};
+  }
+  function matches(tour, query) {
+    const term = String(query).trim().toLowerCase();
+    return tour.steps.filter(s => !term || [s.id, s.title, s.path, s.symbol, s.code, s.explanation, ...s.links.flatMap(l => [l.label, l.reason])].join('\n').toLowerCase().includes(term)).map(s => s.id);
+  }
+  function safeEmbed(value) {
+    return JSON.stringify(value).replace(/[<>&\u2028\u2029]/g, c => ({'<': '\\u003c', '>': '\\u003e', '&': '\\u0026', '\u2028': '\\u2028', '\u2029': '\\u2029'})[c]);
+  }
+  function exportHTML(template, tour) {
+    const opening = '<script type="application/json" id="embedded-tour">', closing = '<' + '/script>';
+    need(typeof template === 'string', 'HTML 템플릿이 필요합니다.');
+    const at = template.indexOf(opening), start = at + opening.length, end = template.indexOf(closing, start);
+    need(at >= 0 && end >= start, 'HTML의 내장 자료 위치를 찾지 못했습니다.');
+    const validated = run(tour).tour;
+    need(new TextEncoder().encode(JSON.stringify(validated)).length <= MAX_BYTES, '내장할 자료 JSON은 2 MiB 이하여야 합니다.');
+    return template.slice(0, start) + safeEmbed(validated) + template.slice(end);
+  }
+  function readEmbedded(raw) {
+    // HTML-safe escaping may expand each '<' to six ASCII bytes.
+    const value = parseJSON(raw, MAX_BYTES * 6);
+    need(new TextEncoder().encode(JSON.stringify(value)).length <= MAX_BYTES, '내장 자료의 원래 JSON은 2 MiB 이하여야 합니다.');
+    return run(value);
+  }
+  return {run, parseJSON, sourceLines, matches, safeEmbed, exportHTML, readEmbedded};
+})();
+/* END WORKLENS CORE */
+const sample={"schemaVersion": 1, "title": "조직 조회 코드 경로 · 합성 예시", "scope": "화면 GET 요청부터 SQL 조건까지. 실제 사내 코드나 실행 결과가 아닙니다.", "provenance": "synthetic", "revision": "합성 자료 v1", "entryStep": "001", "steps": [{"id": "001", "title": "화면에서 조직 조회", "path": "web/OrganizationPage.tsx", "startLine": 12, "symbol": "loadOrganization", "code": "async function loadOrganization(id: string) {\n  const result = await client.get(`/api/organizations/${id}`);\n  setOrganization(result.data);\n}", "explanation": "합성 예시입니다. 선택한 조직 ID를 경로에 넣고 받은 값을 화면 상태에 저장합니다.", "evidence": "observed", "links": [{"to": "002", "label": "GET /api/organizations/{id}", "evidence": "observed", "reason": "예시 호출의 HTTP method와 경로가 Controller의 매핑에 대응합니다."}], "endLine": 15}, {"id": "002", "title": "요청 경로와 서비스 연결", "path": "src/main/java/example/OrganizationController.java", "startLine": 20, "symbol": "OrganizationController.get", "code": "private final OrganizationService service;\n@GetMapping(\"/api/organizations/{id}\")\nOrganizationDto get(@PathVariable String id) {\n    return service.find(id);\n}", "explanation": "합성 예시입니다. 경로 변수의 문자열 ID를 서비스로 넘깁니다. 인증·예외 처리는 이 예시 범위에 포함하지 않았습니다.", "evidence": "observed", "links": [{"to": "003", "label": "service.find(id)", "evidence": "observed", "reason": "예시 Controller의 service 필드 타입과 호출문이 OrganizationService.find에 대응합니다."}], "endLine": 24}, {"id": "003", "title": "Mapper 결과를 반환", "path": "src/main/java/example/OrganizationService.java", "startLine": 8, "symbol": "OrganizationService.find", "code": "OrganizationDto find(String id) {\n    return mapper.findById(id);\n}", "explanation": "합성 예시입니다. 조회 결과를 변경 없이 반환합니다. 결과가 없는 경우의 정책은 추가 자료가 필요합니다.", "evidence": "observed", "links": [{"to": "004", "label": "mapper.findById(id)", "evidence": "inferred", "reason": "XML statement 이름은 맞지만 이 예시에는 Mapper 인터페이스와 @Param 자료가 없어 바인딩을 완전히 확인하지 못했습니다."}], "endLine": 10}, {"id": "004", "title": "조직 ID 조건으로 조회", "path": "src/main/resources/mapper/OrganizationMapper.xml", "startLine": 5, "symbol": "OrganizationMapper.findById", "code": "\u003cselect id=\"findById\" resultType=\"example.OrganizationDto\"\u003e\n  SELECT ORG_ID, ORG_NAME\n  FROM ORGANIZATION\n  WHERE ORG_ID = #{id}\n\u003c/select\u003e", "explanation": "합성 예시입니다. 실제 연결 확인에는 namespace, 인터페이스, 파라미터 이름과 결과 매핑을 함께 읽어야 합니다.", "evidence": "inferred", "links": [], "endLine": 9}]};
+const template='<!doctype html>\n'+document.documentElement.outerHTML;
+const $=id=>document.getElementById(id);let current=null,selected=null,filtered=[],fileTicket=0;
+const evidenceLabel={observed:'코드 확인 · 실행 미확인',inferred:'관련성 추론',gap:'자료 공백'};
+function clear(){current=null;selected=null;filtered=[];$('viewer').hidden=true;$('save-json').disabled=true;$('save-html').disabled=true;$('status').textContent='JSON을 넣고 안내를 여세요.';}
+function showStep(){const s=current?.tour.steps.find(s=>s.id===selected);$('step-title').textContent=s?s.title:'검색 결과가 없습니다.';$('evidence').textContent=s?evidenceLabel[s.evidence]:'';$('anchor').textContent=s?(s.evidence==='gap'?'자료가 없어 경로와 줄 번호를 만들지 않았습니다.':s.path+':'+s.startLine+'–'+s.endLine):'';$('symbol').textContent=s?s.symbol:'';$('explanation').textContent=s?s.explanation:'';$('source-code').replaceChildren();$('links').replaceChildren();const index=filtered.indexOf(selected);$('previous').disabled=index<=0;$('next').disabled=index<0||index>=filtered.length-1;$('position').textContent=index<0?'':(index+1)+' / 검색 결과 '+filtered.length+' · 전체 '+current.tour.steps.length;if(!s)return;if(s.code){const ol=document.createElement('ol');ol.start=s.startLine;for(const line of Worklens.sourceLines(s.code)){const li=document.createElement('li');li.textContent=line||' ';ol.append(li);}$('source-code').append(ol);}if(!s.links.length){const p=document.createElement('p');p.className='help';p.textContent='이 자료에 기록된 다음 연결이 없습니다.';$('links').append(p);}for(const link of s.links){const card=document.createElement('div');card.className='link-card';const button=document.createElement('button');button.type='button';const target=current.tour.steps.find(v=>v.id===link.to);button.textContent=link.label+' → '+target.title;button.addEventListener('click',()=>{$('search').value='';selected=link.to;refreshList();});const p=document.createElement('p');p.textContent=(link.evidence==='observed'?'연결 근거 확인: ':'연결 추론: ')+link.reason;card.append(button,p);$('links').append(card);}}
+function refreshList(){filtered=Worklens.matches(current.tour,$('search').value);if(!filtered.includes(selected))selected=filtered[0]||null;$('search-status').textContent=filtered.length+'개 단계';$('step-list').replaceChildren();for(const id of filtered){const s=current.tour.steps.find(s=>s.id===id),li=document.createElement('li'),button=document.createElement('button');button.type='button';button.textContent=id+' · '+s.title;button.setAttribute('aria-current',id===selected?'step':'false');button.addEventListener('click',()=>{selected=id;refreshList();});li.append(button);$('step-list').append(li);}showStep();}
+function open(raw){clear();const r=Worklens.run(raw);current=r;selected=r.tour.entryStep;$('viewer').hidden=false;$('save-json').disabled=false;$('save-html').disabled=false;$('status').textContent=r.stats.stepCount+'개 단계 · '+r.stats.edgeCount+'개 연결 · 자료 공백 '+r.stats.gapCount+'개';$('tour-title').textContent=r.tour.title;$('scope').textContent=r.tour.scope;$('revision').textContent='자료 기준: '+r.tour.revision;$('provenance').textContent=r.tour.provenance==='synthetic'?'합성 예시':'제공된 소스 자료';$('warnings').replaceChildren();for(const text of r.warnings){const li=document.createElement('li');li.textContent=text;$('warnings').append(li);}$('search').value='';refreshList();}
+$('request').addEventListener('input',()=>{fileTicket++;clear();});
+$('tour-file').addEventListener('change',async()=>{const ticket=++fileTicket;clear();const f=$('tour-file').files[0];if(!f)return;$('request').value='';try{if(f.size>2*1024*1024)throw Error('2 MiB 이하의 파일을 선택하세요.');const raw=new TextDecoder('utf-8',{fatal:true}).decode(await f.arrayBuffer());if(ticket!==fileTicket)return;$('request').value=raw;$('status').textContent='파일을 불러왔습니다. 확인 후 안내를 여세요.';}catch(e){if(ticket===fileTicket)$('status').textContent='파일 열기 실패: '+e.message;}});
+$('example').addEventListener('click',()=>{fileTicket++;$('tour-file').value='';$('request').value=JSON.stringify(sample,null,2);clear();});
+document.querySelector('form').addEventListener('submit',event=>{event.preventDefault();fileTicket++;try{open($('request').value);$('editor').open=false;}catch(e){$('status').textContent='안내를 열 수 없습니다: '+e.message;}});
+$('search').addEventListener('input',()=>{if(current)refreshList();});
+$('previous').addEventListener('click',()=>{const i=filtered.indexOf(selected);if(i>0){selected=filtered[i-1];refreshList();}});
+$('next').addEventListener('click',()=>{const i=filtered.indexOf(selected);if(i>=0&&i<filtered.length-1){selected=filtered[i+1];refreshList();}});
+function save(raw,name,type){const url=URL.createObjectURL(new Blob([raw],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+$('save-json').addEventListener('click',()=>{if(current)save(JSON.stringify(current.tour,null,2)+'\n','code-path-tour.json','application/json;charset=utf-8');});
+$('save-html').addEventListener('click',()=>{if(!current)return;try{save(Worklens.exportHTML(template,current.tour),'code-path-tour.html','text/html;charset=utf-8');}catch(e){$('status').textContent='HTML 저장 실패: '+e.message;}});
+const embedded=$('embedded-tour').textContent.trim();if(embedded&&embedded!=='null'){try{const loaded=Worklens.readEmbedded(embedded);$('request').value=JSON.stringify(loaded.tour,null,2);open(JSON.stringify(loaded.tour));$('editor').open=false;}catch(e){$('status').textContent='내장 자료를 열 수 없습니다: '+e.message;}}
+</script></body></html>

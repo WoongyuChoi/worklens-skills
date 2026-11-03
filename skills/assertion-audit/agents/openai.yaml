@@ -1,0 +1,4 @@
+interface:
+  display_name: "테스트 검증력 점검"
+  short_description: "테스트 검증력 점검 — 폐쇄망에서 근거와 한계를 확인해 실무 결과를 만듭니다"
+  default_prompt: "$assertion-audit — 이 테스트가 진짜 버그를 잡는지 봐줘"

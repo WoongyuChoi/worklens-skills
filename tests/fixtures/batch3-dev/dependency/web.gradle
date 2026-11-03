@@ -1,0 +1,7 @@
+plugins { id 'war' }
+dependencies {
+    implementation platform(project(':business-platform'))
+    implementation 'sample:format-engine:4.6'
+    implementation 'sample:invoice-client:2.0'
+}
+apply from: 'compatibility.gradle'

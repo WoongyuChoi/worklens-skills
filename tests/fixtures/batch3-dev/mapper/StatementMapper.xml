@@ -1,0 +1,19 @@
+<mapper namespace="sample.StatementMapper">
+  <select id="findSelected" resultType="sample.StatementRow">
+    SELECT statement_id AS statementId, customer_name AS customer_label
+    FROM statements
+    <where>
+      <if test="ids != null and ids.size() > 0">
+        statement_id IN
+        <foreach collection="selectedIds" item="entry" open="(" separator="," close=")">#{entry}</foreach>
+      </if>
+    </where>
+  </select>
+  <select id="findOne" parameterType="string" resultType="sample.StatementRow">
+    SELECT statement_id AS statementId, customer_name AS customerName
+    FROM statements WHERE statement_id = #{value}
+  </select>
+  <select id="countStatus" resultType="int">
+    SELECT COUNT(*) FROM statements WHERE status = #{status}
+  </select>
+</mapper>

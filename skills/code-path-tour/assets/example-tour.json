@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "title": "조직 조회 코드 경로 · 합성 예시",
+  "scope": "화면 GET 요청부터 SQL 조건까지. 실제 사내 코드나 실행 결과가 아닙니다.",
+  "provenance": "synthetic",
+  "revision": "합성 자료 v1",
+  "entryStep": "001",
+  "steps": [
+    {
+      "id": "001",
+      "title": "화면에서 조직 조회",
+      "path": "web/OrganizationPage.tsx",
+      "startLine": 12,
+      "symbol": "loadOrganization",
+      "code": "async function loadOrganization(id: string) {\n  const result = await client.get(`/api/organizations/${id}`);\n  setOrganization(result.data);\n}",
+      "explanation": "합성 예시입니다. 선택한 조직 ID를 경로에 넣고 받은 값을 화면 상태에 저장합니다.",
+      "evidence": "observed",
+      "links": [
+        {
+          "to": "002",
+          "label": "GET /api/organizations/{id}",
+          "evidence": "observed",
+          "reason": "예시 호출의 HTTP method와 경로가 Controller의 매핑에 대응합니다."
+        }
+      ],
+      "endLine": 15
+    },
+    {
+      "id": "002",
+      "title": "요청 경로와 서비스 연결",
+      "path": "src/main/java/example/OrganizationController.java",
+      "startLine": 20,
+      "symbol": "OrganizationController.get",
+      "code": "private final OrganizationService service;\n@GetMapping(\"/api/organizations/{id}\")\nOrganizationDto get(@PathVariable String id) {\n    return service.find(id);\n}",
+      "explanation": "합성 예시입니다. 경로 변수의 문자열 ID를 서비스로 넘깁니다. 인증·예외 처리는 이 예시 범위에 포함하지 않았습니다.",
+      "evidence": "observed",
+      "links": [
+        {
+          "to": "003",
+          "label": "service.find(id)",
+          "evidence": "observed",
+          "reason": "예시 Controller의 service 필드 타입과 호출문이 OrganizationService.find에 대응합니다."
+        }
+      ],
+      "endLine": 24
+    },
+    {
+      "id": "003",
+      "title": "Mapper 결과를 반환",
+      "path": "src/main/java/example/OrganizationService.java",
+      "startLine": 8,
+      "symbol": "OrganizationService.find",
+      "code": "OrganizationDto find(String id) {\n    return mapper.findById(id);\n}",
+      "explanation": "합성 예시입니다. 조회 결과를 변경 없이 반환합니다. 결과가 없는 경우의 정책은 추가 자료가 필요합니다.",
+      "evidence": "observed",
+      "links": [
+        {
+          "to": "004",
+          "label": "mapper.findById(id)",
+          "evidence": "inferred",
+          "reason": "XML statement 이름은 맞지만 이 예시에는 Mapper 인터페이스와 @Param 자료가 없어 바인딩을 완전히 확인하지 못했습니다."
+        }
+      ],
+      "endLine": 10
+    },
+    {
+      "id": "004",
+      "title": "조직 ID 조건으로 조회",
+      "path": "src/main/resources/mapper/OrganizationMapper.xml",
+      "startLine": 5,
+      "symbol": "OrganizationMapper.findById",
+      "code": "<select id=\"findById\" resultType=\"example.OrganizationDto\">\n  SELECT ORG_ID, ORG_NAME\n  FROM ORGANIZATION\n  WHERE ORG_ID = #{id}\n</select>",
+      "explanation": "합성 예시입니다. 실제 연결 확인에는 namespace, 인터페이스, 파라미터 이름과 결과 매핑을 함께 읽어야 합니다.",
+      "evidence": "inferred",
+      "links": [],
+      "endLine": 9
+    }
+  ]
+}

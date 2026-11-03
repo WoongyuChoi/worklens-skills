@@ -1,0 +1,162 @@
+[
+  {
+    "name": "file-explorer",
+    "category": "00_common",
+    "title": "파일 탐색",
+    "prompt": "이 파일 좀 보기 좋게",
+    "priority": false,
+    "batch": 1
+  },
+  {
+    "name": "screen-prototype",
+    "category": "10_design",
+    "title": "화면 시안",
+    "prompt": "이 기능 화면으로 보여줘",
+    "priority": false,
+    "batch": 1
+  },
+  {
+    "name": "task-to-tool",
+    "category": "00_common",
+    "title": "반복 작업 도구",
+    "prompt": "방금 한 거 다음에도 쓰게 만들어줘",
+    "priority": false,
+    "batch": 1
+  },
+  {
+    "name": "visual-brief",
+    "category": "90_doc",
+    "title": "리더용 요약",
+    "prompt": "팀장님께 보여주게 한눈에 정리해줘",
+    "priority": false,
+    "batch": 1
+  },
+  {
+    "name": "diagram-maker",
+    "category": "90_doc",
+    "title": "흐름과 관계",
+    "prompt": "이 흐름 그림으로 보여줘",
+    "priority": false,
+    "batch": 1
+  },
+  {
+    "name": "dev-conductor",
+    "category": "20_dev",
+    "title": "개발과 검증",
+    "prompt": "이 기능 개발하고 QA까지 해줘",
+    "priority": false,
+    "batch": 1
+  },
+  {
+    "name": "qa-sweep",
+    "category": "30_test",
+    "title": "작업 QA",
+    "prompt": "방금 만든 거 진짜 동작하는지 봐줘",
+    "priority": false,
+    "batch": 1
+  },
+  {
+    "name": "parallel-batch",
+    "category": "00_common",
+    "title": "일괄 처리",
+    "prompt": "이 방식으로 나머지도 처리해줘",
+    "priority": false,
+    "batch": 1
+  },
+  {
+    "name": "session-handoff",
+    "category": "00_common",
+    "title": "다음 세션 인계",
+    "prompt": "하던 작업 이어서 해줘",
+    "priority": false,
+    "batch": 1
+  },
+  {
+    "name": "project-playbook",
+    "category": "00_common",
+    "title": "프로젝트 규칙 기억",
+    "prompt": "다음부터 이 프로젝트에서는 이렇게 해줘",
+    "priority": false,
+    "batch": 1
+  },
+  {
+    "name": "data-reconcile",
+    "category": "00_common",
+    "title": "데이터 대조",
+    "prompt": "이 두 파일 안 맞는 것만 찾아줘",
+    "priority": false,
+    "batch": 2
+  },
+  {
+    "name": "fixture-factory",
+    "category": "30_test",
+    "title": "테스트 데이터 세트",
+    "prompt": "이 입력 테스트할 데이터 만들어줘",
+    "priority": false,
+    "batch": 2
+  },
+  {
+    "name": "ui-polish",
+    "category": "10_design",
+    "title": "기존 화면 다듬기",
+    "prompt": "이 화면 좀 덜 답답하게 다듬어줘",
+    "priority": false,
+    "batch": 2
+  },
+  {
+    "name": "rule-matrix",
+    "category": "30_test",
+    "title": "업무 조건표",
+    "prompt": "이 로직 조건별로 표로 뽑아줘",
+    "priority": false,
+    "batch": 2
+  },
+  {
+    "name": "config-compare",
+    "category": "20_dev",
+    "title": "환경설정 대조",
+    "prompt": "개발이랑 운영 설정 다른 것만 보여줘",
+    "priority": false,
+    "batch": 2
+  },
+  {
+    "name": "doc-drift",
+    "category": "90_doc",
+    "title": "문서와 구현 대조",
+    "prompt": "이 설명서 지금 코드랑 맞아?",
+    "priority": false,
+    "batch": 2
+  },
+  {
+    "name": "variance-bridge",
+    "category": "90_doc",
+    "title": "숫자 변동 분해",
+    "prompt": "이번 숫자 왜 달라졌는지 풀어줘",
+    "priority": false,
+    "batch": 2
+  },
+  {
+    "name": "acceptance-kit",
+    "category": "30_test",
+    "title": "현업 확인표",
+    "prompt": "현업한테 확인받을 표 만들어줘",
+    "priority": false,
+    "batch": 2
+  },
+  {
+    "name": "pairwise-cases",
+    "category": "30_test",
+    "title": "조건 조합 압축",
+    "prompt": "조합이 너무 많으니 줄여줘",
+    "priority": false,
+    "batch": 2
+  },
+  {
+    "name": "sample-mask",
+    "category": "00_common",
+    "title": "로그와 샘플 가명처리",
+    "prompt": "식별정보 가려서 공유본 만들어줘",
+    "priority": false,
+    "batch": 2
+  }
+]

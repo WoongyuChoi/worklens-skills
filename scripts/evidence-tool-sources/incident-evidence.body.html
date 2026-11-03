@@ -1,0 +1,5 @@
+<h2>로그와 조치 기록</h2>
+<label>붙여넣기 (pasted-log)<textarea id="input" spellcheck="false" placeholder="2026-11-03T09:00:00+09:00 request=0012 조회 시작"></textarea></label>
+<label>추가 파일 불러오기 (UTF-8, 합계 2 MiB 이내)<input id="files" type="file" multiple accept=".txt,.log"></label>
+<div class="fields"><label>오프셋 없는 행의 고정 UTC 오프셋 (분)<input id="offset" type="number" min="-840" max="840" placeholder="모르면 비워 두기 · 한국 +540"></label><label>원문에서 찾을 요청 ID / 문자열 (선택)<input id="query" placeholder="예: request=0012"></label></div>
+<p class="note">오프셋 설정은 모든 입력 중 오프셋이 없는 행에만 적용됩니다. 소스마다 시간대가 다르면 따로 분석하거나 요청 JSON에 소스별 offsetMinutes를 지정하세요. 시간표만으로 원인을 확정하지 않습니다.</p>

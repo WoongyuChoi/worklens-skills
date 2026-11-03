@@ -1,0 +1,4 @@
+interface:
+  display_name: "의존성 충돌 추적"
+  short_description: "의존성 충돌 추적 — 폐쇄망에서 근거와 한계를 확인해 실무 결과를 만듭니다"
+  default_prompt: "$dependency-conflict-lens — 왜 이 버전 JAR가 선택됐는지 찾아줘"

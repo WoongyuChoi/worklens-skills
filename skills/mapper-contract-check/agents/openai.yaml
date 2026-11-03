@@ -1,0 +1,4 @@
+interface:
+  display_name: "MyBatis 매핑 점검"
+  short_description: "MyBatis 매핑 점검 — 폐쇄망에서 근거와 한계를 확인해 실무 결과를 만듭니다"
+  default_prompt: "$mapper-contract-check — Mapper랑 XML 안 맞는 데 찾아줘"

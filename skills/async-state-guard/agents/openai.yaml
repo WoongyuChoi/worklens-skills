@@ -1,0 +1,4 @@
+interface:
+  display_name: "비동기 화면 상태 보호"
+  short_description: "비동기 화면 상태 보호 — 폐쇄망에서 근거와 한계를 확인해 실무 결과를 만듭니다"
+  default_prompt: "$async-state-guard — 조직을 바꾸면 이전 조회 결과가 덮어쓰는 문제를 봐줘"
