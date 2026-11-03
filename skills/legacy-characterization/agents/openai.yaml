@@ -1,0 +1,4 @@
+interface:
+  display_name: "기존 동작 고정"
+  short_description: "기존 동작 고정 — 폐쇄망에서 근거와 한계를 확인해 실무 결과를 만듭니다"
+  default_prompt: "$legacy-characterization — 고치기 전에 현재 결과부터 고정해줘"

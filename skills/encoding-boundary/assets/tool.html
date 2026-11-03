@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; base-uri 'none'; form-action 'none'"><title>한글·바이트 경계 진단 · Worklens</title><style>:root{color-scheme:light;--ink:#172b3d;--muted:#536777;--line:#cdd8e1;--brand:#115e59;--paper:#fff;--back:#f2f5f8}*{box-sizing:border-box}body{font:15px/1.6 system-ui,sans-serif;color:var(--ink);background:var(--back);margin:0}header,main,footer{max-width:1200px;margin:auto;padding:24px}header{padding-bottom:8px}.eyebrow{font-size:12px;letter-spacing:.14em;color:var(--brand);font-weight:750}h1{font-size:30px;line-height:1.3;margin:10px 0}h2{font-size:20px;margin:0 0 12px}h3{font-size:16px}.lead,.muted{color:var(--muted)}.panel{padding:22px;background:var(--paper);border:1px solid var(--line);border-radius:14px;margin-bottom:20px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.fields{display:flex;align-items:end;flex-wrap:wrap;gap:16px}label{display:block;font-weight:650;margin-bottom:10px}input,select,textarea,button{font:inherit}input,select,textarea{width:100%;border:1px solid #98aebe;border-radius:7px;padding:10px;color:var(--ink);background:white}input[type=file]{font-size:13px}textarea{font:13px/1.5 ui-monospace,monospace;min-height:175px;resize:vertical;white-space:pre}.fields label{min-width:130px;flex:1}button{border:1px solid var(--brand);border-radius:8px;padding:9px 15px;background:var(--brand);color:white;cursor:pointer}button.secondary{background:white;color:var(--brand)}button:disabled{opacity:.45;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f0ab00;outline-offset:2px}.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0}#status{min-height:1.8em;margin:12px 0;color:var(--muted)}#status.error{color:#9c2323}#summary{font-weight:650;font-size:17px;white-space:pre-wrap}.scroll{overflow:auto;max-height:520px}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line);padding:9px;white-space:pre-wrap;overflow-wrap:anywhere}th{position:sticky;top:0;background:#eaf1f4;z-index:1}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:450px;overflow:auto;background:#f7f9fb;border:1px solid var(--line);border-radius:6px;padding:14px;font-size:12px}details{margin:14px 0}summary{cursor:pointer;font-weight:650}code{overflow-wrap:anywhere}.note{border-left:4px solid #d19417;padding:8px 14px;background:#fff8e8}.badge{display:inline-block;padding:2px 9px;background:#dbeee7;border-radius:20px;font-size:12px}.hidden{display:none!important}footer{color:var(--muted);font-size:12px}@media(max-width:700px){header,main,footer{padding:16px}.grid{grid-template-columns:1fr}.panel{padding:16px}h1{font-size:25px}.fields label{flex-basis:100%}}</style></head><body><header><div class="eyebrow">WORKLENS / OFFLINE TOOL</div><h1>한글·바이트 경계 진단</h1><p class="lead">문자와 바이트 길이를 나누어 보고, 지정한 바이트에서 잘린 결과를 확인합니다.</p><span class="badge">추가 설치 없음 · 파일을 브라우저에서 열어 사용</span></header><main><section class="panel"><h2>검사할 문자 또는 원본 바이트</h2>
+<div class="fields"><label>입력 방식<select id="mode"><option value="text">텍스트 → UTF-8</option><option value="hex">16진수 원본 바이트</option><option value="file">원본 파일 바이트</option></select></label><label>바이트 디코딩 문자셋<select id="charset"><option value="utf-8">UTF-8</option><option value="euc-kr">EUC-KR (브라우저 디코더)</option><option value="utf-16le">UTF-16LE</option><option value="utf-16be">UTF-16BE</option><option value="windows-1252">Windows-1252</option></select></label><label>자를 바이트 수 (선택)<input id="limit" type="number" min="0" max="131072" placeholder="예: 5"></label></div>
+<label>텍스트 / 공백 구분 16진수<textarea id="input" spellcheck="false" placeholder="가A😀 또는 EA B0 80 41 F0 9F 98 80"></textarea></label>
+<label>원본 파일 (파일 방식에서 사용, 최대 128 KiB)<input id="file" type="file"></label>
+<p class="note">텍스트 입력은 UTF-8로만 인코딩합니다. EUC-KR/MS949 인코딩이나 깨진 텍스트 복원을 하지 않습니다. 원본 바이트를 넣고 문자셋을 명시해야 디코딩 결과를 비교할 수 있습니다.</p>
+<div class="toolbar"><button id="run">분석 실행</button><button id="sample" class="secondary">합성 예제 넣기</button><button id="download" class="secondary" disabled>결과 JSON 저장</button></div><p id="status" role="status" aria-live="polite">입력 자료를 준비한 뒤 실행하세요.</p></section><section class="panel"><h2>분석 결과</h2><p id="summary"></p><div id="results"></div><details><summary>전체 결과 JSON</summary><pre id="raw"></pre></details></section></main><footer>원본 파일을 덮어쓰지 않습니다. JSON에는 입력 원문이 포함될 수 있으므로 공유 전에 내용을 확인하세요.</footer><script>/* Portable engine. Browser uses the same code; Node is optional. */
+(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.WorklensTool=factory();})(typeof globalThis==='object'?globalThis:this,function(){
+'use strict';
+const MAX=131072;
+function fail(message){throw new Error(message);}
+function hex(bytes){return Array.from(bytes,b=>b.toString(16).padStart(2,'0').toUpperCase()).join(' ');}
+function parseHex(value){
+ if(typeof value!=='string'||value.length>MAX*3+1024)fail('16진수 입력은 최대 128 KiB입니다.');
+ const compact=value.replace(/\s/g,'');
+ if(!/^(?:[0-9a-fA-F]{2})*$/.test(compact))fail('공백으로 구분한 2자리 16진수만 입력하세요. 예: EA B0 80');
+ if(compact.length/2>MAX)fail('원본 바이트는 최대 128 KiB입니다.');
+ return Uint8Array.from(compact.match(/../g)||[],s=>parseInt(s,16));
+}
+function decode(bytes,charset){
+ let decoder;try{decoder=new TextDecoder(charset,{fatal:true,ignoreBOM:true});}catch(_){fail('현재 환경에서 지원하지 않는 문자셋입니다: '+charset);}
+ try{return {valid:true,text:decoder.decode(bytes),charset:decoder.encoding,error:null};}
+ catch(_){return {valid:false,text:new TextDecoder(charset,{ignoreBOM:true}).decode(bytes),charset:decoder.encoding,error:'선택한 문자셋으로 엄격한 디코딩에 실패했습니다. 표시문은 대체 문자가 들어간 미리보기입니다.'};}
+}
+function bomOf(b){
+ const signatures=[['UTF-32BE',[0,0,254,255]],['UTF-32LE',[255,254,0,0]],['UTF-8',[239,187,191]],['UTF-16BE',[254,255]],['UTF-16LE',[255,254]]];
+ for(const [name,seq]of signatures)if(seq.every((v,i)=>b[i]===v))return {name,bytes:seq.length};
+ return null;
+}
+function run(req){
+ if(!req||typeof req!=='object'||Array.isArray(req))fail('요청 객체가 필요합니다.');
+ const mode=req.mode===undefined?'text':req.mode;
+ if(req.charset!==undefined&&(typeof req.charset!=='string'||!req.charset.trim()))fail('문자셋 이름은 비어 있지 않은 문자열이어야 합니다.');
+ const charset=(req.charset===undefined?'utf-8':req.charset).trim().toLowerCase();let bytes;
+ if(mode==='text'){
+  if(typeof req.text!=='string'||req.text.length>MAX)fail('텍스트는 최대 131072 UTF-16 단위입니다.');
+  for(let i=0;i<req.text.length;i++){const n=req.text.charCodeAt(i);if(n>=0xD800&&n<=0xDBFF){const m=req.text.charCodeAt(++i);if(!(m>=0xDC00&&m<=0xDFFF))fail('짝이 없는 UTF-16 서로게이트가 있습니다. 원본 바이트로 확인하세요.');}else if(n>=0xDC00&&n<=0xDFFF)fail('짝이 없는 UTF-16 서로게이트가 있습니다. 원본 바이트로 확인하세요.');}
+  if(charset!=='utf-8'&&charset!=='utf8')fail('텍스트 재인코딩은 UTF-8만 지원합니다. 다른 문자셋은 원본 바이트를 넣어 디코딩하세요.');
+  bytes=new TextEncoder().encode(req.text);
+ }else if(mode==='hex')bytes=parseHex(req.hex);
+ else if(mode==='bytes'){
+  if(!Array.isArray(req.bytes)||req.bytes.length>MAX||req.bytes.some(n=>!Number.isInteger(n)||n<0||n>255))fail('바이트 배열은 0~255 정수, 최대 128 KiB입니다.');
+  bytes=Uint8Array.from(req.bytes);
+ }else fail('mode는 text, hex, bytes 중 하나여야 합니다.');
+ if(bytes.length>MAX)fail('변환된 바이트가 128 KiB를 넘습니다.');
+ const full=decode(bytes,charset),utf8=new TextEncoder().encode(full.text),points=[];let index=0,byteOffset=0,count=0;
+ for(const ch of full.text){const b=new TextEncoder().encode(ch);if(points.length<2000)points.push({utf16Offset:index,derivedUtf8Offset:byteOffset,codePoint:'U+'+ch.codePointAt(0).toString(16).toUpperCase().padStart(4,'0'),text:ch,utf16Units:ch.length,utf8Bytes:b.length,utf8Hex:hex(b)});index+=ch.length;byteOffset+=b.length;count++;}
+ let truncation=null;
+ if(req.limitBytes!==undefined&&req.limitBytes!==null&&req.limitBytes!==''){
+  if(typeof req.limitBytes!=='number'&&!(typeof req.limitBytes==='string'&&/^\d+$/.test(req.limitBytes)))fail('바이트 제한은 정수여야 합니다.');
+  const n=Number(req.limitBytes);if(!Number.isSafeInteger(n)||n<0||n>MAX)fail('바이트 제한은 0~131072 사이 정수여야 합니다.');
+  const cut=Math.min(n,bytes.length),prefix=decode(bytes.slice(0,cut),charset);let safe=null;
+  if(full.valid&&full.charset==='utf-8'){
+   safe=cut;while(safe>0&&!decode(bytes.slice(0,safe),'utf-8').valid)safe--;
+  }
+  truncation={requestedBytes:n,takenBytes:cut,hex:hex(bytes.slice(0,cut)),decodeValid:prefix.valid,decodedPreview:prefix.text,safeUtf8PrefixBytes:safe,safeUtf8Text:safe===null?null:decode(bytes.slice(0,safe),'utf-8').text};
+ }
+ return {tool:'encoding-boundary',verification:'로컬 바이트 계산',inputKind:mode,inputByteLength:bytes.length,originalHex:hex(bytes),bom:bomOf(bytes),charset:full.charset,decodeValid:full.valid,decodeError:full.error,decodedText:full.text,utf16Units:full.text.length,codePoints:count,derivedUtf8ByteLength:utf8.length,nfcUnchanged:full.text.normalize('NFC')===full.text,nfdUnchanged:full.text.normalize('NFD')===full.text,points,pointsTruncated:count>points.length,truncation,limits:['원래 문자셋을 추정하거나 확정하지 않습니다. 선택한 디코더의 성공만 확인합니다.','문자별 바이트 오프셋은 표시문을 UTF-8로 다시 계산한 값입니다. 원본이 다른 문자셋이면 원본 오프셋이 아닙니다.','코드포인트 수는 사용자에게 보이는 글자 수와 다를 수 있습니다. 정규화·복원·파일 덮어쓰기를 하지 않습니다.','EUC-KR/MS949 바이트 재인코딩은 지원하지 않습니다. BOM은 제거하지 않고 표시문에 유지합니다.']};
+}
+return {run,parseHex};
+});
+if(typeof require==='function'&&typeof module==='object'&&require.main===module){try{const fs=require('node:fs');if(process.argv.length!==4)throw new Error('사용법: node tool.cjs 요청.json 새결과.json');const result=module.exports.run(JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(fs.readFileSync(process.argv[2]))));fs.writeFileSync(process.argv[3],JSON.stringify(result,null,2)+'\n',{flag:'wx'});}catch(e){console.error(e.message);process.exitCode=1;}}
+
+'use strict';
+const $=id=>document.getElementById(id);let current=null,revision=0;
+async function readUtf8(file){try{return new TextDecoder('utf-8',{fatal:true}).decode(await file.arrayBuffer());}catch(_){throw new Error('UTF-8 원문 파일을 읽지 못했습니다. 문자셋이나 파일 상태를 확인하세요.');}}
+function status(text,error=false){$('status').textContent=text;$('status').className=error?'error':'';}
+function clear(){revision++;current=null;$('download').disabled=true;if($('csv'))$('csv').disabled=true;$('summary').textContent='';$('results').replaceChildren();$('raw').textContent='';status('입력을 바꾸면 다시 실행하세요.');}
+function table(title,headers,rows){const section=document.createElement('section'),h=document.createElement('h3'),wrap=document.createElement('div'),t=document.createElement('table'),head=document.createElement('thead'),tr=document.createElement('tr'),body=document.createElement('tbody');h.textContent=title;wrap.className='scroll';for(const text of headers){const th=document.createElement('th');th.scope='col';th.textContent=text;tr.append(th);}head.append(tr);for(const row of rows){const line=document.createElement('tr');for(const value of row){const td=document.createElement('td');td.textContent=value===null?'미확인':String(value);line.append(td);}body.append(line);}t.append(head,body);wrap.append(t);section.append(h,wrap);$('results').append(section);}
+function note(text){const p=document.createElement('p');p.className='note';p.textContent=text;$('results').append(p);}
+function finish(result,summary){current=result;$('summary').textContent=summary;$('raw').textContent=JSON.stringify(result,null,2);$('download').disabled=false;if($('csv'))$('csv').disabled=false;for(const text of result.limits||[])note(text);status('계산 완료 · 원문과 환경을 확인한 뒤 해석하세요.');}
+function save(content,name,type='application/json'){const blob=new Blob([content],{type:type+';charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+$('download').addEventListener('click',()=>{if(current)save(JSON.stringify(current,null,2)+'\n',current.tool+'-result.json');});
+document.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',clear));
+function execute(make,render){clear();try{const result=WorklensTool.run(make());render(result);}catch(error){status(error.message,true);}}
+
+function render(result){
+ finish(result,'원본 '+result.inputByteLength+' 바이트 · UTF-16 '+result.utf16Units+' 단위 · 코드포인트 '+result.codePoints+'개\n디코딩 '+(result.decodeValid?'성공':'실패: 대체 문자 미리보기')+' · '+result.charset+(result.bom?' · BOM '+result.bom.name:''));
+ if(result.truncation){const t=result.truncation;table('바이트 잘림',['요청 / 사용 바이트','엄격한 디코딩','표시문','UTF-8 안전한 접두부'],[[t.requestedBytes+' / '+t.takenBytes,t.decodeValid?'성공':'실패',t.decodedPreview,t.safeUtf8PrefixBytes===null?'지원 범위 아님':t.safeUtf8PrefixBytes+' 바이트: '+t.safeUtf8Text]]);}
+ table('문자별 UTF-8 재계산'+(result.pointsTruncated?' (앞 2000개)':''),['UTF-16 위치','UTF-8 위치','코드포인트','문자','UTF-8 바이트'],result.points.map(p=>[p.utf16Offset,p.derivedUtf8Offset,p.codePoint,p.text,p.utf8Hex]));
+}
+$('run').addEventListener('click',async()=>{
+ clear();const token=revision;try{
+  const mode=$('mode').value,request={mode,charset:$('charset').value,limitBytes:$('limit').value};
+  if(mode==='text')request.text=$('input').value;
+  else if(mode==='hex')request.hex=$('input').value;
+  else{const file=$('file').files[0];if(!file)throw new Error('원본 파일을 선택하세요.');if(file.size>131072)throw new Error('원본 파일은 최대 128 KiB입니다.');request.mode='bytes';request.bytes=Array.from(new Uint8Array(await file.arrayBuffer()));}
+  if(token!==revision)return;render(WorklensTool.run(request));
+ }catch(error){if(token===revision)status(error.message,true);}
+});
+$('sample').addEventListener('click',()=>{clear();$('mode').value='text';$('charset').value='utf-8';$('input').value='가A😀e\u0301';$('limit').value='5';status('합성 예제입니다. 5바이트에서 이모지 중간이 잘리는지 확인하세요.');});
+$('mode').addEventListener('change',()=>{clear();if($('mode').value==='text')$('charset').value='utf-8';});
+</script></body></html>

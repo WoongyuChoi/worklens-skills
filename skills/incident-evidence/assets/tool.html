@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; base-uri 'none'; form-action 'none'"><title>장애 증거 타임라인 · Worklens</title><style>:root{color-scheme:light;--ink:#172b3d;--muted:#536777;--line:#cdd8e1;--brand:#115e59;--paper:#fff;--back:#f2f5f8}*{box-sizing:border-box}body{font:15px/1.6 system-ui,sans-serif;color:var(--ink);background:var(--back);margin:0}header,main,footer{max-width:1200px;margin:auto;padding:24px}header{padding-bottom:8px}.eyebrow{font-size:12px;letter-spacing:.14em;color:var(--brand);font-weight:750}h1{font-size:30px;line-height:1.3;margin:10px 0}h2{font-size:20px;margin:0 0 12px}h3{font-size:16px}.lead,.muted{color:var(--muted)}.panel{padding:22px;background:var(--paper);border:1px solid var(--line);border-radius:14px;margin-bottom:20px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.fields{display:flex;align-items:end;flex-wrap:wrap;gap:16px}label{display:block;font-weight:650;margin-bottom:10px}input,select,textarea,button{font:inherit}input,select,textarea{width:100%;border:1px solid #98aebe;border-radius:7px;padding:10px;color:var(--ink);background:white}input[type=file]{font-size:13px}textarea{font:13px/1.5 ui-monospace,monospace;min-height:175px;resize:vertical;white-space:pre}.fields label{min-width:130px;flex:1}button{border:1px solid var(--brand);border-radius:8px;padding:9px 15px;background:var(--brand);color:white;cursor:pointer}button.secondary{background:white;color:var(--brand)}button:disabled{opacity:.45;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f0ab00;outline-offset:2px}.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0}#status{min-height:1.8em;margin:12px 0;color:var(--muted)}#status.error{color:#9c2323}#summary{font-weight:650;font-size:17px;white-space:pre-wrap}.scroll{overflow:auto;max-height:520px}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line);padding:9px;white-space:pre-wrap;overflow-wrap:anywhere}th{position:sticky;top:0;background:#eaf1f4;z-index:1}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:450px;overflow:auto;background:#f7f9fb;border:1px solid var(--line);border-radius:6px;padding:14px;font-size:12px}details{margin:14px 0}summary{cursor:pointer;font-weight:650}code{overflow-wrap:anywhere}.note{border-left:4px solid #d19417;padding:8px 14px;background:#fff8e8}.badge{display:inline-block;padding:2px 9px;background:#dbeee7;border-radius:20px;font-size:12px}.hidden{display:none!important}footer{color:var(--muted);font-size:12px}@media(max-width:700px){header,main,footer{padding:16px}.grid{grid-template-columns:1fr}.panel{padding:16px}h1{font-size:25px}.fields label{flex-basis:100%}}</style></head><body><header><div class="eyebrow">WORKLENS / OFFLINE TOOL</div><h1>장애 증거 타임라인</h1><p class="lead">원문 위치를 보존하며 시간표를 만듭니다. 불명확한 시각은 따로 남깁니다.</p><span class="badge">추가 설치 없음 · 파일을 브라우저에서 열어 사용</span></header><main><section class="panel"><h2>로그와 조치 기록</h2>
+<label>붙여넣기 (pasted-log)<textarea id="input" spellcheck="false" placeholder="2026-11-03T09:00:00+09:00 request=0012 조회 시작"></textarea></label>
+<label>추가 파일 불러오기 (UTF-8, 합계 2 MiB 이내)<input id="files" type="file" multiple accept=".txt,.log"></label>
+<div class="fields"><label>오프셋 없는 행의 고정 UTC 오프셋 (분)<input id="offset" type="number" min="-840" max="840" placeholder="모르면 비워 두기 · 한국 +540"></label><label>원문에서 찾을 요청 ID / 문자열 (선택)<input id="query" placeholder="예: request=0012"></label></div>
+<p class="note">오프셋 설정은 모든 입력 중 오프셋이 없는 행에만 적용됩니다. 소스마다 시간대가 다르면 따로 분석하거나 요청 JSON에 소스별 offsetMinutes를 지정하세요. 시간표만으로 원인을 확정하지 않습니다.</p>
+<div class="toolbar"><button id="run">분석 실행</button><button id="sample" class="secondary">합성 예제 넣기</button><button id="download" class="secondary" disabled>결과 JSON 저장</button><button id="csv" class="secondary" disabled>시간표 CSV 저장</button></div><p id="status" role="status" aria-live="polite">입력 자료를 준비한 뒤 실행하세요.</p></section><section class="panel"><h2>분석 결과</h2><p id="summary"></p><div id="results"></div><details><summary>전체 결과 JSON</summary><pre id="raw"></pre></details></section></main><footer>원본 파일을 덮어쓰지 않습니다. JSON에는 입력 원문이 포함될 수 있으므로 공유 전에 내용을 확인하세요.</footer><script>/* Offline timeline extraction. Chronology is not a cause analysis. */
+(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.WorklensTool=factory();})(typeof globalThis==='object'?globalThis:this,function(){
+'use strict';
+function fail(m){throw new Error(m);}
+const stamp=/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2}):(\d{2})(?:[.,](\d{1,3}))?(Z|[+-]\d{2}:\d{2})?(?=\s|\]|$)/;
+function timeOf(raw,offsetMinutes){
+ const m=raw.match(stamp);if(!m)return null;
+ const [,Y,M,D,h,mi,s,frac,zone]=m,year=+Y,month=+M,day=+D,hour=+h,minute=+mi,second=+s,ms=+(frac||'').padEnd(3,'0');
+ const local=new Date(0);local.setUTCFullYear(year,month-1,day);local.setUTCHours(hour,minute,second,ms);
+ if(year<1||month<1||month>12||day<1||hour>23||minute>59||second>59||local.getUTCFullYear()!==year||local.getUTCMonth()!==month-1||local.getUTCDate()!==day)return {original:m[0],epochMs:null,reason:'유효하지 않은 날짜/시간'};
+ let offset=null,basis='명시 오프셋';
+ if(zone==='Z')offset=0;
+ else if(zone){const zh=+zone.slice(1,3),zm=+zone.slice(4,6);if(zh>14||zm>59||(zh===14&&zm!==0))return {original:m[0],epochMs:null,reason:'지원 범위를 벗어난 UTC 오프셋'};offset=(zone[0]==='-'?-1:1)*(zh*60+zm);}
+ else if(Number.isInteger(offsetMinutes)){offset=offsetMinutes;basis='사용자가 지정한 소스 고정 오프셋';}
+ if(offset===null)return {original:m[0],epochMs:null,reason:'UTC 오프셋 미지정'};
+ return {original:m[0],epochMs:local.getTime()-offset*60000,offsetMinutes:offset,basis,reason:null};
+}
+function run(req){
+ if(!req||!Array.isArray(req.sources)||req.sources.length<1||req.sources.length>8)fail('sources에 1~8개 로그/조치 기록을 넣으세요.');
+ const names=new Set(),events=[],unresolved=[],untimed=[];let total=0;
+ for(const source of req.sources){
+  if(!source||typeof source.name!=='string'||!source.name.trim()||source.name.length>200||names.has(source.name)||typeof source.text!=='string')fail('소스에는 서로 다른 이름과 원문 text가 필요합니다.');
+  names.add(source.name);total+=source.text.length;if(total>2*1024*1024)fail('전체 원문은 최대 2 MiB 문자입니다.');
+  if(source.offsetMinutes!==undefined&&source.offsetMinutes!==null&&(!Number.isInteger(source.offsetMinutes)||Math.abs(source.offsetMinutes)>840))fail('소스 오프셋은 -840~840 사이 정수 또는 null이어야 합니다.');
+  const lines=source.text.split(/\r?\n/);if(lines.length>20000)fail('한 소스는 최대 20000줄입니다.');let current=null;
+  for(let i=0;i<lines.length;i++){
+   const line=lines[i],start=line.startsWith('[')?line.slice(1):line,t=timeOf(start,source.offsetMinutes);
+   if(t){
+    current={source:source.name,lineStart:i+1,lineEnd:i+1,originalTimestamp:t.original,epochMs:t.epochMs,utc:t.epochMs===null?null:new Date(t.epochMs).toISOString(),offsetMinutes:t.offsetMinutes??null,timeBasis:t.basis||null,unresolvedReason:t.reason,raw:line};
+    (t.epochMs===null?unresolved:events).push(current);
+    if(events.length+unresolved.length>10000)fail('시간이 있는 기록은 최대 10000개입니다.');
+   }else{
+    // A timestamp-looking but unsupported new record must not become a prior event's stack trace.
+    const looksTimestamp=/^\[?\d{4}[-/]\d{2}[-/]\d{2}[T ]/.test(line);
+    if(looksTimestamp){current=null;untimed.push({source:source.name,lineStart:i+1,lineEnd:i+1,raw:line,reason:'지원하지 않는 시간 형식'});}
+    else if(current){current.raw+='\n'+line;current.lineEnd=i+1;}
+    else if(line.trim())untimed.push({source:source.name,lineStart:i+1,lineEnd:i+1,raw:line,reason:'시간을 연결하지 못한 원문'});
+   }
+  }
+ }
+ events.sort((a,b)=>a.epochMs-b.epochMs||a.source.localeCompare(b.source)||a.lineStart-b.lineStart);
+ const collisions=[];for(let i=0;i<events.length;){let j=i+1;while(j<events.length&&events[j].epochMs===events[i].epochMs)j++;if(j-i>1)collisions.push({utc:events[i].utc,records:events.slice(i,j).map(e=>({source:e.source,line:e.lineStart}))});i=j;}
+ if(req.query!==undefined&&typeof req.query!=='string')fail('검색어는 문자열이어야 합니다. 식별자의 앞자리 0을 보존하세요.');
+ const query=req.query||'';
+ return {tool:'incident-evidence',verification:'원문 시간표 정적 추출',sourceCount:req.sources.length,parsedCount:events.length,events:query?events.filter(e=>e.raw.includes(query)):events,unresolved,untimed,sameTimestamp:collisions,filter:query,limits:['정렬은 로그에 적힌 시간/지정한 오프셋을 기준으로 합니다. 서버 간 시계 오차·수집 지연을 보정하지 않습니다.','같은 시각의 소스명/줄 번호 정렬은 화면 표시용입니다. 인과 순서나 전역 실행 순서를 뜻하지 않습니다.','시간이 불명확한 기록은 미해결 영역에 남깁니다. 원문을 수정하거나 원인·담당자·복구 성공을 자동 추론하지 않습니다.','첫 위치의 YYYY-MM-DD[T 또는 공백]HH:mm:ss[.또는 , 1~3자리][Z 또는 ±HH:mm]만 지원합니다. 선택적 앞 대괄호는 허용합니다.']};
+}
+function csv(result){const cell=v=>'"'+String(v??'').replace(/^[\t\r\n]|^\s*[=+\-@]/,"'$&").replace(/"/g,'""')+'"';return '\uFEFF'+[['UTC','소스','시작 줄','끝 줄','원래 시각','시간 근거','원문'],...result.events.map(e=>[e.utc,e.source,e.lineStart,e.lineEnd,e.originalTimestamp,e.timeBasis,e.raw])].map(row=>row.map(cell).join(',')).join('\r\n');}
+return {run,timeOf,csv};
+});
+if(typeof require==='function'&&typeof module==='object'&&require.main===module){try{const fs=require('node:fs');if(process.argv.length!==4)throw new Error('사용법: node tool.cjs 요청.json 새결과.json');const result=module.exports.run(JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(fs.readFileSync(process.argv[2]))));fs.writeFileSync(process.argv[3],JSON.stringify(result,null,2)+'\n',{flag:'wx'});}catch(e){console.error(e.message);process.exitCode=1;}}
+
+'use strict';
+const $=id=>document.getElementById(id);let current=null,revision=0;
+async function readUtf8(file){try{return new TextDecoder('utf-8',{fatal:true}).decode(await file.arrayBuffer());}catch(_){throw new Error('UTF-8 원문 파일을 읽지 못했습니다. 문자셋이나 파일 상태를 확인하세요.');}}
+function status(text,error=false){$('status').textContent=text;$('status').className=error?'error':'';}
+function clear(){revision++;current=null;$('download').disabled=true;if($('csv'))$('csv').disabled=true;$('summary').textContent='';$('results').replaceChildren();$('raw').textContent='';status('입력을 바꾸면 다시 실행하세요.');}
+function table(title,headers,rows){const section=document.createElement('section'),h=document.createElement('h3'),wrap=document.createElement('div'),t=document.createElement('table'),head=document.createElement('thead'),tr=document.createElement('tr'),body=document.createElement('tbody');h.textContent=title;wrap.className='scroll';for(const text of headers){const th=document.createElement('th');th.scope='col';th.textContent=text;tr.append(th);}head.append(tr);for(const row of rows){const line=document.createElement('tr');for(const value of row){const td=document.createElement('td');td.textContent=value===null?'미확인':String(value);line.append(td);}body.append(line);}t.append(head,body);wrap.append(t);section.append(h,wrap);$('results').append(section);}
+function note(text){const p=document.createElement('p');p.className='note';p.textContent=text;$('results').append(p);}
+function finish(result,summary){current=result;$('summary').textContent=summary;$('raw').textContent=JSON.stringify(result,null,2);$('download').disabled=false;if($('csv'))$('csv').disabled=false;for(const text of result.limits||[])note(text);status('계산 완료 · 원문과 환경을 확인한 뒤 해석하세요.');}
+function save(content,name,type='application/json'){const blob=new Blob([content],{type:type+';charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+$('download').addEventListener('click',()=>{if(current)save(JSON.stringify(current,null,2)+'\n',current.tool+'-result.json');});
+document.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',clear));
+function execute(make,render){clear();try{const result=WorklensTool.run(make());render(result);}catch(error){status(error.message,true);}}
+
+function render(result){
+ finish(result,'시간 확인 '+result.parsedCount+'건 · 현재 표시 '+result.events.length+'건 · 시간 미해결 '+result.unresolved.length+'건 · 미연결 원문 '+result.untimed.length+'건');
+ table('시간표 (앞 1000개, 전체는 JSON/CSV)',['UTC','원래 시각 / 시간 근거','소스 / 줄','원문'],result.events.slice(0,1000).map(e=>[e.utc,e.originalTimestamp+' / '+e.timeBasis,e.source+':'+e.lineStart+'–'+e.lineEnd,e.raw]));
+ table('시간 미해결 (앞 500개)',['소스 / 줄','이유','원문'],result.unresolved.slice(0,500).map(e=>[e.source+':'+e.lineStart,e.unresolvedReason,e.raw]));
+ table('시간 미연결 원문 (앞 500개)',['소스 / 줄','이유','원문'],result.untimed.slice(0,500).map(e=>[e.source+':'+e.lineStart,e.reason,e.raw]));
+ if(result.sameTimestamp.length)note('같은 타임스탬프 '+result.sameTimestamp.length+'구간이 있습니다. 같은 시각 안의 표시 순서는 인과 순서가 아닙니다.');
+}
+$('run').addEventListener('click',async()=>{
+ clear();const token=revision;try{
+  const offsetMinutes=$('offset').value===''?null:Number($('offset').value),sources=[],files=Array.from($('files').files);
+  if($('input').value.trim())sources.push({name:'pasted-log',text:$('input').value,offsetMinutes});
+  if(files.length+sources.length>8)throw new Error('입력 소스는 최대 8개입니다.');let bytes=0;
+  for(const file of files){bytes+=file.size;if(bytes>2*1024*1024)throw new Error('파일 합계는 최대 2 MiB입니다.');sources.push({name:file.name,text:await readUtf8(file),offsetMinutes});}
+  if(token!==revision)return;render(WorklensTool.run({sources,query:$('query').value}));
+ }catch(error){if(token===revision)status(error.message,true);}
+});
+$('sample').addEventListener('click',()=>{clear();$('files').value='';$('offset').value='';$('query').value='';$('input').value='2026-11-03T09:00:00+09:00 request=0012 조회 시작\n2026-11-03T00:00:02Z request=0012 timeout\n  at demo.Client.read(Client.java:52)\n2026-11-03 09:00:03 request=0012 재시도 기록 (시간대 미확인)\n2026-11-03T09:00:05+09:00 operator-note 설정 확인, 복구 성공 여부 미확인';status('합성 예제입니다. 시간대 없는 행과 복구 미확인 조치가 포함되어 있습니다.');});
+$('csv').addEventListener('click',()=>{if(current)save(WorklensTool.csv(current),'incident-timeline.csv','text/csv');});
+</script></body></html>

@@ -1,0 +1,4 @@
+interface:
+  display_name: "업무 날짜 경계 진단"
+  short_description: "업무 날짜 경계 진단 — 폐쇄망에서 근거와 한계를 확인해 실무 결과를 만듭니다"
+  default_prompt: "$business-time-boundary — 전월 집계가 자정과 월말에서 왜 빠지는지 봐줘"

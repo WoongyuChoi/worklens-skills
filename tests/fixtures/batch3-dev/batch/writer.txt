@@ -1,0 +1,6 @@
+Within the chunk transaction, for every input item:
+  Insert processed_entry(run_id, account_id) only if that pair does not already exist.
+  If a new processed_entry was inserted, update balance = balance + input.delta for that account.
+The unique key of processed_entry is (run_id, account_id).
+The business operation is one adjustment per valueDate and account_id.
+The transaction commits business writes and reader checkpoint together.

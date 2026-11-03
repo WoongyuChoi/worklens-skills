@@ -1,0 +1,7 @@
+The initial balances for accounts 1/2/3/4 were 100/200/300/400.
+Chunk 1 committed accounts 000000000000000001 and 000000000000000002.
+Chunk 2 updated accounts 000000000000000003 and 000000000000000004, then failed before commit.
+The chunk 2 transaction was rolled back.
+Persisted nextIndex: 2
+Committed processed_entry: (41,000000000000000001), (41,000000000000000002)
+Current balances: 000000000000000001=110, 000000000000000002=220, 000000000000000003=300, 000000000000000004=400

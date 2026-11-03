@@ -1,0 +1,4 @@
+interface:
+  display_name: "트랜잭션 경계 추적"
+  short_description: "트랜잭션 경계 추적 — 폐쇄망에서 근거와 한계를 확인해 실무 결과를 만듭니다"
+  default_prompt: "$transaction-boundary — 여기서 예외 나면 어디까지 롤백되는지 봐줘"

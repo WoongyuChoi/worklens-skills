@@ -1,0 +1,4 @@
+interface:
+  display_name: "키보드·포커스 점검"
+  short_description: "키보드·포커스 점검 — 폐쇄망에서 근거와 한계를 확인해 실무 결과를 만듭니다"
+  default_prompt: "$a11y-focus — 이 팝업과 트리를 키보드로 쓸 수 있게 봐줘"

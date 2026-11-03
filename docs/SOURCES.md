@@ -35,5 +35,23 @@ Impeccable의 바이너리, SQL Server 대조 스킬의 Python/Arrow, Redacta의
 
 [신규 후보 20개](CANDIDATES-2026-11.md)에 공개 원문, 공식 기술 근거, 기존 20개와의 경계, 제거할 의존성, 구현 후 통과 기준을 기록했습니다.
 공개 SKILL.md와 스킬 패키지의 세부 규칙을 확인한 사내형 후보이며, 일정 미리보기·배치 재시작 점검은 공식 문서 중심의 자체 설계로 구분했습니다.
-이번에는 조사 문서만 추가했습니다. 외부 코드·지시문을 패키지에 복제하거나 신규 스킬을 구현한 상태가 아닙니다.
+사용자 진행 요청에 따라 신규 20개를 구현했습니다. 지시문·계산 엔진·HTML·합성 예제는 새로 작성했으며, 외부 코드·지시문 원문을 그대로 패키지에 복제하지 않았습니다.
 최근 커밋은 유지보수 증거로만 사용하며, 인기 순위·생산성·사내 실행 성공을 보증하지 않습니다.
+
+
+### 3차 구현 시 공식 의미 확인
+
+- [WHATWG Encoding](https://encoding.spec.whatwg.org/): TextEncoder의 UTF-8 범위, 명시한 TextDecoder 문자셋, fatal과 BOM 보존의 의미. EUC-KR/MS949 재인코딩은 제공하지 않습니다.
+- [Java 21 Thread.State](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Thread.State.html): JVM 상태와 운영체제 실행 상태를 혼동하지 않고 WAITING을 곧바로 장애로 판단하지 않습니다.
+- Spring 일정은 일반 전체 cron 호환을 주장하지 않고 숫자 문법의 작은 부분집합과 고정 오프셋으로 제한했습니다. 지원하지 않는 방언과 문법은 명시적으로 거부합니다.
+- API·Mapper·Oracle·트랜잭션·재시작·날짜·테스트의 전문 규칙은 선정 문서의 공식 출처를 근거로 하되, 프로젝트 버전·설정·실제 실행 근거가 없을 때 확정하지 않도록 구성했습니다.
+
+배포 ZIP에는 공개 원문의 코드·라이브러리·바이너리가 포함되지 않습니다. 외부 출처 링크는 연구·검토용이며 스킬 실행에 접속을 요구하지 않습니다.
+
+
+### 세부 계약의 공식 참조
+
+- [Jackson JsonProperty](https://www.javadoc.io/static/com.fasterxml.jackson.core/jackson-annotations/2.21/com/fasterxml/jackson/annotation/JsonProperty.html), [DeserializationFeature](https://www.javadoc.io/static/com.fasterxml.jackson.core/jackson-databind/2.18.5/com/fasterxml/jackson/databind/DeserializationFeature.html): 속성 존재·명시적 null·creator 설정을 나누어 검토합니다. 링크 버전을 실제 프로젝트 버전으로 가정하지 않습니다.
+- [MyBatis Java API](https://mybatis.org/mybatis-3/java-api.html), [Mapper XML](https://mybatis.org/mybatis-3/sqlmap-xml.html): scalar/DTO/@Param 루트와 동적 SQL·resultMap의 실제 바인딩을 확인합니다.
+- [Oracle 19c COMMIT](https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/COMMIT.html): DDL 경계와 일반 DML rollback을 혼동하지 않도록 참조했습니다.
+- [Spring 6.2 rollback rules](https://docs.spring.io/spring-framework/reference/6.2/data-access/transaction/declarative/rolling-back.html): 프로젝트의 명시/전역 예외 규칙과 버전을 확인하도록 반영했습니다.

@@ -1,0 +1,12 @@
+{
+  "snapshots": [
+    {
+      "name": "synthetic-1",
+      "text": "\"worker-A\" #11 tid=0x001 nid=0x101 waiting for monitor entry\n   java.lang.Thread.State: BLOCKED (on object monitor)\n\tat demo.Transfer.run(Transfer.java:41)\n\t- waiting to lock <0xbbb> (a java.lang.Object)\n\t- locked <0xaaa> (a java.lang.Object)\n\n\"worker-B\" #12 tid=0x002 nid=0x102 waiting for monitor entry\n   java.lang.Thread.State: BLOCKED (on object monitor)\n\tat demo.Transfer.run(Transfer.java:59)\n\t- waiting to lock <0xaaa> (a java.lang.Object)\n\t- locked <0xbbb> (a java.lang.Object)\n"
+    },
+    {
+      "name": "synthetic-2",
+      "text": "\"worker-A\" #11 tid=0x001 nid=0x101 waiting for monitor entry\n   java.lang.Thread.State: BLOCKED (on object monitor)\n\tat demo.Transfer.run(Transfer.java:41)\n\t- waiting to lock <0xbbb> (a java.lang.Object)\n\t- locked <0xaaa> (a java.lang.Object)\n\n\"worker-B\" #12 tid=0x002 nid=0x102 waiting for monitor entry\n   java.lang.Thread.State: BLOCKED (on object monitor)\n\tat demo.Transfer.run(Transfer.java:59)\n\t- waiting to lock <0xaaa> (a java.lang.Object)\n\t- locked <0xbbb> (a java.lang.Object)\n"
+    }
+  ]
+}

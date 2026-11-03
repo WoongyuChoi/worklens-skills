@@ -17,3 +17,32 @@ fixtures에는 합성 데이터만 있습니다.
 2차 계산 엔진 수정 시 `scripts/tool-sources/`를 편집하고 `node scripts/build-offline-tools.cjs`로 각 스킬의 자산을 다시 생성하세요.
 사용자는 빌더나 저장소 공통 파일 없이 개별 스킬 폴더만 복사하면 됩니다.
 2차 엔진의 Node VM 검사는 브라우저 화면·파일 선택·다운로드 실행 검증을 대신하지 않습니다.
+
+## 3차 추가팩 검사
+
+| 명령 | 범위 | 의존성 |
+|---|---|---|
+| node --test tests/batch3-evidence.test.cjs | 바이트·덤프·시간표의 계산/오판 방지 29개 | Node.js 기본 모듈 |
+| node --test tests/batch3-navigation.test.cjs | 일정·코드 안내의 경계/상한/내장 왕복 24개 | Node.js 기본 모듈 |
+| node --test tests/batch3-cli.test.cjs | 선택 CLI 경로·원본 보존·잘못된 UTF-8·HTML 출력 6개 | Node.js 기본 모듈 |
+| node tests/batch3-async-dom.cjs | 실제 비동기 실험 HTML 이벤트 11개 | 최소 DOM 어댑터 / Node |
+| node tests/batch3-evidence-dom.cjs | 실제 HTML 이벤트·다운로드 데이터·엔진 일치 21개 | 최소 DOM 어댑터 / Node |
+
+기존 64개와 신규 91개, 총 155개 로직/CLI/최소 DOM 검사를 통과했습니다. 스킬 구조 검사와 독립 요청 적용은 이 숫자에 합산하지 않았습니다. 실제 브라우저에서 버튼을 눌러 다운로드한 검증과 Blob 내용을 확인한 최소 DOM 검증을 혼동하지 마세요.
+
+바이트·덤프·시간표 HTML을 수정할 때는 해당 스킬의 `scripts/tool.cjs` 및 저장소 `scripts/evidence-tool-sources/`를 편집한 뒤 다음 빌더로 재생성합니다.
+
+    node scripts/build-evidence-tools.cjs
+
+일정·코드 안내의 core는 `/* BEGIN WORKLENS CORE */`와 `/* END WORKLENS CORE */` 사이에 있습니다. 해당 스킬의 CLI와 HTML core를 함께 갱신하고 navigation 테스트의 바이트 일치 검사를 통과해야 합니다.
+
+`tests/fixtures/batch3-dev/`와 `tests/fixtures/batch3-quality/`는 별도 에이전트에 실제 업무 요청을 적용시키기 위한 합성 원자료입니다. 정답이 있는 문서를 함께 전달하지 않고 각 요청을 수행하게 합니다. 결과는 무시되는 `test-results/`에 저장하며, 사내 Qwen 테스트로 표현하지 않습니다.
+
+## 배포 파일 재생성
+
+개발 환경에 Python 표준 라이브러리만 있으면 다음으로 목록과 두 ZIP을 다시 생성할 수 있습니다. 스킬 사용자는 이 스크립트가 필요 없습니다.
+
+    python scripts/package-release.py --catalog-only
+    python scripts/package-release.py --output /absolute/output/directory
+
+스킬별 필수 자원을 폴더째 담고 ZIP 무결성·스킬 수·참조 파일·SHA-256을 검사합니다. ZIP에는 Git 이력, 테스트 결과, node_modules, CI 환경을 포함하지 않습니다.

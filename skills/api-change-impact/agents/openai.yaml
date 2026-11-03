@@ -1,0 +1,4 @@
+interface:
+  display_name: "API 변경 영향"
+  short_description: "API 변경 영향 — 폐쇄망에서 근거와 한계를 확인해 실무 결과를 만듭니다"
+  default_prompt: "$api-change-impact — 이 DTO 바꾸면 어느 화면이 깨지는지 봐줘"

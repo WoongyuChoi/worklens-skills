@@ -1,0 +1,11 @@
+Source: DBMS_XPLAN.DISPLAY after EXPLAIN PLAN for query.sql
+Plan hash value: 987654321
+Id | Operation          | Name           | Rows | Cost | Time
+ 0 | SELECT STATEMENT   |                |   20 |  804 | 00:00:01
+ 1 | HASH JOIN          |                |   20 |  804 | 00:00:01
+ 2 |  TABLE ACCESS FULL | PAYMENT_STATUS |    4 |    1 | 00:00:01
+ 3 |  TABLE ACCESS FULL | PAYMENT        |   20 |  803 | 00:00:01
+Predicate Information:
+  1 - access(P.STATUS_CODE=S.STATUS_CODE)
+  2 - filter(S.ACTIVE='Y')
+  3 - filter(TO_NUMBER(P.CLIENT_CODE)=:CLIENTCODE)

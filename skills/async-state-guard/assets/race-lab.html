@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>응답 역전 실험실 · Worklens</title>
+<style>
+:root{color-scheme:light;--bg:#f3f5f8;--ink:#152438;--muted:#5e6c7e;--line:#d4dce7;--blue:#225fc4;--green:#15714f;--red:#a23537}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink)}main{max-width:1120px;margin:auto;padding:30px 22px 60px}h1,h2,h3,p{margin:0 0 12px}h1{font-size:30px;letter-spacing:-.04em}h2{font-size:19px}h3{font-size:16px}.eyebrow{font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.07em}.lead,.muted{color:var(--muted)}.notice{border-left:3px solid var(--blue);padding:10px 14px;background:#eaf1fe;margin:18px 0}.card{background:white;border:1px solid var(--line);border-radius:12px;padding:20px;margin:18px 0;min-width:0}.row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}.field{display:flex;flex-direction:column;gap:4px;min-width:140px;flex:1}.field.small{max-width:200px}label{font-size:13px;font-weight:650}input{font:inherit;max-width:100%;min-width:0;padding:9px 10px;border:1px solid #a8b6c9;border-radius:6px;background:#fff;color:inherit}button{font:inherit;font-size:14px;font-weight:650;border:1px solid #9caec7;background:white;color:#223d60;padding:9px 12px;border-radius:6px;cursor:pointer;max-width:100%}button.primary{background:var(--blue);border-color:var(--blue);color:white}button.danger{color:var(--red)}button:hover{filter:brightness(.96)}button:disabled{opacity:.5;cursor:not-allowed}button:focus-visible,input:focus-visible{outline:3px solid #d58c06;outline-offset:2px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.statusline{padding:12px 0 0;font-size:13px;color:var(--muted);overflow-wrap:anywhere}.panels{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{border:1px solid var(--line);border-top:4px solid var(--red);border-radius:8px;padding:16px;min-width:0}.panel.good{border-top-color:var(--green)}dl{display:grid;grid-template-columns:80px minmax(0,1fr);gap:6px 10px;margin:0}dt{color:var(--muted)}dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}.tag{display:inline-block;font-size:12px;font-weight:650;padding:2px 7px;background:#edf2f8;border-radius:4px}.pending{list-style:none;padding:0;margin:0;display:grid;gap:10px}.request{border:1px solid var(--line);padding:12px;border-radius:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}.request-detail{flex:1;min-width:180px;overflow-wrap:anywhere}.request-detail small{display:block;color:var(--muted)}.log{max-height:350px;overflow:auto;border-top:1px solid var(--line);padding:10px 0 0 24px;margin:14px 0 0}.log li{padding:6px 3px;overflow-wrap:anywhere;border-bottom:1px solid #edf1f6;font-size:13px}details{margin-top:12px}summary{cursor:pointer;font-weight:650}code{font-family:ui-monospace,monospace;font-size:.9em;background:#edf2f8;padding:2px 4px;border-radius:3px}.empty{color:var(--muted);font-size:14px;padding:10px 0}.sr-status{font-size:13px;min-height:22px;color:var(--green);margin-top:8px}.foot{color:var(--muted);font-size:13px}footer{margin-top:20px}@media(max-width:650px){main{padding:22px 14px 40px}h1{font-size:26px}.card{padding:16px}.panels{grid-template-columns:1fr}.field.small{max-width:none}.row>button{flex:1}.request-detail{min-width:100%}dl{grid-template-columns:65px minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<p class="eyebrow">WORKLENS / ASYNC STATE GUARD</p>
+<h1>응답 역전 실험실</h1>
+<p class="lead">요청의 완료 순서를 직접 바꾸며 데이터·오류·로딩 상태가 어떻게 달라지는지 확인합니다.</p>
+<div class="notice"><strong>설명용 · 로컬 이벤트</strong><br>서버 요청과 실제 앱을 실행하지 않습니다. 이 파일에서 확인한 결과는 프로젝트의 React·HTTP·저장 처리 검증과 별개입니다.</div>
+</header>
+<section class="card" aria-labelledby="start-title">
+<h2 id="start-title">1. 요청을 만들고 순서를 정하세요</h2>
+<p class="muted">빠르게 보려면 ‘A·B 예제 준비’ 후 ‘B 성공 → A 성공’을 누르세요. 두 요청은 서로 다른 조직을 조회합니다.</p>
+<div class="row">
+<div class="field small"><label for="organization">조직</label><input id="organization" value="조직 A" maxlength="120"></div>
+<div class="field small"><label for="period">업무 기간</label><input id="period" value="2026-10" maxlength="120"></div>
+<button id="issue" class="primary" type="button">조회 시작</button>
+<button id="change" type="button">문맥만 변경</button>
+</div>
+<div class="actions">
+<button id="prepare" type="button">A·B 예제 준비</button>
+<button id="reverse" type="button">B 성공 → A 성공</button>
+<button id="lifecycle" type="button">화면 떠나기</button>
+<button id="reset" class="danger" type="button">초기화</button>
+</div>
+<p class="statusline" id="context"></p>
+<p class="sr-status" id="announcement" role="status" aria-live="polite"></p>
+</section>
+<section class="card" aria-labelledby="pending-title">
+<h2 id="pending-title">2. 원하는 요청부터 완료하세요</h2>
+<div class="field"><label for="payload">성공 시 표시할 내용 (비워 두면 요청 당시 조직·기간 사용)</label><input id="payload" maxlength="1000" placeholder="응답 내용은 실행하지 않고 텍스트로 표시합니다"></div>
+<ul class="pending" id="requests"></ul>
+<p class="empty" id="empty">아직 대기 중인 요청이 없습니다.</p>
+</section>
+<section class="card" aria-labelledby="result-title">
+<h2 id="result-title" tabindex="-1">3. 같은 이벤트를 두 방식으로 처리한 결과</h2>
+<div class="panels">
+<article class="panel" aria-labelledby="bad-title"><h3 id="bad-title">보호 없는 갱신</h3><dl><dt>데이터</dt><dd id="bad-data">—</dd><dt>오류</dt><dd id="bad-error">없음</dd><dt>로딩</dt><dd id="bad-loading">아니요</dd><dt>마지막 갱신</dt><dd id="bad-last">—</dd></dl></article>
+<article class="panel good" aria-labelledby="good-title"><h3 id="good-title">요청·문맥·화면 상태 확인</h3><dl><dt>데이터</dt><dd id="good-data">—</dd><dt>오류</dt><dd id="good-error">없음</dd><dt>로딩</dt><dd id="good-loading">아니요</dd><dt>마지막 갱신</dt><dd id="good-last">—</dd></dl></article>
+</div>
+<details><summary>이 도구가 적용한 규칙과 한계</summary><p>하나의 조회 패널에서 최신 요청만 유효하다는 정책입니다. 완료 시 요청의 세대 번호, 조직·기간 키, 화면 활성 상태가 모두 일치해야 데이터·오류·로딩을 갱신합니다. 같은 문맥의 재조회도 새 세대입니다.</p><p>문맥만 바꾸거나 화면을 떠나면 기존 요청을 무효화합니다. 두 패널에 동일한 초기화 정책을 적용한 뒤 완료 처리만 비교합니다. 여러 독립 패널·페이지 누적·서버 저장에는 각 계약에 맞는 별도 정책이 필요합니다.</p><p>서버 저장 취소·중복 저장 방지·실제 컴포넌트 생명주기는 검증하지 않습니다. 입력은 메모리에서만 다루며 새로고침하면 사라집니다. 최대 60개 요청과 200개 이벤트를 유지합니다.</p></details>
+</section>
+<section class="card" aria-labelledby="log-title">
+<div class="row"><h2 id="log-title" style="flex:1;margin:0">이벤트 기록</h2><button id="export" type="button">기록 JSON 저장</button></div>
+<ol class="log" id="log"></ol>
+</section>
+<footer class="foot">실제 앱에서는 동일한 순서로 기존 시험 환경의 Promise를 직접 완료시켜 확인하세요. 이 도구의 통과가 앱의 통과를 의미하지 않습니다.</footer>
+</main>
+<script>
+"use strict";
+(function(){
+  const $ = id => document.getElementById(id);
+  const blank = () => ({data:"—",error:"없음",loading:false,last:"—"});
+  function fresh(){return {generation:0,nextId:1,key:"",mounted:true,requests:[],events:[],bad:blank(),good:blank()};}
+  let state=fresh();
+  function keyOf(org,period){return JSON.stringify([org,period]);}
+  function addEvent(type,message,extra){
+    state.events.push(Object.assign({sequence:state.events.length?state.events[state.events.length-1].sequence+1:1,type,message},extra||{}));
+    if(state.events.length>200)state.events.shift();
+  }
+  function invalidate(org,period){
+    state.generation++;state.key=keyOf(org,period);state.bad=blank();state.good=blank();
+    addEvent("context","문맥 변경",{organization:org,period,generation:state.generation});
+    state.events[state.events.length-1].message="문맥 변경: "+org+" / "+period+". 이전 요청은 무효입니다.";
+  }
+  function issue(org,period){
+    if(!state.mounted)throw new Error("화면으로 돌아온 뒤 조회하세요.");
+    if(state.requests.length>=60)throw new Error("요청 60개 한도입니다. 기록을 저장한 뒤 초기화하세요.");
+    const key=keyOf(org,period);
+    if(state.key!==key){state.bad=blank();state.good=blank();state.key=key;}
+    const request={id:state.nextId++,generation:++state.generation,key,organization:org,period,status:"pending"};
+    state.requests.push(request);
+    state.bad.loading=state.good.loading=true;state.bad.error=state.good.error="없음";
+    addEvent("start","요청 #"+request.id+" 시작: "+org+" / "+period,{requestId:request.id,key,generation:request.generation});
+    return request.id;
+  }
+  function settle(id,kind,value){
+    const request=state.requests.find(r=>r.id===id);
+    if(!request||request.status!=="pending")return false;
+    request.status=kind;
+    const payload=value||request.organization+" / "+request.period+" 조회 결과";
+    const valid=state.mounted&&request.generation===state.generation&&request.key===state.key;
+    const apply=view=>{if(kind==="success"){view.data=payload;view.error="없음";}else{view.error="요청 #"+id+" 실패";}view.loading=false;view.last="#"+id+" · "+(kind==="success"?"성공":"실패");};
+    apply(state.bad);if(valid)apply(state.good);
+    let reason="최신 요청과 문맥이 일치해 반영";
+    if(!state.mounted)reason="화면 종료 후 응답이므로 무시";
+    else if(request.key!==state.key)reason="현재 문맥과 달라 무시";
+    else if(request.generation!==state.generation)reason="이전 세대의 응답이므로 무시";
+    addEvent(kind,"요청 #"+id+" "+(kind==="success"?"성공":"실패")+": 보호 없는 패널은 갱신. 보호 패널은 "+reason+".",{requestId:id,accepted:valid,payload:kind==="success"?payload:null});
+    return true;
+  }
+  function announce(message){$("announcement").textContent=message;}
+  function render(){
+    const key=state.key?JSON.parse(state.key):["미선택","미선택"];
+    $("context").textContent="화면: "+(state.mounted?"활성":"종료")+" · 현재 문맥: "+key[0]+" / "+key[1]+" · 세대: "+state.generation;
+    $("lifecycle").textContent=state.mounted?"화면 떠나기":"화면 돌아오기";
+    $("issue").disabled=!state.mounted;$("change").disabled=!state.mounted;
+    for(const name of ["bad","good"]){const panel=state[name];for(const part of ["data","error","last"])$(name+"-"+part).textContent=panel[part];$(name+"-loading").textContent=panel.loading?"진행 중":"아니요";}
+    const pending=state.requests.filter(r=>r.status==="pending");
+    $("requests").replaceChildren();$("empty").hidden=pending.length>0;
+    for(const request of pending){
+      const li=document.createElement("li");li.className="request";
+      const detail=document.createElement("div");detail.className="request-detail";
+      const label=document.createElement("strong");label.textContent="#"+request.id+" · "+request.organization+" / "+request.period;
+      const info=document.createElement("small");info.textContent="요청 세대 "+request.generation+" · "+(request.generation===state.generation&&request.key===state.key&&state.mounted?"현재 유효":"현재 무효");
+      detail.append(label,info);li.append(detail);
+      for(const kind of ["success","error"]){const button=document.createElement("button");button.type="button";button.textContent=kind==="success"?"성공 완료":"실패 완료";button.dataset.request=String(request.id);button.dataset.kind=kind;button.setAttribute("aria-label","요청 "+request.id+" "+button.textContent);button.addEventListener("click",()=>{settle(request.id,kind,$("payload").value);render();const next=$("requests").querySelector("button");(next||$("result-title")).focus();announce("요청 #"+request.id+"을 완료했습니다. 결과 패널과 기록을 확인하세요.");});li.append(button);}
+      $("requests").append(li);
+    }
+    $("reverse").disabled=!(state.requests[0]?.status==="pending"&&state.requests[1]?.status==="pending");
+    $("log").replaceChildren();for(const event of state.events){const li=document.createElement("li");li.textContent=event.sequence+". "+event.message;$("log").append(li);}
+  }
+  function inputContext(){const org=$("organization").value,period=$("period").value;if(!org.trim()||!period.trim())throw new Error("조직과 업무 기간을 입력하세요.");return [org,period];}
+  function action(fn){try{fn();render();}catch(error){announce(error.message);}}
+  $("issue").addEventListener("click",()=>action(()=>{const [org,period]=inputContext();const id=issue(org,period);announce("요청 #"+id+"을 시작했습니다. 완료 버튼으로 순서를 정하세요.");}));
+  $("change").addEventListener("click",()=>action(()=>{const [org,period]=inputContext();invalidate(org,period);announce("문맥만 변경했습니다. 기존 요청을 완료해 무효화 동작을 확인하세요.");}));
+  $("prepare").addEventListener("click",()=>action(()=>{state=fresh();$("payload").value="";issue("조직 A","2026-10");issue("조직 B","2026-10");$("organization").value="조직 B";$("period").value="2026-10";announce("A 요청 후 B 요청을 시작했습니다. B를 먼저 완료해 보세요.");}));
+  $("reverse").addEventListener("click",()=>action(()=>{if(state.requests[0]?.status!=="pending"||state.requests[1]?.status!=="pending")return;settle(state.requests[1].id,"success","");settle(state.requests[0].id,"success","");announce("B 성공 후 A 성공 순서로 완료했습니다. 보호 패널은 B를 유지합니다.");$("result-title").focus();}));
+  $("lifecycle").addEventListener("click",()=>action(()=>{state.mounted=!state.mounted;state.generation++;state.bad=blank();state.good=blank();addEvent("lifecycle",state.mounted?"화면으로 돌아왔습니다. 이전 요청은 새 화면에 유효하지 않습니다.":"화면을 떠났습니다. 기존 요청은 무효입니다.",{mounted:state.mounted,generation:state.generation});announce(state.mounted?"화면에 돌아왔습니다.":"화면을 종료했습니다. 대기 요청을 완료해 보세요.");}));
+  $("reset").addEventListener("click",()=>action(()=>{state=fresh();$("organization").value="조직 A";$("period").value="2026-10";$("payload").value="";announce("요청과 기록을 초기화했습니다.");}));
+  $("export").addEventListener("click",()=>{const record={schema:"worklens-async-race/1",kind:"설명용 로컬 이벤트",limits:"실제 앱·HTTP·서버 저장은 실행하지 않음",state};const blob=new Blob([JSON.stringify(record,null,2)],{type:"application/json;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="async-race-record.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);announce("현재 기록을 JSON으로 저장했습니다.");});
+  render();
+})();
+</script>
+</body>
+</html>

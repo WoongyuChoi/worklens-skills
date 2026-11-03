@@ -1,0 +1,4 @@
+interface:
+  display_name: "한글·바이트 경계 진단"
+  short_description: "한글·바이트 경계 진단 — 폐쇄망에서 근거와 한계를 확인해 실무 결과를 만듭니다"
+  default_prompt: "$encoding-boundary — 한글에서 전문 길이가 왜 안 맞는지 봐줘"

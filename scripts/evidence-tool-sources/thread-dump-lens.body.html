@@ -1,0 +1,5 @@
+<h2>시점별 덤프</h2>
+<div class="grid"><label>첫 번째 덤프 (snapshot-1)<textarea id="input1" spellcheck="false" placeholder="전통적 HotSpot Thread.print 원문"></textarea></label><label>두 번째 덤프 (선택, snapshot-2)<textarea id="input2" spellcheck="false" placeholder="같은 JVM에서 다른 시점에 받은 원문"></textarea></label></div>
+<label>또는 덤프 파일 1~5개 불러오기 (UTF-8, 각 2 MiB 이내)<input id="files" type="file" multiple accept=".txt,.log,.dump"></label>
+<p id="loaded" class="muted">파일을 선택하면 텍스트 입력 대신 선택한 파일들을 분석합니다. 파일 선택을 비우면 텍스트 입력을 사용합니다.</p>
+<p class="note">전통적 플랫폼 스레드 텍스트와 intrinsic monitor 락만 계산합니다. WAITING 상태와 반복 스택만으로 장애나 교착을 확정하지 않습니다. 가상 스레드 JSON, AQS/ReentrantLock 관계는 수동 검토 대상입니다.</p>

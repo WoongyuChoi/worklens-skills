@@ -1,0 +1,4 @@
+java.lang.NoSuchMethodError: 'java.lang.String sample.FormatEngine.format(java.lang.String, java.util.Locale)'
+  at sample.InvoiceRenderer.render(InvoiceRenderer.java:48)
+Deployment type: WAR
+Loaded source location of sample.FormatEngine: not captured

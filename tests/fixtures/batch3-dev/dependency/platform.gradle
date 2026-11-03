@@ -1,0 +1,4 @@
+plugins { id 'java-platform' }
+dependencies {
+    constraints { api 'sample:format-engine:4.4' }
+}
