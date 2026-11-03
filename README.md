@@ -6,9 +6,11 @@
 실행 지침은 영어, 사용자가 보는 질문과 결과는 한국어입니다.
 Git, CI/CD, DB 연결이나 패키지 설치를 기본 전제로 삼지 않습니다.
 
-**✅ 기존 10개 사내 반영 완료** — 2026-09-28 사용자 확인.
-기존 10개의 실무 적용 가능 평가는 **6/10개**입니다. 반영 여부와 유용성 평가는 구분합니다.
+**✅ 20개 전체 사내 반영 완료** — 1차 10개는 2026-09-28, 2차 10개는 2026-11-03 사용자 확인.
+최근 사용 피드백은 **실제로 유용한 것은 반 정도**입니다. 개별 평가는 미확정이며, 반영 완료와 유용성 검증은 구분합니다.
 [반영 상태와 피드백](docs/ADOPTION.md) · [2차 추가 10개의 설계와 출처](docs/NEXT-SKILLS.md)
+
+**3차 발굴:** [신규 후보 20개와 선정 근거](docs/CANDIDATES-2026-11.md) — 2026-11-03 조사. 기존 20개와 중복을 대조한 미구현 후보입니다.
 
 ## 무엇을 말하면 되나요?
 
@@ -27,22 +29,22 @@ Git, CI/CD, DB 연결이나 패키지 설치를 기본 전제로 삼지 않습�
 
 dev-conductor와 parallel-batch는 사용자 피드백에 따라 신규 도입 추천 우선순위를 낮췄습니다.
 
-## 2차 추가 — 구현 완료, 사내 반영 대기
+## 2차 추가 — 사내 반영 완료
 
-새 10개는 2026-09-28 추가했습니다. 아래의 대기는 스킬 제작 상태가 아니라 사내 반입 상태입니다.
+새 10개는 2026-09-28 구현했고, 2026-11-03 사내 반영 완료를 사용자에게 확인했습니다.
 
 | 하고 싶은 일 | 이렇게 요청하세요 | 스킬 | 사내 반영 |
 |---|---|---|---|
-| 데이터 대조 | 이 두 파일 안 맞는 것만 찾아줘 | [data-reconcile](skills/data-reconcile/SKILL.md) | ☐ 대기 |
-| 테스트 데이터 세트 | 이 입력 테스트할 데이터 만들어줘 | [fixture-factory](skills/fixture-factory/SKILL.md) | ☐ 대기 |
-| 기존 화면 다듬기 | 이 화면 좀 덜 답답하게 다듬어줘 | [ui-polish](skills/ui-polish/SKILL.md) | ☐ 대기 |
-| 업무 조건표 | 이 로직 조건별로 표로 뽑아줘 | [rule-matrix](skills/rule-matrix/SKILL.md) | ☐ 대기 |
-| 환경설정 대조 | 개발이랑 운영 설정 다른 것만 보여줘 | [config-compare](skills/config-compare/SKILL.md) | ☐ 대기 |
-| 문서와 구현 대조 | 이 설명서 지금 코드랑 맞아? | [doc-drift](skills/doc-drift/SKILL.md) | ☐ 대기 |
-| 숫자 변동 분해 | 이번 숫자 왜 달라졌는지 풀어줘 | [variance-bridge](skills/variance-bridge/SKILL.md) | ☐ 대기 |
-| 현업 확인표 | 현업한테 확인받을 표 만들어줘 | [acceptance-kit](skills/acceptance-kit/SKILL.md) | ☐ 대기 |
-| 조건 조합 압축 | 조합이 너무 많으니 줄여줘 | [pairwise-cases](skills/pairwise-cases/SKILL.md) | ☐ 대기 |
-| 로그와 샘플 가명처리 | 식별정보 가려서 공유본 만들어줘 | [sample-mask](skills/sample-mask/SKILL.md) | ☐ 대기 |
+| 데이터 대조 | 이 두 파일 안 맞는 것만 찾아줘 | [data-reconcile](skills/data-reconcile/SKILL.md) | ✅ 완료 |
+| 테스트 데이터 세트 | 이 입력 테스트할 데이터 만들어줘 | [fixture-factory](skills/fixture-factory/SKILL.md) | ✅ 완료 |
+| 기존 화면 다듬기 | 이 화면 좀 덜 답답하게 다듬어줘 | [ui-polish](skills/ui-polish/SKILL.md) | ✅ 완료 |
+| 업무 조건표 | 이 로직 조건별로 표로 뽑아줘 | [rule-matrix](skills/rule-matrix/SKILL.md) | ✅ 완료 |
+| 환경설정 대조 | 개발이랑 운영 설정 다른 것만 보여줘 | [config-compare](skills/config-compare/SKILL.md) | ✅ 완료 |
+| 문서와 구현 대조 | 이 설명서 지금 코드랑 맞아? | [doc-drift](skills/doc-drift/SKILL.md) | ✅ 완료 |
+| 숫자 변동 분해 | 이번 숫자 왜 달라졌는지 풀어줘 | [variance-bridge](skills/variance-bridge/SKILL.md) | ✅ 완료 |
+| 현업 확인표 | 현업한테 확인받을 표 만들어줘 | [acceptance-kit](skills/acceptance-kit/SKILL.md) | ✅ 완료 |
+| 조건 조합 압축 | 조합이 너무 많으니 줄여줘 | [pairwise-cases](skills/pairwise-cases/SKILL.md) | ✅ 완료 |
+| 로그와 샘플 가명처리 | 식별정보 가려서 공유본 만들어줘 | [sample-mask](skills/sample-mask/SKILL.md) | ✅ 완료 |
 
 이번 요청에서 명시한 경로, 현재 대화, 현재 프로젝트 폴더 순으로 대상을 찾습니다.
 후보가 여러 개면 짧은 선택 질문을 합니다. CLI가 IDE에서 선택한 파일을 안다고 가정하지 않습니다.
