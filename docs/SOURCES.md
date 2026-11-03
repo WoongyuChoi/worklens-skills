@@ -55,3 +55,20 @@ Impeccable의 바이너리, SQL Server 대조 스킬의 Python/Arrow, Redacta의
 - [MyBatis Java API](https://mybatis.org/mybatis-3/java-api.html), [Mapper XML](https://mybatis.org/mybatis-3/sqlmap-xml.html): scalar/DTO/@Param 루트와 동적 SQL·resultMap의 실제 바인딩을 확인합니다.
 - [Oracle 19c COMMIT](https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/COMMIT.html): DDL 경계와 일반 DML rollback을 혼동하지 않도록 참조했습니다.
 - [Spring 6.2 rollback rules](https://docs.spring.io/spring-framework/reference/6.2/data-access/transaction/declarative/rolling-back.html): 프로젝트의 명시/전역 예외 규칙과 버전을 확인하도록 반영했습니다.
+
+
+## 4차 보안 5개 — 2026-11-03
+
+조사·선정 근거와 실제 파일 커밋은 [보안 조사 보고서](SECURITY-RESEARCH-2026-11.md)에 기록했습니다. 다섯 스킬의 지침·보조 스크립트·합성 fixture·HTML은 독립 작성했습니다. 아래 스킬 원문·PDF·scanner·실행환경은 복사하거나 동봉하지 않았습니다.
+
+| 대상 | 참고한 1차 자료 | 적용과 제한 |
+|---|---|---|
+| api-authz-probe | [Spring JSON Patch 권고](https://spring.io/security/cve-2026-47849/), [OWASP API BOLA](https://api-security.owasp.org/editions/2023/en/0xa1-broken-object-level-authorization/), [ASVS 5.0.0](https://asvs.owasp.org/) | 메서드·객체·주체·속성의 권한을 대조. Spring 권고는 2026-08-20, OWASP API 2023은 기준 표준 |
+| privacy-log-audit | [OpenTelemetry 민감 데이터](https://opentelemetry.io/docs/security/handling-sensitive-data/), [2026-05-19 레거시 환경 보안](https://opentelemetry.io/blog/2026/security-legacy-environments/), [OWASP Logging](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html) | 필요한 이벤트를 보존하면서 불필요 필드 수집·출력을 줄임. OTel 설치 요구 없음 |
+| source-sink-review | [Spring Sort](https://spring.io/security/cve-2026-47834/), [Gateway Resource](https://spring.io/security/cve-2026-47879/), [FreeMarker](https://spring.io/security/cve-2026-59280/) | 2026-08-20 공지의 구체적 입력·기능·권한 조건. 로컬 witness는 실제 CVE exploit이 아님 |
+| dependency-advisory-triage | [Spring LDAP](https://spring.io/security/cve-2026-59270/), [WebAuthn](https://spring.io/security/cve-2026-47841/), [ONNX](https://spring.io/security/cve-2026-47852/), [React RSC](https://react.dev/blog/2025/12/11/denial-of-service-and-source-code-exposure-in-react-server-components), [OSV 1.9.2](https://ossf.github.io/osv-schema/), [GitHub malware advisories](https://github.blog/security/supply-chain-security/how-we-took-malware-advisories-beyond-npm/) | 조건·날짜·철회·alias·생태계·수정 버전 제공 채널. snapshot 6건은 독립 요약한 사실 데이터, 전체 DB 아님 |
+| agent-boundary-check | [OWASP Manual 2026-10-20](https://genai.owasp.org/resource/genai-red-teaming-manual-version-1-0/), [Guide 2.0 2026-10-27](https://genai.owasp.org/resource/llm-exploit-generation-guide-2-0/), [ACS 2026-09-01](https://genai.owasp.org/resource/agent-control-standard-acs/) | 통제된 입력, 관측 가능한 도구 시도·차단·후속 효과. 참조 runtime은 반입하지 않음 |
+
+공개 SKILL 조사에서 OpenAI `security-scan`의 plugin manifest가 Proprietary임을 확인했습니다. Trail of Bits `vulnerability-triage-brocards`와 `agentic-actions-auditor`는 CC-BY-SA-4.0입니다. 원문을 변환·번역해 배포하지 않고 공개된 일반 방법론을 참고해 별도로 작성했습니다. 문서화된 동작이나 수정 비용만으로 사내의 유효한 보안 문제를 기각하는 규칙은 채택하지 않았습니다. `dkleptsov/skill-security-review`(Apache-2.0)는 반입 심사 목적의 참고 후보로 검토했으며 이번 팩에 포함하지 않았습니다.
+
+사용자 캡처의 실제 로그·개인정보 값·사내 서버 경로·시스템명은 저장소에 복사하지 않았습니다. 테스트 자산에는 새로 만든 합성 자료만 들어 있습니다.

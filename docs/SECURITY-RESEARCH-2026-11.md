@@ -1,0 +1,130 @@
+# 보안 스킬 5개 — 최신 조사와 선정 근거
+
+기준일: **2026-11-03**. 기존 40개에 5개를 추가해 총 45개입니다. 이 문서는 스킬 선정·구현 보고서이며, 실제 사내 시스템의 취약점 진단 결과가 아닙니다.
+
+## 결론과 우선순위
+
+**먼저 API 인증·권한 검증, 개인정보 로그 노출 점검, 입력 경로 보안 검토, 라이브러리 취약점 영향 판정을 우선 사용합니다. 에이전트 입력 경계 검증은 실제 호스트 trace를 볼 수 있을 때 선택합니다.** 다섯 개 모두 짧은 요청에서 소스와 기존 자료를 찾아 시작하며, 결과 HTML은 공통 산출물로 제공합니다.
+
+사용자가 제시한 문제는 “무인증 API에서 개인정보가 보임 → 소스에서 원인 확인 → 전체 API 점검 범위를 관리 → 수정과 발표에 사용할 근거”입니다. 이에 따라 검사 횟수보다 **정상 대조군, 허용·거부 기대값, 실제 데이터/효과 관측, 미검증 범위**를 중시합니다. 내부 위치에서 접속된 것만으로 인터넷 외부 노출을 판정하지 않습니다.
+
+| 순서 | 새 스킬 | 독립적인 업무 | 주요 결과 | 조건 |
+|---|---|---|---|---|
+| 1 | `api-authz-probe` | 익명·타 사용자·타 조직·낮은 역할의 접근 비교 | API 권한 행렬, 실행 증거, 남은 API | 소스 검토는 오프라인. 실제 요청에는 지정 테스트 서버·계정·HTTP 실행 도구 필요 |
+| 2 | `privacy-log-audit` | 개인정보 필드에서 DTO·직렬화·예외·로그 출력으로 이어지는 경로 추적 | 출력 제외/최소화, source-to-log 근거, 합성값 재검증 | 소스와 필드명 목록부터 시작. 실제 로그는 사내 로컬에서만 제한적으로 점검 |
+| 3 | `source-sink-review` | 외부 입력부터 검증·위험 함수까지 추적 | 파일 근거, 성립 조건, 국소 수정안, 로컬 witness | 코드 읽기부터 시작. 번들 예제는 Node 표준 기능만 사용 |
+| 4 | `dependency-advisory-triage` | 반입한 권고와 실제 의존성·기능·설정 대조 | 버전 일치·영향 조건·반증·판정 보류 | 완전한 CVE DB가 아닌 출처·날짜가 있는 소규모 snapshot |
+| 5 | `agent-boundary-check` | 문서·주석·도구 응답이 Qwen 행동을 바꾸는지 검증 | 제안·시도·차단·실행·효과를 구별한 기록 | 실제 호스트 trace가 없으면 실행 검증을 완료했다고 하지 않음 |
+
+`web-exposure-check`는 이번에 별도 스킬로 늘리지 않았습니다. 인증 API의 관측 위치·노출 조건과 소스/의존성의 배포 조건에서 함께 확인할 수 있는 범위가 많기 때문입니다. 보고서 작성만 담당하는 별도 스킬도 만들지 않았습니다.
+
+## 추가 캡처 반영 — 개인정보 로그 노출
+
+사용자가 추가한 **2026-10-14 점검 사례**는 불필요한 개인정보 출력 제외와 기존 로그 정책 재검토를 요청합니다. 실제 로그는 개인정보 때문에 제공할 수 없고, 서비스별 컬럼명 목록을 활용하는 방식입니다. 해당 원본 로그·내부 서버 경로·시스템명은 이 저장소에 수집하거나 복제하지 않습니다.
+
+이에 따라 `privacy-log-audit`를 다섯 번째 항목으로 추가하되 현장 우선순위는 두 번째로 높였습니다. `log.info("{}", dto)`, Lombok/수동 `toString`, JSON 직렬화, 예외 메시지, HTTP body/header 기록, SQL bind trace, MDC와 telemetry 속성을 따라갑니다. 단순 주민번호·전화번호 정규식 탐지나 데이터 마스킹에 그치지 않고 **왜 이 필드가 기록되는지와 어떤 출력 경로를 줄일지**를 결정합니다.
+
+[OpenTelemetry의 민감 데이터 공식 지침](https://opentelemetry.io/docs/security/handling-sensitive-data/)은 업무별 민감도를 도구가 자동 판단할 수 없으며 관측 목적에 필요한 정보만 수집하도록 설명합니다. [2026-05-19 레거시 환경 보안 글](https://opentelemetry.io/blog/2026/security-legacy-environments/)도 전체 payload 수집을 줄이고 목적 있는 속성을 선택하는 접근을 다룹니다. 여기서는 OpenTelemetry 설치를 요구하지 않고 기존 logger에 적용할 판단 기준으로 사용합니다. [OWASP Logging 지침](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html)은 보안 사건 추적에 필요한 이벤트를 유지하면서 토큰·민감 개인정보 등의 직접 기록을 피하는 기준입니다. 이 문서들은 새 사건으로 소개하지 않고 현재 구현의 기준으로 사용합니다.
+
+새 스킬은 불필요한 필드를 먼저 출력 대상에서 제외하고, 장애 분석에 반드시 필요한 상관관계는 승인된 trace ID·오류 코드 등의 최소 정보로 유지합니다. 로그 레벨만 낮추거나 수집 서버에서 뒤늦게 가리는 조치가 최초 파일 출력을 제거했다고 간주하지 않습니다. 실제 로그를 검사해도 보고서에는 값·원문·원문 hash를 싣지 않고 필드명·위치·개수·확인 수준만 남깁니다.
+
+## 1. 최근 공개된 스킬에서 무엇을 참고했나
+
+다음 날짜는 **해당 SKILL.md의 마지막 파일 커밋 시각**입니다. 방법론의 최초 등장일이나 성능 검증일과 다릅니다. 원문·scanner·실행환경을 복제하지 않고 독립 작성했습니다.
+
+| 실제 공개 스킬 | 확인한 파일 커밋 | 참고한 관점 | 그대로 반입하지 않은 이유 |
+|---|---|---|---|
+| OpenAI `security-scan` | 2026-10-08, `0722921d5542fc593105c27bd52630babd8b8c2a` | 범위·위협 모델·소스 근거·검증·coverage를 연결 | Codex 호스트/도구 의존. plugin manifest의 license는 Proprietary |
+| Trail of Bits `vulnerability-triage-brocards` | 2026-09-01, `b89f6dbc3565c9e3e8990b3a837991d25d76633e` | 공격 주체·도달 경로·효과·반증을 확인해 오탐 축소 | CC-BY-SA-4.0. 문서화/수정 비용만으로 사내 문제를 기각하는 규칙은 이식하지 않음 |
+| Trail of Bits `agentic-actions-auditor` | 2026-08-31, `9645e2f89b2d3195847df5c82ddf68b67e4de90f` | 외부 입력이 프롬프트·도구 권한에 이르는 경로 | 원본은 GitHub Actions 정적 검토용. Qwen runtime 검증 도구가 아님 |
+| `dkleptsov/skill-security-review` | 2026-08-30, `d23100ff507375e8d173c20392d1753a67cc7e47` | 스킬 반입 때 실행·통신·자격증명 접근 경로 심사 | Apache-2.0, 실제 Node scanner 있음. 사내 서비스 검사와는 별도 과제라 이번 핵심에서 제외 |
+
+직접 확인한 파일:
+
+- [OpenAI security-scan](https://github.com/openai/plugins/blob/0722921d5542fc593105c27bd52630babd8b8c2a/plugins/codex-security/skills/security-scan/SKILL.md), [플러그인 라이선스 선언](https://github.com/openai/plugins/blob/0722921d5542fc593105c27bd52630babd8b8c2a/plugins/codex-security/.codex-plugin/plugin.json)
+- [Trail of Bits triage](https://github.com/trailofbits/skills/blob/b89f6dbc3565c9e3e8990b3a837991d25d76633e/plugins/vulnerability-triage-brocards/skills/vulnerability-triage-brocards/SKILL.md)
+- [Trail of Bits agent audit](https://github.com/trailofbits/skills/blob/9645e2f89b2d3195847df5c82ddf68b67e4de90f/plugins/agentic-actions-auditor/skills/agentic-actions-auditor/SKILL.md)
+- [스킬 반입 심사](https://github.com/dkleptsov/skill-security-review/blob/d23100ff507375e8d173c20392d1753a67cc7e47/skills/skill-security-review/SKILL.md)
+
+공개 제안 PR을 공식 배포 스킬로 혼동하지 않았습니다. [anthropics/skills PR #803](https://github.com/anthropics/skills/pull/803)은 조사 시점 open·미병합이므로 공식 Anthropic 보안 스킬로 선정하지 않았습니다. CodeQL·Semgrep 등의 외부 실행기는 사내에 이미 있는 경우의 선택 입력이며 필수 구성에 포함하지 않았습니다.
+
+## 2. 2026년 10월의 자료가 설계에 미친 영향
+
+- **2026-10-20, OWASP GenAI Red Teaming Manual v1.0:** 계획부터 영향 평가·보고·개선까지 이어지는 실무 절차와 재현성·측정 가능성을 강조합니다. 이번 팩에는 성공 조건, 실제 관측, 미검증 범위를 함께 기록하도록 반영했습니다. [공식 자료](https://genai.owasp.org/resource/genai-red-teaming-manual-version-1-0/)
+- **2026-10-27, OWASP LLM Exploit Generation Guide 2.0:** 조사한 자율 에이전트 방식에서 반복적·소음이 많은 활동과 운영 한계를 보고합니다. 실행량을 검증 성과와 같게 취급하지 않고, 요청 예산·중복 시도 중단·증거 기준을 먼저 고정했습니다. 특정 실험을 사내 Qwen 성능에 일반화하지 않습니다. [공식 자료](https://genai.owasp.org/resource/llm-exploit-generation-guide-2-0/)
+- **2026-09-01, OWASP Agent Control Standard:** 프롬프트 규칙과 별도로 실행 시점의 관찰·제어를 다룹니다. 모델의 거부 답변, 실제 tool call 차단, 후속 효과를 별도로 기록하도록 반영했습니다. 해당 reference runtime은 추가 설치가 필요하므로 동봉하지 않았습니다. [공식 자료](https://genai.owasp.org/resource/agent-control-standard-acs/)
+
+이는 최신 자료에서 얻은 설계 판단입니다. “최근에 발표됐으므로 반드시 효과가 있다”는 성능 주장이 아닙니다.
+
+## 3. 최근 Spring 권고를 실제 업무 질문으로 바꾸기
+
+아래 공지는 모두 **2026-08-20 공개**, 기준일 75일 전 자료입니다. 과거에 언급된 Spring Boot 버전만으로 현재 런타임의 Framework/Security/Data 버전을 확정하지 않습니다. 부품의 실제 선택/패키징 버전, 필요한 기능과 배포 조건을 확인해야 합니다.
+
+| 권고 | 사내에서 확인할 질문 | 잘못된 결론 방지 |
+|---|---|---|
+| [CVE-2026-47849 · Data REST JSON Patch](https://spring.io/security/cve-2026-47849/) | repository가 노출되고 PATCH 가능한 사용자가 Jackson에 보이는 `@Id`/`@Version`을 바꿀 수 있는가? | 일반 MVC/JPA 사용만으로 해당하지 않음. GET 하나의 성공으로 PATCH 속성 보호를 검증할 수 없음 |
+| [CVE-2026-47834 · Data JPA Sort](https://spring.io/security/cve-2026-47834/) | 외부 Sort/Pageable이 정제 없이 native query로 전달되고 DB가 공지의 문자 조건을 허용하는가? | 값 바인딩만 보고 SQL 전체가 안전하다고 하지 않음. 공지는 Oracle 전체를 지목하지 않음 |
+| [CVE-2026-47879 · Gateway resource](https://spring.io/security/cve-2026-47879/) | JsonToGrpc의 descriptor resource 설정을 누가 바꿀 수 있고 실제 파일/네트워크 접근으로 연결되는가? | 의존성 존재만으로 익명 SSRF를 판정하지 않음. 공식 CVSS에는 높은 권한 전제가 있음 |
+| [CVE-2026-59270 · embedded LDAP](https://spring.io/security/cve-2026-59270/) | embedded UnboundID를 실제로 사용하고 그 listener가 공격자 관측 위치에서 도달 가능한가? | 테스트 의존성 존재·내부 접속만으로 외부 공개를 확정하지 않음 |
+| [CVE-2026-59280 · FreeMarker](https://spring.io/security/cve-2026-59280/) | 외부 입력이 view name에 도달하고 SpringTemplateLoader로 해석되는가? | FreeMarker를 쓰지 않는 배포까지 Framework 버전만으로 영향 확정하지 않음 |
+| [CVE-2026-47841 · WebAuthn](https://spring.io/security/cve-2026-47841/) | passkey, userVerification=REQUIRED, 분산 세션 직렬화가 모두 사용되는가? | 일반 로그인 전체의 우회 문제로 확대하지 않음 |
+| [CVE-2026-47852 · Spring AI ONNX cache](https://spring.io/security/cve-2026-47852/) | 다중 사용자 호스트의 로컬 공격자가 모델 캐시 경로에 영향을 줄 수 있는가? | 본문은 로컬 공격 조건. CVSS 링크와 표현이 다르므로 원격 무인증 공격으로 확대하지 않음 |
+
+수정 버전은 권고별로 OSS와 Enterprise 경로가 다릅니다. snapshot은 이 구분을 보존합니다. 현재 BOM·호환성·지원 경로를 확인하지 않고 개별 컴포넌트를 가장 큰 major로 교체하라고 권하지 않습니다.
+
+## 4. 폐쇄망의 취약점 정보는 어떻게 현행화할까
+
+이번 snapshot은 **6건을 골라 정리한 예제 지식**이며 전체 CVE 데이터베이스가 아닙니다. 인터넷에 연결하지 않는 분석기가 자동으로 최신 취약점 전부를 알 수 있다고 표현하지 않습니다.
+
+[OSV 스키마](https://ossf.github.io/osv-schema/)의 조회 버전은 **1.9.2, 2026-10-13**입니다. 공개·수정·철회 시각, 별칭, 패키지 생태계와 버전 범위를 구분하는 취지를 반영했습니다. 숫자 세 부분의 명시적 범위와 정확 버전만 도구에서 비교하고, Maven qualifier·지원하지 않는 범위·누락 브랜치는 판정을 보류합니다. Spring의 제품 단위 공지를 모든 Maven artifact에 임의 적용하지 않습니다.
+
+[GitHub의 2026-08-06 공급망 글](https://github.blog/security/supply-chain-security/how-we-took-malware-advisories-beyond-npm/)은 악성 패키지 권고를 Maven·PyPI 등 8개 생태계로 확장하면서 출처·철회·중복·생태계 표현 차이를 다룹니다. 설치/빌드에서 실행되는 악성 패키지 위험은 런타임 호출이 없다는 이유만으로 제외하지 않게 했습니다.
+
+[React RSC 후속 권고](https://react.dev/blog/2025/12/11/denial-of-service-and-source-code-exposure-in-react-server-components)는 2025-12-11 게시, **2026-01-26 갱신**된 기존 자료입니다. 이전 수정 버전이 불완전했던 사실과 RSC를 쓰지 않는 경우의 제외 조건이 있어 snapshot 갱신 예제로 포함했습니다. 최근 90일의 신규 사건으로 소개하지 않으며, 해당 후속 권고를 RCE 문제로 부르지 않습니다.
+
+실제 반입 절차는 다음과 같습니다.
+
+1. 외부 조사에서 공식 공지의 URL·공개일·수정일·조회일·범위·필수 조건·수정 버전 경로를 확보합니다.
+2. 회사 반입 절차에 맞춰 snapshot을 가져옵니다. 출처 원문을 별도 보관했다면 실제 바이트의 hash를 기록하고, 보관하지 않았다면 hash를 꾸며내지 않습니다.
+3. 사내 Agent가 현재 배포의 의존성·관련 소스와 대조합니다. 실제 회사 소스나 dependency 목록을 외부 서비스로 전송할 필요가 없습니다.
+4. 새로운 snapshot의 수정·철회·별칭 변경을 기존 판정과 대조하고, 달라진 항목만 재검토합니다.
+
+## 5. 기존 40개와 중복하지 않는 이유
+
+| 기존 스킬 | 기존의 질문 | 신규 스킬의 질문 |
+|---|---|---|
+| api-change-impact | DTO/API 변경이 어느 화면을 깨뜨리는가 | 이 주체가 이 객체/필드를 실제로 읽을 권한이 있는가 |
+| sample-mask | 반입·공유용 샘플 값의 마스킹 | 어떤 개인정보가 왜 로그에 기록되며 출력 자체를 어떻게 줄일 것인가 |
+| mapper-contract-check | Mapper와 SQL 바인딩 계약이 맞는가 | 외부 값이 검증을 우회해 SQL 구조에 들어가는가 |
+| bug-variant-hunt | 이미 고친 버그와 같은 형태가 남아 있는가 | 최초의 보안 가설이 어떤 입력·권한·경로에서 성립하는가 |
+| dependency-conflict-lens | 왜 이 버전이 선택됐는가 | 이 설치 버전과 실제 기능·배포에 권고가 적용되는가 |
+| qa-sweep / invariant-tests | 일반 결함·업무 불변식이 깨지는가 | 비신뢰 입력이 에이전트의 권한·도구 호출을 바꾸는가 |
+| visual-brief / incident-evidence | 결과를 설명하거나 장애 기록을 정리 | 이번에는 별도 보고 스킬을 만들지 않고 다섯 보안 스킬의 결과 형식으로 제공 |
+
+## 6. 사용과 검증의 현실적인 경계
+
+- 스킬은 사내 Agent의 현재 파일·셸·HTTP 기능을 활용하는 절차와 보조도구입니다. 호스트에 없는 도구를 추가하지 않습니다.
+- 실제 API runner는 지정 origin·경로·GET/HEAD의 읽기 사례만 자동 수행합니다. POST/PATCH/DELETE와 부작용 있는 GET은 별도 테스트 환경·데이터·복구 조건을 가진 계획으로 남깁니다.
+- endpoint 분모, 실행한 사례, 미실행 이유를 남깁니다. 정적 목록에 없는 동적 route나 외부 서비스까지 “전수 점검 완료”로 표시하지 않습니다.
+- 결과에 credential·cookie·실제 응답 원문을 저장하지 않습니다. API runner는 합성 마커와 필요한 판정 값만 사용합니다.
+- HTML에는 inline CSS/JavaScript와 SVG를 사용합니다. 서버 연결·CDN·외부 폰트가 필요하지 않습니다.
+- 로컬 테스트와 실제 사내 Qwen 동작은 별도입니다. 구체적인 실행 결과·한계는 [검증 기록](VALIDATION.md)을 참조하세요.
+
+첫 현장 적용은 전체 서비스보다 **읽기 API가 있는 작은 모듈 한 개**가 적합합니다. Agent가 소스에서 API 목록과 후보를 만들고, 정상 계정·다른 테스트 주체의 대조 결과를 남긴 뒤, 개발자가 실제 수정할 문제와 남은 질문이 나오는지 확인하면 다섯 스킬의 효용을 빠르게 판단할 수 있습니다.
+
+## 7. 구현 결과와 실제 확인한 수준
+
+다섯 스킬에는 SKILL 지침, 참조 문서, 합성 예제, 선택 실행 도구와 동일 형식의 독립 HTML 보고서를 넣었습니다. Node 표준 모듈만 사용하며 추가 패키지는 설치하지 않았습니다. 각 폴더만 복사해 사용할 수 있습니다.
+
+| 검증 | 결과 | 해석 범위 |
+|---|---|---|
+| 전체 구조 | 45개 스킬·20개 HTML 자산 검사 통과 | HTML 20개는 기존 15개와 보안 공통 뷰어 사본 5개 |
+| 로직·CLI·최소 DOM | 신규 90개 + 기존 155개 = 245개 통과 | Node v24.22.1. 실제 브라우저/Node 22/사내 Qwen 시험은 별도 |
+| API 자체 서버 | 실행 12건, 취약 경로 노출 3건, 수정 경로 미재현 3건 | 합성 계정·객체·두 업무 경로. 계획 요청 0, 변경 요청 0 |
+| 로그 개선 전후 | 합성 canary 관측행 합계 7→0, 필수 필드 정상 관측 12→12 | 신규 합성 로그. 회사 logger/appender/collector는 실행하지 않음 |
+| 입력 경로 | SQL/URL 구성 관측, 임시 canary 파일 경계 비교 | 실제 DB·외부 HTTP·Spring CVE exploit은 실행하지 않음 |
+| 의존성·에이전트 | 버전/조건·시도/차단/효과를 구분하는 합성 사례 평가 | 실제 배포 영향이나 Qwen 취약성의 확정 결과가 아님 |
+
+별도 에이전트에도 짧은 업무 요청과 원자료를 주어 다섯 스킬을 각각 적용했습니다. API 사례에서는 대상 서버가 없을 때 소스 근거 2건과 미실행 설계 14개를 구별했고, 의존성 사례에서는 미검증 브랜치와 실제 라우팅 부재를 남겼습니다. 개인정보 사례에서는 컬럼 MD 없이 후보와 출력 경로를 추적하되 정책은 미확정으로 유지했습니다. 에이전트 기록에서는 호스트 차단과 대조군 부족에 따른 귀속 불가를 구별했습니다. 현재 호스트에서의 적용 확인을 사내 Qwen의 자동 선택률·성능·실무 효과로 확대하지 않습니다.
+
+보고서는 JSON과 독립 HTML로 제공합니다. HTML에는 검색, 판정 필터, 전체 검사 범위, 소스→관측 경로 SVG, 수정안과 재검증 조건이 들어 있습니다. 필터를 걸어도 전체 검사 분모와 미검증 범위를 숨기지 않습니다. 개인정보 로그 보고서에는 원문 값·부분값·값의 hash를 남기지 않습니다.

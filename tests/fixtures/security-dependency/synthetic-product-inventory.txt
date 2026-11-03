@@ -1,0 +1,4 @@
+합성 product inventory; 실제 JAR 분석 결과 아님
+spring-context-support 6.1.1 -> spring-framework 6.1.1
+spring-security-ldap 6.2.0 -> spring-security 6.2.0
+spring-data-rest-webmvc 4.2.1 -> spring-data-rest 4.2.1

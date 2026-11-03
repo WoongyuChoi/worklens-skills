@@ -1,0 +1,10 @@
+{
+  "openapi": "3.0.3",
+  "info": {"title": "고객 기록 샘플", "version": "fixture"},
+  "paths": {
+    "/api/records/{recordId}": {"get": {"security": [], "description": "고객 기록 조회", "responses": {"200": {"description": "조회 결과"}}}},
+    "/api/notices": {"get": {"security": [], "description": "공개 공지", "responses": {"200": {"description": "공개 목록"}}}},
+    "/api/protected-records/{recordId}": {"get": {"security": [{"session": []}], "description": "담당자·조직 범위 조회", "responses": {"200": {"description": "조회 결과"}}}}
+  },
+  "components": {"securitySchemes": {"session": {"type": "http", "scheme": "bearer"}}}
+}

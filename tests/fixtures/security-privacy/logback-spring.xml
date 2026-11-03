@@ -1,0 +1,11 @@
+<configuration>
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder><pattern>%level %logger %msg %X%n</pattern></encoder>
+  </appender>
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>sample-service.log</file>
+    <encoder><pattern>%level %replace(%msg){'mobileNo=[^ ]+', 'mobileNo=[REDACTED]'}%n</pattern></encoder>
+  </appender>
+  <root level="INFO"><appender-ref ref="CONSOLE"/><appender-ref ref="FILE"/></root>
+  <springProfile name="diagnostic"><logger name="sample" level="DEBUG"/></springProfile>
+</configuration>

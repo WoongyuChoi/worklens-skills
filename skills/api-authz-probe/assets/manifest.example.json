@@ -1,0 +1,28 @@
+{
+  "schema": "worklens-api-probe/v1",
+  "mode": "authorized-live",
+  "scope": {"origin": "https://example.invalid", "authorizationConfirmed": false, "description": "에이전트가 현재 소스와 사용자 승인 범위로 수정할 실행 전 템플릿", "vantage": "unknown"},
+  "limits": {"maxRequests": 12, "minIntervalMs": 500, "timeoutMs": 3000, "maxBodyBytes": 32768, "maxDurationMs": 60000},
+  "principals": [
+    {"id": "anonymous", "kind": "anonymous"},
+    {"id": "owner-a", "kind": "authenticated", "credential": {"header": "Authorization", "env": "WL_OWNER_AUTH"}},
+    {"id": "peer-b", "kind": "authenticated", "credential": {"header": "Authorization", "env": "WL_PEER_AUTH"}}
+  ],
+  "calibrations": [{
+    "id": "identity", "method": "GET", "path": "/test/session", "sideEffectFreeConfirmed": false,
+    "cases": [
+      {"id": "anonymous", "principal": "anonymous", "expect": "deny", "policyConfirmed": false},
+      {"id": "owner", "principal": "owner-a", "expect": "allow", "policyConfirmed": false, "marker": {"pointer": "/identity", "equals": "WL_SYNTHETIC_IDENTITY_OWNER_A"}},
+      {"id": "peer", "principal": "peer-b", "expect": "allow", "policyConfirmed": false, "marker": {"pointer": "/identity", "equals": "WL_SYNTHETIC_IDENTITY_PEER_B"}}
+    ]
+  }],
+  "routes": [{
+    "id": "record-read", "method": "GET", "path": "/api/records/synthetic-record-a-0001", "sideEffectFreeConfirmed": false,
+    "policyNote": "소유자·조직 정책을 확인한 후 확정할 예시", "baselineCaseId": "owner-baseline",
+    "cases": [
+      {"id": "owner-baseline", "principal": "owner-a", "expect": "allow", "policyConfirmed": false, "marker": {"pointer": "/record/testTag", "equals": "WL_SYNTHETIC_RECORD_A"}},
+      {"id": "anonymous-denied", "principal": "anonymous", "expect": "deny", "policyConfirmed": false, "marker": {"pointer": "/record/testTag", "equals": "WL_SYNTHETIC_RECORD_A"}},
+      {"id": "peer-denied", "principal": "peer-b", "expect": "deny", "policyConfirmed": false, "marker": {"pointer": "/record/testTag", "equals": "WL_SYNTHETIC_RECORD_A"}}
+    ]
+  }]
+}

@@ -1,0 +1,7 @@
+<mapper namespace="sample.CustomerMapper">
+  <select id="findById" resultType="sample.CustomerView">
+    SELECT CUST_ID AS customerId, CUST_NM AS customerName, MOBILE_NO AS mobileNo
+    FROM SAMPLE_CUSTOMER
+    WHERE CUST_ID = #{customerId}
+  </select>
+</mapper>

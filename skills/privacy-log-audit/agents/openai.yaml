@@ -1,0 +1,4 @@
+interface:
+  display_name: "개인정보 로그 노출 점검"
+  short_description: "개인정보 필드가 로그로 흐르는 경로를 찾고 출력 최소화와 회귀 검사를 돕습니다"
+  default_prompt: "$privacy-log-audit로 개인정보가 로그에 찍히는 경로와 불필요한 출력을 찾아줘"
