@@ -1,0 +1,4 @@
+interface:
+  display_name: "에이전트 입력 경계 검증"
+  short_description: "문서와 도구 응답의 지시가 에이전트 행동으로 번지는지 근거를 확인합니다"
+  default_prompt: "Qwen이 문서나 API 응답의 가짜 지시를 따르는지 $agent-boundary-check로 확인해줘"

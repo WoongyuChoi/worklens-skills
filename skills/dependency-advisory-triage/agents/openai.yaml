@@ -1,0 +1,4 @@
+interface:
+  display_name: "라이브러리 취약점 영향 판정"
+  short_description: "실제 선택된 의존성과 반입한 보안 권고로 우리 코드의 영향 여부를 검토합니다"
+  default_prompt: "우리 라이브러리가 이 보안 권고에 실제로 해당하는지 $dependency-advisory-triage로 봐줘"

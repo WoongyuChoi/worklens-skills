@@ -1,0 +1,181 @@
+{
+  "schema": "worklens-dependency-input/v1",
+  "project": "합성 데모: 사내 시스템 관찰 결과가 아님",
+  "title": "합성 데모 · 라이브러리 권고 영향 판정",
+  "scope": {
+    "description": "실제 서비스에 접속하지 않는 판정 예제",
+    "targets": [
+      "demo-api",
+      "demo-client"
+    ],
+    "vantage": "합성 로컬 자료",
+    "limitations": [
+      "모든 패키지/조건 근거는 동작 설명용 합성 입력입니다. 실제 사내 버전과 취약점 발견을 뜻하지 않습니다."
+    ]
+  },
+  "dependencies": [
+    {
+      "id": "freemarker-runtime",
+      "ecosystem": "Maven",
+      "name": "org.springframework:spring-context-support",
+      "version": "6.1.1",
+      "basis": "selected",
+      "configuration": "demo:runtimeClasspath",
+      "evidence": [
+        {
+          "kind": "source",
+          "location": "synthetic-dependencies.txt",
+          "detail": "합성 자료의 선택 버전: org.springframework:spring-context-support:6.1.1"
+        }
+      ],
+      "productEvidence": [
+        {
+          "product": "spring-framework",
+          "version": "6.1.1",
+          "evidence": [
+            {
+              "kind": "source",
+              "location": "synthetic-product-inventory.txt",
+              "detail": "합성 패키지 자료에서 org.springframework:spring-context-support:6.1.1을 spring-framework 제품 버전으로 확인"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "static-client",
+      "ecosystem": "npm",
+      "name": "react-server-dom-webpack",
+      "version": "19.2.3",
+      "basis": "selected",
+      "configuration": "demo-client:production",
+      "evidence": [
+        {
+          "kind": "source",
+          "location": "synthetic-dependencies.txt",
+          "detail": "합성 자료의 선택 버전: react-server-dom-webpack:19.2.3"
+        }
+      ]
+    },
+    {
+      "id": "legacy-security",
+      "ecosystem": "Maven",
+      "name": "org.springframework.security:spring-security-ldap",
+      "version": "6.2.0",
+      "basis": "selected",
+      "configuration": "demo:runtimeClasspath",
+      "evidence": [
+        {
+          "kind": "source",
+          "location": "synthetic-dependencies.txt",
+          "detail": "합성 자료의 선택 버전: org.springframework.security:spring-security-ldap:6.2.0"
+        }
+      ],
+      "productEvidence": [
+        {
+          "product": "spring-security",
+          "version": "6.2.0",
+          "evidence": [
+            {
+              "kind": "source",
+              "location": "synthetic-product-inventory.txt",
+              "detail": "합성 패키지 자료에서 org.springframework.security:spring-security-ldap:6.2.0을 spring-security 제품 버전으로 확인"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "data-rest",
+      "ecosystem": "Maven",
+      "name": "org.springframework.data:spring-data-rest-webmvc",
+      "version": "4.2.1",
+      "basis": "selected",
+      "configuration": "demo:runtimeClasspath",
+      "evidence": [
+        {
+          "kind": "source",
+          "location": "synthetic-dependencies.txt",
+          "detail": "합성 자료의 선택 버전: org.springframework.data:spring-data-rest-webmvc:4.2.1"
+        }
+      ],
+      "productEvidence": [
+        {
+          "product": "spring-data-rest",
+          "version": "4.2.1",
+          "evidence": [
+            {
+              "kind": "source",
+              "location": "synthetic-product-inventory.txt",
+              "detail": "합성 패키지 자료에서 org.springframework.data:spring-data-rest-webmvc:4.2.1을 spring-data-rest 제품 버전으로 확인"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assessments": [
+    {
+      "dependencyId": "freemarker-runtime",
+      "advisoryId": "CVE-2026-59280",
+      "conditions": {
+        "freemarker_used": {
+          "value": true,
+          "evidence": [
+            {
+              "kind": "source",
+              "location": "synthetic-template.properties:2",
+              "detail": "합성 설정에서 FreeMarker integration 사용"
+            }
+          ]
+        },
+        "untrusted_view_name": {
+          "value": true,
+          "evidence": [
+            {
+              "kind": "source",
+              "location": "SyntheticViews.java:5",
+              "detail": "합성 controller가 요청의 viewName을 반환"
+            }
+          ]
+        },
+        "spring_template_loader": {
+          "value": true,
+          "evidence": [
+            {
+              "kind": "source",
+              "location": "synthetic-template.properties:3",
+              "detail": "합성 배포의 loader가 SpringTemplateLoader임"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "dependencyId": "static-client",
+      "advisoryId": "CVE-2026-23864",
+      "conditions": {
+        "server_runtime": {
+          "value": false,
+          "evidence": [
+            {
+              "kind": "source",
+              "location": "synthetic-spa-build.txt:2",
+              "detail": "합성 배포는 정적 자산만 제공하고 React 서버 런타임을 포함하지 않음"
+            }
+          ]
+        },
+        "rsc_supported": {
+          "value": false,
+          "evidence": [
+            {
+              "kind": "source",
+              "location": "synthetic-spa-build.txt:3",
+              "detail": "합성 빌드에서 RSC 지원 framework/bundler/plugin을 사용하지 않음"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

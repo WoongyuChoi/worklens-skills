@@ -1,0 +1,4 @@
+interface:
+  display_name: "입력 경로 보안 검토"
+  short_description: "외부 입력부터 위험한 함수까지 추적해 보안 문제의 성립 조건을 확인합니다"
+  default_prompt: "이 소스에서 외부 입력이 위험한 처리까지 도달하는지 $source-sink-review로 봐줘"

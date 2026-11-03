@@ -1,0 +1,693 @@
+{
+  "schema": "worklens-advisory-snapshot/v1",
+  "collectedAt": "2026-11-03T00:00:00Z",
+  "curated": true,
+  "coverageNote": "공식 권고 6건을 선별한 반입용 예시입니다. 전체 CVE, 전체 제품/버전, 최신 미공개·미수집 권고를 포괄하지 않습니다.",
+  "provenance": {
+    "method": "Official publisher pages read during research; facts independently structured for offline use.",
+    "rawSourceBodiesIncluded": false,
+    "sourceContentHashes": null,
+    "notice": "수집 시점만으로 원문 변경 여부를 보증하지 않습니다. hash는 원문 파일을 실제로 보존·계산한 경우에만 추가하세요."
+  },
+  "advisories": [
+    {
+      "id": "CVE-2026-47849",
+      "aliases": [],
+      "related": [],
+      "title": "Spring Data REST JSON Patch의 식별자·버전 변경",
+      "product": "spring-data-rest",
+      "kind": "vulnerability",
+      "severity": "high",
+      "publishedAt": "2026-08-20",
+      "modifiedAt": null,
+      "withdrawnAt": null,
+      "packageMappings": [],
+      "packageMappingStatus": "product-only; verify local productEvidence before version matching",
+      "candidatePackages": [
+        {
+          "ecosystem": "Maven",
+          "prefix": "org.springframework.data:spring-data-rest-"
+        }
+      ],
+      "affected": {
+        "comparison": "numeric-triplet-closed-ranges-or-explicit-numeric-versions",
+        "knownBranches": [
+          "3.7",
+          "4.0",
+          "4.4",
+          "4.5",
+          "5.0",
+          "5.1",
+          "4.1",
+          "4.2",
+          "4.3"
+        ],
+        "numericRanges": [
+          {
+            "from": "5.1.0",
+            "through": "5.1.0"
+          },
+          {
+            "from": "5.0.0",
+            "through": "5.0.6"
+          },
+          {
+            "from": "4.5.0",
+            "through": "4.5.12"
+          },
+          {
+            "from": "4.0.0",
+            "through": "4.4.15"
+          },
+          {
+            "from": "3.7.0",
+            "through": "3.7.20"
+          }
+        ],
+        "exactVersions": [],
+        "disputedVersions": [],
+        "unparsedStatements": [
+          "Official product range also includes 3.7.20 and earlier. Older unenumerated branches remain unknown in this limited comparator."
+        ]
+      },
+      "conditions": [
+        {
+          "id": "repository_exposed",
+          "label": "Spring Data REST repository가 해당 배포에서 노출됨",
+          "phase": "deployment"
+        },
+        {
+          "id": "json_patch_access",
+          "label": "평가 주체가 application/json-patch+json PATCH 경로에 접근할 수 있음",
+          "phase": "runtime"
+        },
+        {
+          "id": "mutable_id_or_version",
+          "label": "Id 또는 Version 속성이 setter 등을 통해 Jackson 역직렬화에 노출됨",
+          "phase": "runtime"
+        }
+      ],
+      "fixedVersions": [
+        {
+          "version": "5.1.1",
+          "channel": "OSS"
+        },
+        {
+          "version": "5.0.7",
+          "channel": "OSS"
+        },
+        {
+          "version": "5.1.0.1",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "5.0.6.1",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "4.5.13",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "4.4.16",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "3.7.21",
+          "channel": "enterprise-only"
+        }
+      ],
+      "limitations": [
+        "일반 JPA 사용은 Spring Data REST repository 노출의 증거가 아닙니다.",
+        "PUT 또는 merge-patch 검토만으로 JSON Patch 경로를 판정하지 않습니다.",
+        "4.0~4.3에는 이 스냅샷에서 같은 minor의 수정 버전이 제시되지 않습니다. 4.4.16 등 이동의 호환성을 따로 검토하세요."
+      ],
+      "sources": [
+        {
+          "title": "Spring Data REST JSON Patch의 식별자·버전 변경",
+          "url": "https://spring.io/security/cve-2026-47849/",
+          "publishedAt": "2026-08-20",
+          "modifiedAt": null,
+          "retrievedAt": "2026-11-03T00:00:00Z",
+          "contentSha256": null,
+          "provenance": "Official publisher page read during research; independently summarized facts. Raw source body not bundled; no source-content hash claimed."
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-59280",
+      "aliases": [],
+      "related": [],
+      "title": "FreeMarker view name의 템플릿 경로 이탈",
+      "product": "spring-framework",
+      "kind": "vulnerability",
+      "severity": "medium",
+      "publishedAt": "2026-08-20",
+      "modifiedAt": null,
+      "withdrawnAt": null,
+      "packageMappings": [],
+      "packageMappingStatus": "product-only; verify local productEvidence before version matching",
+      "candidatePackages": [
+        {
+          "ecosystem": "Maven",
+          "prefix": "org.springframework:spring-"
+        }
+      ],
+      "affected": {
+        "comparison": "numeric-triplet-closed-ranges-or-explicit-numeric-versions",
+        "knownBranches": [
+          "5.3",
+          "6.0",
+          "6.1",
+          "6.2",
+          "7.0"
+        ],
+        "numericRanges": [
+          {
+            "from": "7.0.0",
+            "through": "7.0.8"
+          },
+          {
+            "from": "6.2.0",
+            "through": "6.2.19"
+          },
+          {
+            "from": "6.1.0",
+            "through": "6.1.28"
+          },
+          {
+            "from": "6.0.0",
+            "through": "6.0.30"
+          },
+          {
+            "from": "5.3.0",
+            "through": "5.3.49"
+          }
+        ],
+        "exactVersions": [],
+        "disputedVersions": [],
+        "unparsedStatements": [
+          "Spring Framework 5.2.25.RELEASE and earlier; qualifier ordering is unsupported."
+        ]
+      },
+      "conditions": [
+        {
+          "id": "freemarker_used",
+          "label": "실제 요청 경로에서 FreeMarker integration을 사용함",
+          "phase": "runtime"
+        },
+        {
+          "id": "untrusted_view_name",
+          "label": "Controller의 view name이 비신뢰 입력에서 유래함",
+          "phase": "runtime"
+        },
+        {
+          "id": "spring_template_loader",
+          "label": "해당 view를 SpringTemplateLoader로 해석함",
+          "phase": "runtime"
+        }
+      ],
+      "fixedVersions": [
+        {
+          "version": "7.0.9",
+          "channel": "OSS"
+        },
+        {
+          "version": "7.0.8.1",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "6.2.20",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "6.1.29",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "6.0.31",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "5.3.50",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "5.2.26",
+          "channel": "enterprise-only"
+        }
+      ],
+      "limitations": [
+        "FreeMarker 또는 입력 기반 view name이 없는 배포는 필수 조건을 반증할 수 있습니다.",
+        "5.2.25.RELEASE 이하라는 원문 범위는 이 숫자 비교기로 계산하지 않습니다."
+      ],
+      "sources": [
+        {
+          "title": "FreeMarker view name의 템플릿 경로 이탈",
+          "url": "https://spring.io/security/cve-2026-59280/",
+          "publishedAt": "2026-08-20",
+          "modifiedAt": null,
+          "retrievedAt": "2026-11-03T00:00:00Z",
+          "contentSha256": null,
+          "provenance": "Official publisher page read during research; independently summarized facts. Raw source body not bundled; no source-content hash claimed."
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-59270",
+      "aliases": [],
+      "related": [],
+      "title": "Embedded UnboundID LDAP의 관리 접근 노출",
+      "product": "spring-security",
+      "kind": "vulnerability",
+      "severity": "critical",
+      "publishedAt": "2026-08-20",
+      "modifiedAt": null,
+      "withdrawnAt": null,
+      "packageMappings": [],
+      "packageMappingStatus": "product-only; verify local productEvidence before version matching",
+      "candidatePackages": [
+        {
+          "ecosystem": "Maven",
+          "prefix": "org.springframework.security:"
+        }
+      ],
+      "affected": {
+        "comparison": "numeric-triplet-closed-ranges-or-explicit-numeric-versions",
+        "knownBranches": [
+          "5.7",
+          "5.8",
+          "6.4",
+          "6.5",
+          "7.0",
+          "7.1"
+        ],
+        "numericRanges": [
+          {
+            "from": "7.1.0",
+            "through": "7.1.0"
+          },
+          {
+            "from": "7.0.0",
+            "through": "7.0.6"
+          },
+          {
+            "from": "6.5.0",
+            "through": "6.5.11"
+          },
+          {
+            "from": "6.4.0",
+            "through": "6.4.18"
+          },
+          {
+            "from": "5.8.0",
+            "through": "5.8.27"
+          },
+          {
+            "from": "5.7.0",
+            "through": "5.7.25"
+          }
+        ],
+        "exactVersions": [],
+        "disputedVersions": [],
+        "unparsedStatements": []
+      },
+      "conditions": [
+        {
+          "id": "embedded_unboundid",
+          "label": "UnboundIdContainer 또는 spring.ldap.embedded 설정으로 embedded LDAP를 사용함",
+          "phase": "runtime"
+        },
+        {
+          "id": "listener_reachable",
+          "label": "해당 LDAP listener에 평가 주체의 위치에서 접근 가능함",
+          "phase": "deployment"
+        }
+      ],
+      "fixedVersions": [
+        {
+          "version": "7.1.1",
+          "channel": "OSS"
+        },
+        {
+          "version": "7.0.7",
+          "channel": "OSS"
+        },
+        {
+          "version": "7.1.0.1",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "7.0.6.1",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "6.5.12",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "6.4.19",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "5.8.28",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "5.7.26",
+          "channel": "enterprise-only"
+        }
+      ],
+      "limitations": [
+        "일반 외부 LDAP 연결이나 Spring Security 존재만으로 영향이 성립하지 않습니다.",
+        "공식 목록에 없는 6.2 등 브랜치를 안전하다고 추론하지 않습니다.",
+        "원문에 있는 관리 인증 값과 공격 절차는 이 스냅샷에 포함하지 않습니다."
+      ],
+      "sources": [
+        {
+          "title": "Embedded UnboundID LDAP의 관리 접근 노출",
+          "url": "https://spring.io/security/cve-2026-59270/",
+          "publishedAt": "2026-08-20",
+          "modifiedAt": null,
+          "retrievedAt": "2026-11-03T00:00:00Z",
+          "contentSha256": null,
+          "provenance": "Official publisher page read during research; independently summarized facts. Raw source body not bundled; no source-content hash claimed."
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-47841",
+      "aliases": [],
+      "related": [],
+      "title": "WebAuthn 사용자 검증과 분산 세션의 불일치",
+      "product": "spring-security",
+      "kind": "vulnerability",
+      "severity": "high",
+      "publishedAt": "2026-08-20",
+      "modifiedAt": null,
+      "withdrawnAt": null,
+      "packageMappings": [],
+      "packageMappingStatus": "product-only; verify local productEvidence before version matching",
+      "candidatePackages": [
+        {
+          "ecosystem": "Maven",
+          "prefix": "org.springframework.security:"
+        }
+      ],
+      "affected": {
+        "comparison": "numeric-triplet-closed-ranges-or-explicit-numeric-versions",
+        "knownBranches": [
+          "6.4",
+          "6.5",
+          "7.0",
+          "7.1"
+        ],
+        "numericRanges": [
+          {
+            "from": "7.1.0",
+            "through": "7.1.0"
+          },
+          {
+            "from": "7.0.0",
+            "through": "7.0.6"
+          },
+          {
+            "from": "6.5.0",
+            "through": "6.5.11"
+          },
+          {
+            "from": "6.4.0",
+            "through": "6.4.18"
+          }
+        ],
+        "exactVersions": [],
+        "disputedVersions": [],
+        "unparsedStatements": []
+      },
+      "conditions": [
+        {
+          "id": "webauthn_used",
+          "label": "실제 인증 경로에서 WebAuthn/passkey를 사용함",
+          "phase": "runtime"
+        },
+        {
+          "id": "verification_required",
+          "label": "userVerification을 REQUIRED로 명시함",
+          "phase": "runtime"
+        },
+        {
+          "id": "distributed_session",
+          "label": "해당 HTTP session을 분산 저장소에서 직렬화·역직렬화함",
+          "phase": "deployment"
+        }
+      ],
+      "fixedVersions": [
+        {
+          "version": "7.1.1",
+          "channel": "OSS"
+        },
+        {
+          "version": "7.0.7",
+          "channel": "OSS"
+        },
+        {
+          "version": "7.1.0.1",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "7.0.6.1",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "6.5.12",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "6.4.19",
+          "channel": "enterprise-only"
+        }
+      ],
+      "limitations": [
+        "기본값 PREFERRED는 권고의 REQUIRED 조건에 해당하지 않습니다.",
+        "일반 비밀번호 로그인이나 Redis 존재만으로 이 취약점에 해당하지 않습니다.",
+        "공식 설명은 공격자가 사용자의 authenticator device를 확보한 경우의 검증 우회입니다. 정적 조건 충족과 실제 공격 가능 위치·재현을 구분하세요."
+      ],
+      "sources": [
+        {
+          "title": "WebAuthn 사용자 검증과 분산 세션의 불일치",
+          "url": "https://spring.io/security/cve-2026-47841/",
+          "publishedAt": "2026-08-20",
+          "modifiedAt": null,
+          "retrievedAt": "2026-11-03T00:00:00Z",
+          "contentSha256": null,
+          "provenance": "Official publisher page read during research; independently summarized facts. Raw source body not bundled; no source-content hash claimed."
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-47852",
+      "aliases": [],
+      "related": [],
+      "title": "Spring AI의 예측 가능한 ONNX 모델 캐시",
+      "product": "spring-ai",
+      "kind": "vulnerability",
+      "severity": "high",
+      "publishedAt": "2026-08-20",
+      "modifiedAt": null,
+      "withdrawnAt": null,
+      "packageMappings": [],
+      "packageMappingStatus": "product-only; verify local productEvidence before version matching",
+      "candidatePackages": [
+        {
+          "ecosystem": "Maven",
+          "prefix": "org.springframework.ai:"
+        }
+      ],
+      "affected": {
+        "comparison": "numeric-triplet-closed-ranges-or-explicit-numeric-versions",
+        "knownBranches": [
+          "1.0",
+          "1.1",
+          "2.0"
+        ],
+        "numericRanges": [
+          {
+            "from": "2.0.0",
+            "through": "2.0.0"
+          },
+          {
+            "from": "1.1.0",
+            "through": "1.1.8"
+          },
+          {
+            "from": "1.0.0",
+            "through": "1.0.9"
+          }
+        ],
+        "exactVersions": [],
+        "disputedVersions": [],
+        "unparsedStatements": []
+      },
+      "conditions": [
+        {
+          "id": "onnx_cache_used",
+          "label": "Spring AI의 해당 ONNX 모델 캐시/로딩 경로를 사용함",
+          "phase": "runtime"
+        },
+        {
+          "id": "multi_user_local_actor",
+          "label": "동일 호스트의 비신뢰 로컬 사용자를 위협 모델에 포함함",
+          "phase": "deployment"
+        },
+        {
+          "id": "cache_precreation_possible",
+          "label": "그 사용자가 모델 캐시 경로를 미리 생성하거나 파일을 배치할 수 있음",
+          "phase": "deployment"
+        }
+      ],
+      "fixedVersions": [
+        {
+          "version": "2.0.1",
+          "channel": "OSS"
+        },
+        {
+          "version": "2.0.0.1",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "1.1.9",
+          "channel": "enterprise-only"
+        },
+        {
+          "version": "1.0.10",
+          "channel": "enterprise-only"
+        }
+      ],
+      "limitations": [
+        "Qwen Agent 또는 AI 기능이 있다는 사실은 Spring AI 사용 증거가 아닙니다.",
+        "공식 설명은 로컬 공격 전제입니다. 점수 표기만으로 네트워크 공격으로 분류하지 않습니다."
+      ],
+      "sources": [
+        {
+          "title": "Spring AI의 예측 가능한 ONNX 모델 캐시",
+          "url": "https://spring.io/security/cve-2026-47852/",
+          "publishedAt": "2026-08-20",
+          "modifiedAt": null,
+          "retrievedAt": "2026-11-03T00:00:00Z",
+          "contentSha256": null,
+          "provenance": "Official publisher page read during research; independently summarized facts. Raw source body not bundled; no source-content hash claimed."
+        }
+      ]
+    },
+    {
+      "id": "CVE-2026-23864",
+      "aliases": [],
+      "related": [
+        "CVE-2025-55184",
+        "CVE-2025-67779"
+      ],
+      "title": "React Server Components의 후속 서비스 거부 수정",
+      "product": "react-server-components",
+      "kind": "vulnerability",
+      "severity": "high",
+      "publishedAt": "2026-01-26",
+      "modifiedAt": "2026-01-26",
+      "withdrawnAt": null,
+      "packageMappings": [
+        {
+          "ecosystem": "npm",
+          "name": "react-server-dom-webpack",
+          "sourceUrl": "https://react.dev/blog/2025/12/11/denial-of-service-and-source-code-exposure-in-react-server-components"
+        },
+        {
+          "ecosystem": "npm",
+          "name": "react-server-dom-parcel",
+          "sourceUrl": "https://react.dev/blog/2025/12/11/denial-of-service-and-source-code-exposure-in-react-server-components"
+        },
+        {
+          "ecosystem": "npm",
+          "name": "react-server-dom-turbopack",
+          "sourceUrl": "https://react.dev/blog/2025/12/11/denial-of-service-and-source-code-exposure-in-react-server-components"
+        }
+      ],
+      "packageMappingStatus": "publisher-listed-packages",
+      "candidatePackages": [],
+      "affected": {
+        "comparison": "numeric-triplet-closed-ranges-or-explicit-numeric-versions",
+        "knownBranches": [
+          "19.0",
+          "19.1",
+          "19.2"
+        ],
+        "numericRanges": [
+          {
+            "from": "19.0.0",
+            "through": "19.0.3"
+          },
+          {
+            "from": "19.1.0",
+            "through": "19.1.4"
+          },
+          {
+            "from": "19.2.0",
+            "through": "19.2.3"
+          }
+        ],
+        "exactVersions": [],
+        "disputedVersions": [
+          "19.1.4"
+        ],
+        "unparsedStatements": []
+      },
+      "conditions": [
+        {
+          "id": "server_runtime",
+          "label": "React 코드를 실행하는 서버 경로가 존재함",
+          "phase": "runtime"
+        },
+        {
+          "id": "rsc_supported",
+          "label": "해당 서버가 RSC 지원 framework/bundler/plugin을 사용함",
+          "phase": "runtime"
+        },
+        {
+          "id": "rsc_input_reachable",
+          "label": "평가 주체의 요청이 해당 RSC 처리 경로에 도달할 수 있음",
+          "phase": "deployment"
+        }
+      ],
+      "fixedVersions": [
+        {
+          "version": "19.0.4",
+          "channel": "OSS"
+        },
+        {
+          "version": "19.1.5",
+          "channel": "OSS"
+        },
+        {
+          "version": "19.2.4",
+          "channel": "OSS"
+        }
+      ],
+      "limitations": [
+        "원문 게시일은 2025-12-11이며 이 후속 CVE와 수정 안내의 날짜는 2026-01-26입니다. 최근 90일 사례가 아닙니다.",
+        "19.1.4는 이전 수정이 불완전하다는 안내에 포함되지만 열거된 영향 버전 목록에서는 빠져 있어 자동 판정을 보류합니다.",
+        "React SPA만 존재하거나 RSC 미사용이면 해당 조건을 반증할 수 있습니다.",
+        "Server Function을 직접 정의하지 않았다는 이유만으로 RSC 지원 앱을 제외하지 않습니다.",
+        "이 후속 이슈는 RCE가 아닙니다. related CVE는 동일 취약점 alias로 합치지 않습니다."
+      ],
+      "sources": [
+        {
+          "title": "React RSC 후속 보안 수정 안내",
+          "url": "https://react.dev/blog/2025/12/11/denial-of-service-and-source-code-exposure-in-react-server-components",
+          "publishedAt": "2025-12-11",
+          "modifiedAt": "2026-01-26",
+          "retrievedAt": "2026-11-03T00:00:00Z",
+          "contentSha256": null,
+          "provenance": "Official publisher page read during research; independently summarized facts. Raw source body not bundled; no source-content hash claimed."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+합성 dependency export; 실제 실행 결과 아님
+demo:runtimeClasspath org.springframework:spring-context-support:6.1.1
+demo:runtimeClasspath org.springframework.security:spring-security-ldap:6.2.0
+demo:runtimeClasspath org.springframework.data:spring-data-rest-webmvc:4.2.1
+demo-client:production react-server-dom-webpack@19.2.3

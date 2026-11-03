@@ -1,0 +1,37 @@
+[
+  {
+    "name": "api-authz-probe",
+    "category": "30_test",
+    "title": "API 인증·권한 검증",
+    "prompt": "이 API가 익명이나 다른 조직 계정에도 열리는지 확인해줘",
+    "priority": true
+  },
+  {
+    "name": "privacy-log-audit",
+    "category": "20_dev",
+    "title": "개인정보 로그 노출 점검",
+    "prompt": "개인정보가 로그에 찍히는 경로와 불필요한 출력을 찾아줘",
+    "priority": true
+  },
+  {
+    "name": "source-sink-review",
+    "category": "20_dev",
+    "title": "입력 경로 보안 검토",
+    "prompt": "외부 입력이 SQL·URL·파일 처리까지 도달하는지 봐줘",
+    "priority": true
+  },
+  {
+    "name": "dependency-advisory-triage",
+    "category": "20_dev",
+    "title": "라이브러리 취약점 영향 판정",
+    "prompt": "이 보안 권고가 우리 라이브러리와 설정에 실제로 해당하는지 봐줘",
+    "priority": true
+  },
+  {
+    "name": "agent-boundary-check",
+    "category": "30_test",
+    "title": "에이전트 입력 경계 검증",
+    "prompt": "Qwen이 문서나 API 응답의 가짜 지시를 따르는지 확인해줘",
+    "priority": false
+  }
+]

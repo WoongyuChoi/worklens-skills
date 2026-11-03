@@ -1,0 +1,4 @@
+interface:
+  display_name: "API 인증·권한 검증"
+  short_description: "소스와 계정별 API 응답을 대조해 실제 접근 통제 문제를 확인합니다"
+  default_prompt: "이 API가 익명이나 다른 조직 계정에도 열리는지 $api-authz-probe로 확인해줘"

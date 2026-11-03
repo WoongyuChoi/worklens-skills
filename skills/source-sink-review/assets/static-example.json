@@ -1,0 +1,27 @@
+{
+  "schema": "worklens-security-report/v1",
+  "title": "가상 예시: 정렬 입력 경로의 정적 검토 — 실행하지 않음",
+  "skill": "source-sink-review",
+  "generatedAt": "2026-11-03T00:00:00.000Z",
+  "mode": "static",
+  "scope": {
+    "description": "보고 형식만 보여주는 가상의 소스 검토입니다. 실제 사내 파일을 검사한 결과가 아닙니다.",
+    "targets": ["가상 OrderController → OrderQuery"],
+    "vantage": "제공된 코드 조각을 읽었다고 가정한 예시; 실행 없음",
+    "limitations": ["실제 저장소·배포·DB를 확인하지 않았습니다.", "소스 파일명과 코드는 형식 설명을 위한 가상 값입니다."]
+  },
+  "findings": [{
+    "id": "EXAMPLE-SQL-001",
+    "title": "정렬 문자열의 SQL 구조 전달 가능성",
+    "severity": "medium",
+    "status": "suspected",
+    "summary": "가상의 정렬 문자열 조합 경로입니다. 실제 DB 처리와 도달성을 확인하지 않았으므로 취약점 확정이 아닙니다.",
+    "evidence": [{"kind": "source", "location": "가상 OrderQuery:build", "detail": "예시 코드가 입력 문자열을 ORDER BY 뒤에 직접 붙인다고 가정합니다. 실제 파일 근거로 대체해야 합니다."}],
+    "conditions": ["낮은 권한의 호출자가 정렬 문자열을 직접 정할 수 있어야 합니다.", "실제 호출 경로에서 유효한 정렬 키 매핑이 없어야 합니다.", "SQL이 해당 DB에 전달되는지는 확인이 필요합니다."],
+    "fix": ["외부 정렬 키를 고정된 내부 컬럼 이름에 매핑하고 정렬 방향을 열거형으로 제한합니다."],
+    "retest": ["정상 키 name은 display_name으로 매핑되는지 확인합니다.", "허용 키가 아닌 문자열은 SQL 생성 전에 거부되는지 확인합니다.", "실행하지 못한 경우 정적 검토로 남깁니다."],
+    "flow": [{"label": "입력", "detail": "가상 요청의 sort 문자열"}, {"label": "보호 코드", "detail": "가상 예시에서 미확인"}, {"label": "SQL 구성", "detail": "실행되지 않은 코드 가정"}]
+  }],
+  "coverage": [{"target": "가상 코드 조각", "status": "not-executed", "detail": "형식 예시이며 실제 소스 검토 결과가 아닙니다."}],
+  "sources": []
+}
