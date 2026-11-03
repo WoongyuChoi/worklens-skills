@@ -76,14 +76,16 @@
 
 ## 4차 보안 스킬 — 구현 완료, 사내 확인 전
 
+사용자가 신설한 `40_security` 카테고리로 다섯 스킬을 분류합니다.
+
 구현일: 2026-11-03. 신규 5개이며 기존 40개와 이름이 겹치지 않습니다. 추가로 제시된 개인정보 로그 사례를 반영했습니다. 실제 사내 대상에서의 발견·수정 실적은 아직 없습니다.
 
 | 분류 | 스킬 | 구현 | 사내 반영 | 실무 평가 |
 |---|---|---|---|---|
-| 30_test | api-authz-probe | 완료 | 확인 전 | 미실시 |
-| 20_dev | privacy-log-audit | 완료 | 확인 전 | 미실시 |
-| 20_dev | source-sink-review | 완료 | 확인 전 | 미실시 |
-| 20_dev | dependency-advisory-triage | 완료 | 확인 전 | 미실시 |
-| 30_test | agent-boundary-check | 완료 | 확인 전 | 미실시 |
+| 40_security | api-authz-probe | 완료 | 확인 전 | 미실시 |
+| 40_security | privacy-log-audit | 완료 | 확인 전 | 미실시 |
+| 40_security | source-sink-review | 완료 | 확인 전 | 미실시 |
+| 40_security | dependency-advisory-triage | 완료 | 확인 전 | 미실시 |
+| 40_security | agent-boundary-check | 완료 | 확인 전 | 미실시 |
 
 Agent 입력 경계 검증은 실제 호스트 trace를 관찰할 수 있을 때 우선 적용합니다. 로그 점검은 실로그 제공 없이 소스와 필드명부터 시작하도록 설계했습니다. 외부 환경의 합성 테스트 통과를 사내 적용 완료로 표시하지 않습니다.

@@ -12,13 +12,15 @@
 
 ## 보안 5개 — 무엇을 확인하나요?
 
+다섯 스킬은 사내 정리함의 **`40_security` · 보안** 카테고리에 모읍니다.
+
 | 우선 | 분류 | 스킬 | 짧은 요청 | 핵심 산출물 |
 |---|---|---|---|---|
-| 1 | 30_test | [API 인증·권한 검증](skills/api-authz-probe/SKILL.md) | 이 API가 익명이나 다른 조직 계정에도 열리는지 봐줘 | 소스 권한 행렬·실제 응답 비교·미검증 API |
-| 2 | 20_dev | [개인정보 로그 노출 점검](skills/privacy-log-audit/SKILL.md) | 개인정보가 로그에 찍히는 경로와 불필요한 출력을 찾아줘 | 필드부터 로그까지의 근거·출력 제외/최소화·재검증 |
-| 3 | 20_dev | [입력 경로 보안 검토](skills/source-sink-review/SKILL.md) | 외부 입력이 SQL·URL·파일 처리까지 도달하는지 봐줘 | 입력→검증→위험 처리·반증·국소 수정안 |
-| 4 | 20_dev | [라이브러리 취약점 영향 판정](skills/dependency-advisory-triage/SKILL.md) | 이 보안 권고가 우리 버전과 설정에 실제 해당하는지 봐줘 | 권고·실제 버전·기능·배포 조건 대조 |
-| 선택 | 30_test | [에이전트 입력 경계 검증](skills/agent-boundary-check/SKILL.md) | Qwen이 문서나 API 응답의 가짜 지시를 따르는지 봐줘 | 제안·시도·차단·실행·효과를 구별한 trace 분석 |
+| 1 | 40_security | [API 인증·권한 검증](skills/api-authz-probe/SKILL.md) | 이 API가 익명이나 다른 조직 계정에도 열리는지 봐줘 | 소스 권한 행렬·실제 응답 비교·미검증 API |
+| 2 | 40_security | [개인정보 로그 노출 점검](skills/privacy-log-audit/SKILL.md) | 개인정보가 로그에 찍히는 경로와 불필요한 출력을 찾아줘 | 필드부터 로그까지의 근거·출력 제외/최소화·재검증 |
+| 3 | 40_security | [입력 경로 보안 검토](skills/source-sink-review/SKILL.md) | 외부 입력이 SQL·URL·파일 처리까지 도달하는지 봐줘 | 입력→검증→위험 처리·반증·국소 수정안 |
+| 4 | 40_security | [라이브러리 취약점 영향 판정](skills/dependency-advisory-triage/SKILL.md) | 이 보안 권고가 우리 버전과 설정에 실제 해당하는지 봐줘 | 권고·실제 버전·기능·배포 조건 대조 |
+| 선택 | 40_security | [에이전트 입력 경계 검증](skills/agent-boundary-check/SKILL.md) | Qwen이 문서나 API 응답의 가짜 지시를 따르는지 봐줘 | 제안·시도·차단·실행·효과를 구별한 trace 분석 |
 
 추가 사례의 개인정보 로그 문제를 별도 스킬로 반영했습니다. 실제 로그를 외부로 가져올 필요 없이 소스와 필드명 목록으로 시작합니다. 기존 `sample-mask`와 달리 기록 경로와 출력 정책을 개선합니다.
 

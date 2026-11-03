@@ -12,7 +12,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parent.parent
 DATE = "20261103"
-CATEGORIES = {"00_common": "공통", "10_design": "설계·화면 동작", "20_dev": "개발·운영 진단", "30_test": "테스트", "90_doc": "문서·리포트"}
+CATEGORIES = {"00_common": "공통", "10_design": "설계·화면 동작", "20_dev": "개발·운영 진단", "30_test": "테스트", "40_security": "보안", "90_doc": "문서·리포트"}
 
 
 def catalog():
