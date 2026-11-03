@@ -44,9 +44,6 @@
 | [의존성 충돌 추적](../skills/dependency-conflict-lens/SKILL.md) `dependency-conflict-lens` | 왜 이 버전 JAR가 선택됐는지 찾아줘 | 3차 신규 |
 | [비동기 화면 상태 보호](../skills/async-state-guard/SKILL.md) `async-state-guard` | 조직을 바꾸면 이전 조회 결과가 덮어쓰는 문제를 봐줘 | 3차·우선 시험 |
 | [업무 날짜 경계 진단](../skills/business-time-boundary/SKILL.md) `business-time-boundary` | 전월 집계가 자정과 월말에서 왜 빠지는지 봐줘 | 3차 신규 |
-| [개인정보 로그 노출 점검](../skills/privacy-log-audit/SKILL.md) `privacy-log-audit` | 개인정보가 로그에 찍히는 경로와 불필요한 출력을 찾아줘 | 보안 신규·우선 시험 |
-| [입력 경로 보안 검토](../skills/source-sink-review/SKILL.md) `source-sink-review` | 외부 입력이 SQL·URL·파일 처리까지 도달하는지 봐줘 | 보안 신규·우선 시험 |
-| [라이브러리 취약점 영향 판정](../skills/dependency-advisory-triage/SKILL.md) `dependency-advisory-triage` | 이 보안 권고가 우리 라이브러리와 설정에 실제로 해당하는지 봐줘 | 보안 신규·우선 시험 |
 
 ## 30_test · 테스트
 
@@ -60,7 +57,15 @@
 | [기존 동작 고정](../skills/legacy-characterization/SKILL.md) `legacy-characterization` | 고치기 전에 현재 결과부터 고정해줘 | 3차·우선 시험 |
 | [업무 불변식 검증](../skills/invariant-tests/SKILL.md) `invariant-tests` | 입력이 달라도 반드시 맞을 관계를 시험해줘 | 3차 신규 |
 | [테스트 검증력 점검](../skills/assertion-audit/SKILL.md) `assertion-audit` | 이 테스트가 진짜 버그를 잡는지 봐줘 | 3차 신규 |
+
+## 40_security · 보안
+
+| 스킬 | 짧은 요청 | 구분 |
+|---|---|---|
 | [API 인증·권한 검증](../skills/api-authz-probe/SKILL.md) `api-authz-probe` | 이 API가 익명이나 다른 조직 계정에도 열리는지 확인해줘 | 보안 신규·우선 시험 |
+| [개인정보 로그 노출 점검](../skills/privacy-log-audit/SKILL.md) `privacy-log-audit` | 개인정보가 로그에 찍히는 경로와 불필요한 출력을 찾아줘 | 보안 신규·우선 시험 |
+| [입력 경로 보안 검토](../skills/source-sink-review/SKILL.md) `source-sink-review` | 외부 입력이 SQL·URL·파일 처리까지 도달하는지 봐줘 | 보안 신규·우선 시험 |
+| [라이브러리 취약점 영향 판정](../skills/dependency-advisory-triage/SKILL.md) `dependency-advisory-triage` | 이 보안 권고가 우리 라이브러리와 설정에 실제로 해당하는지 봐줘 | 보안 신규·우선 시험 |
 | [에이전트 입력 경계 검증](../skills/agent-boundary-check/SKILL.md) `agent-boundary-check` | Qwen이 문서나 API 응답의 가짜 지시를 따르는지 확인해줘 | 보안 신규 |
 
 ## 90_doc · 문서·리포트
