@@ -1,0 +1,4 @@
+interface:
+  display_name: "브라우저 출처 경계 검증"
+  short_description: "브라우저의 출처·쿠키·CORS·WebSocket 경계와 실제 효과를 검증합니다"
+  default_prompt: "다른 출처의 페이지가 이 서비스의 데이터를 읽거나 변경할 수 있는지 $browser-origin-check로 확인해줘"

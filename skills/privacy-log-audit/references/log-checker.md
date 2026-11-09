@@ -53,9 +53,9 @@ Read in bounded chunks and cap each stored line. Stop at the byte/line budget. A
 
 ```text
 node scripts/check-logs.cjs --rules field-policy.json --input approved-local.jsonl --format jsonl --label service-a --out log-report.json
-node scripts/render-report.cjs log-report.json log-report.html
+node scripts/write-report.cjs log-report.json log-report.md
 node scripts/demo.cjs --out-dir privacy-demo-results
-node scripts/render-report.cjs privacy-demo-results/reports.json privacy-demo-results/report.html
+node scripts/write-report.cjs privacy-demo-results/reports.json privacy-demo-results/report.md
 ```
 
 Use a new output path. The CLI reserves it before reading the log, refuses overwrite and emits only counts. Keep the original input unchanged. Without a shell/Node capability, deliver the source analysis, rule draft and unexecuted local procedure; do not ask for a production-log upload or install dependencies.

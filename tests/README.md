@@ -38,7 +38,7 @@ fixtures에는 합성 데이터만 있습니다.
 
 `tests/fixtures/batch3-dev/`와 `tests/fixtures/batch3-quality/`는 별도 에이전트에 실제 업무 요청을 적용시키기 위한 합성 원자료입니다. 정답이 있는 문서를 함께 전달하지 않고 각 요청을 수행하게 합니다. 결과는 무시되는 `test-results/`에 저장하며, 사내 Qwen 테스트로 표현하지 않습니다.
 
-## 보안 5개 추가팩 검사
+## 보안 1차 보조도구 검사
 
 | 명령 | 범위 | 의존성 |
 |---|---|---|
@@ -47,11 +47,11 @@ fixtures에는 합성 데이터만 있습니다.
 | node --test tests/security-dependency.test.cjs | 버전/조건/반증/철회/범위/수정 채널 22개 | Node 기본 모듈 |
 | node --test tests/security-agent.test.cjs | 시도·차단·효과·대조군·불완전 trace 14개 | Node 기본 모듈, 합성 기록 |
 | node --test tests/security-privacy.test.cjs | 제한된 로그 파싱·원문 비출력·출력 제외·관측 유지 16개 | Node 기본 모듈, 합성 로그 |
-| node --test tests/security-report.test.cjs | 공통 형식·안전한 텍스트·필터/coverage·오류 비출력 10개 | Node 기본 모듈, 최소 DOM |
+| node --test tests/security-report.test.cjs | Markdown 출력·안전한 텍스트·전체 coverage·UTF-8·덮어쓰기 거부 15개 | Node 기본 모듈 |
 
-신규 90개와 기존 155개를 다시 실행해 총 245개를 통과했습니다. Node v24.22.1에서 실행했으며 목표 Node 22+ 및 사내 Windows/Qwen 실행 검증과 구분합니다. 구조·독립 요청 적용은 합산하지 않았습니다.
+**2026-11-03 이력:** 당시 보안 90개와 기존 155개를 다시 실행해 총 245개를 통과했습니다. 2026-11-09에는 HTML 뷰어 검사를 Markdown 출력 검사로 교체했으며, 현재 실행 수치는 docs/VALIDATION.md를 따릅니다. Node v24.22.1에서 실행했으며 목표 Node 22+ 및 사내 Windows/Qwen 실행 검증과 구분합니다. 구조·독립 요청 적용은 합산하지 않았습니다.
 
-공통 보고서의 소스는 `scripts/security-tool-sources/`입니다. 수정 후 다음을 실행하면 5개 폴더 안에 같은 렌더러가 복제됩니다.
+공통 보고서의 소스는 `scripts/security-tool-sources/`입니다. 수정 후 다음을 실행하면 기존 5개 폴더에 같은 Markdown 작성기가, 보안 10개에 같은 Markdown 보고서 설계가 복제됩니다.
 
     node scripts/build-security-report.cjs
 
@@ -59,11 +59,20 @@ fixtures에는 합성 데이터만 있습니다.
 
 ## 배포 파일 재생성
 
-개발 환경에 Python 표준 라이브러리만 있으면 다음으로 목록과 두 ZIP을 다시 생성할 수 있습니다. 스킬 사용자는 이 스크립트가 필요 없습니다.
+개발 환경에 Python 표준 라이브러리만 있으면 다음으로 목록과 세 ZIP을 다시 생성할 수 있습니다. 스킬 사용자는 이 스크립트가 필요 없습니다.
 
     python scripts/package-release.py --catalog-only
     python scripts/package-release.py --output /absolute/output/directory
 
 스킬별 필수 자원을 폴더째 담고 ZIP 무결성·스킬 수·참조 파일·SHA-256을 검사합니다. ZIP에는 Git 이력, 테스트 결과, node_modules, CI 환경을 포함하지 않습니다.
 
-기본 출력은 보안 5개 추가팩과 전체 45개 통합팩입니다. 이전 3차 20개/전체 40개 파일은 변경하지 않습니다. 조사 HTML은 `python scripts/build-security-research.py`로 Markdown 원본에서 생성합니다.
+기본 출력은 이번 보안 5개 추가팩, 보안 10개 통합팩, 전체 50개 통합팩입니다. 보안 팩 두 개에는 독립 HTML 파일이 없습니다. 이전 날짜의 배포 파일은 변경하지 않습니다. 현재 조사 문서는 docs/SECURITY-RESEARCH-2026-11-09.md입니다. build-security-research.py는 11월 3일 역사 문서의 생성기입니다.
+
+
+## 보안 2차 절차 적용 검증
+
+`tests/fixtures/security2-{session,workflow,upload,browser,deployment}`는 합성 소스와 자연스러운 업무 요청입니다. 정답 패치나 예상 진단을 함께 전달하지 않습니다. 각 폴더를 별도 임시 작업 공간으로 복사하고 해당 SKILL.md로 요청을 수행하게 합니다. 원자료를 직접 고쳐 보안 문제가 사라진 것처럼 만들지 않습니다.
+
+결과에는 원본 보존본, 동일한 검증 코드, 수정한 실제 소스, 최초 관측과 변경 후 관측, 정상 대조군, 한국어 Markdown을 남깁니다. 업무 경합은 소량의 결정적 동기화로 확인하고 실제 외부 효과를 사용하지 않습니다. 브라우저 검증은 서버에 Origin 헤더를 보내는 시험과 구분해야 합니다.
+
+`node --test tests/security2-deployment-fixture.test.cjs`는 배포 fixture의 정상 기능과 종료를 확인하는 **1개 유지관리 검사**입니다. 취약점 수정의 성공을 판정하는 정답표는 아닙니다. 스킬 적용 결과와 재현·수정 기록은 docs/VALIDATION.md에 별도로 기재합니다.

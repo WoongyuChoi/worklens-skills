@@ -1,6 +1,6 @@
 # 전체 스킬 목록
 
-2026-11-03 · 저장소 전체 상태: 기존 20개 사내 반영 완료 / 3차 20개·보안 5개 구현 완료·사내 확인 전
+2026-11-09 · 기존 20개 반영 완료 / 3차 20개 확인 전 / 보안 1차 5개 채택·적용 결정 / 보안 2차 5개 사내 검증 전
 
 분류는 사내 정리함을 참고한 찾아보기용입니다. 실제 배포 폴더는 `skills/스킬이름`입니다.
 
@@ -8,13 +8,13 @@
 
 | 스킬 | 짧은 요청 | 구분 |
 |---|---|---|
-| [파일 탐색](../skills/file-explorer/SKILL.md) `file-explorer` | 이 파일 좀 보기 좋게 | 기존 |
-| [반복 작업 도구](../skills/task-to-tool/SKILL.md) `task-to-tool` | 방금 한 거 다음에도 쓰게 만들어줘 | 기존 |
+| [파일 탐색](../skills/file-explorer/SKILL.md) `file-explorer` | 이 파일 좀 보기 좋게 | 기존·반영 완료 |
+| [반복 작업 도구](../skills/task-to-tool/SKILL.md) `task-to-tool` | 방금 한 거 다음에도 쓰게 만들어줘 | 기존·반영 완료 |
 | [일괄 처리](../skills/parallel-batch/SKILL.md) `parallel-batch` | 이 방식으로 나머지도 처리해줘 | 기존·추천 우선순위 낮음 |
-| [다음 세션 인계](../skills/session-handoff/SKILL.md) `session-handoff` | 하던 작업 이어서 해줘 | 기존 |
-| [프로젝트 규칙 기억](../skills/project-playbook/SKILL.md) `project-playbook` | 다음부터 이 프로젝트에서는 이렇게 해줘 | 기존 |
-| [데이터 대조](../skills/data-reconcile/SKILL.md) `data-reconcile` | 이 두 파일 안 맞는 것만 찾아줘 | 기존 |
-| [로그와 샘플 가명처리](../skills/sample-mask/SKILL.md) `sample-mask` | 식별정보 가려서 공유본 만들어줘 | 기존 |
+| [다음 세션 인계](../skills/session-handoff/SKILL.md) `session-handoff` | 하던 작업 이어서 해줘 | 기존·반영 완료 |
+| [프로젝트 규칙 기억](../skills/project-playbook/SKILL.md) `project-playbook` | 다음부터 이 프로젝트에서는 이렇게 해줘 | 기존·반영 완료 |
+| [데이터 대조](../skills/data-reconcile/SKILL.md) `data-reconcile` | 이 두 파일 안 맞는 것만 찾아줘 | 기존·반영 완료 |
+| [로그와 샘플 가명처리](../skills/sample-mask/SKILL.md) `sample-mask` | 식별정보 가려서 공유본 만들어줘 | 기존·반영 완료 |
 | [한글·바이트 경계 진단](../skills/encoding-boundary/SKILL.md) `encoding-boundary` | 한글에서 전문 길이가 왜 안 맞는지 봐줘 | 3차 신규 |
 | [배치 일정 미리보기](../skills/schedule-lens/SKILL.md) `schedule-lens` | 이 배치들이 월말에 언제 겹치는지 보여줘 | 3차 신규 |
 
@@ -22,8 +22,8 @@
 
 | 스킬 | 짧은 요청 | 구분 |
 |---|---|---|
-| [화면 시안](../skills/screen-prototype/SKILL.md) `screen-prototype` | 이 기능 화면으로 보여줘 | 기존 |
-| [기존 화면 다듬기](../skills/ui-polish/SKILL.md) `ui-polish` | 이 화면 좀 덜 답답하게 다듬어줘 | 기존 |
+| [화면 시안](../skills/screen-prototype/SKILL.md) `screen-prototype` | 이 기능 화면으로 보여줘 | 기존·반영 완료 |
+| [기존 화면 다듬기](../skills/ui-polish/SKILL.md) `ui-polish` | 이 화면 좀 덜 답답하게 다듬어줘 | 기존·반영 완료 |
 | [설계 대안 비교](../skills/design-decision/SKILL.md) `design-decision` | 이 책임을 어디에 둘지 현재 코드로 비교해줘 | 3차 신규 |
 | [키보드·포커스 점검](../skills/a11y-focus/SKILL.md) `a11y-focus` | 이 팝업과 트리를 키보드로 쓸 수 있게 봐줘 | 3차 신규 |
 
@@ -32,7 +32,7 @@
 | 스킬 | 짧은 요청 | 구분 |
 |---|---|---|
 | [개발과 검증](../skills/dev-conductor/SKILL.md) `dev-conductor` | 이 기능 개발하고 QA까지 해줘 | 기존·추천 우선순위 낮음 |
-| [환경설정 대조](../skills/config-compare/SKILL.md) `config-compare` | 개발이랑 운영 설정 다른 것만 보여줘 | 기존 |
+| [환경설정 대조](../skills/config-compare/SKILL.md) `config-compare` | 개발이랑 운영 설정 다른 것만 보여줘 | 기존·반영 완료 |
 | [API 변경 영향](../skills/api-change-impact/SKILL.md) `api-change-impact` | 이 DTO 바꾸면 어느 화면이 깨지는지 봐줘 | 3차·우선 시험 |
 | [MyBatis 매핑 점검](../skills/mapper-contract-check/SKILL.md) `mapper-contract-check` | Mapper랑 XML 안 맞는 데 찾아줘 | 3차·우선 시험 |
 | [동일 버그 재탐색](../skills/bug-variant-hunt/SKILL.md) `bug-variant-hunt` | 방금 고친 버그 다른 데도 남아 있는지 찾아줘 | 3차·우선 시험 |
@@ -49,11 +49,11 @@
 
 | 스킬 | 짧은 요청 | 구분 |
 |---|---|---|
-| [작업 QA](../skills/qa-sweep/SKILL.md) `qa-sweep` | 방금 만든 거 진짜 동작하는지 봐줘 | 기존 |
-| [테스트 데이터 세트](../skills/fixture-factory/SKILL.md) `fixture-factory` | 이 입력 테스트할 데이터 만들어줘 | 기존 |
-| [업무 조건표](../skills/rule-matrix/SKILL.md) `rule-matrix` | 이 로직 조건별로 표로 뽑아줘 | 기존 |
-| [현업 확인표](../skills/acceptance-kit/SKILL.md) `acceptance-kit` | 현업한테 확인받을 표 만들어줘 | 기존 |
-| [조건 조합 압축](../skills/pairwise-cases/SKILL.md) `pairwise-cases` | 조합이 너무 많으니 줄여줘 | 기존 |
+| [작업 QA](../skills/qa-sweep/SKILL.md) `qa-sweep` | 방금 만든 거 진짜 동작하는지 봐줘 | 기존·반영 완료 |
+| [테스트 데이터 세트](../skills/fixture-factory/SKILL.md) `fixture-factory` | 이 입력 테스트할 데이터 만들어줘 | 기존·반영 완료 |
+| [업무 조건표](../skills/rule-matrix/SKILL.md) `rule-matrix` | 이 로직 조건별로 표로 뽑아줘 | 기존·반영 완료 |
+| [현업 확인표](../skills/acceptance-kit/SKILL.md) `acceptance-kit` | 현업한테 확인받을 표 만들어줘 | 기존·반영 완료 |
+| [조건 조합 압축](../skills/pairwise-cases/SKILL.md) `pairwise-cases` | 조합이 너무 많으니 줄여줘 | 기존·반영 완료 |
 | [기존 동작 고정](../skills/legacy-characterization/SKILL.md) `legacy-characterization` | 고치기 전에 현재 결과부터 고정해줘 | 3차·우선 시험 |
 | [업무 불변식 검증](../skills/invariant-tests/SKILL.md) `invariant-tests` | 입력이 달라도 반드시 맞을 관계를 시험해줘 | 3차 신규 |
 | [테스트 검증력 점검](../skills/assertion-audit/SKILL.md) `assertion-audit` | 이 테스트가 진짜 버그를 잡는지 봐줘 | 3차 신규 |
@@ -62,19 +62,24 @@
 
 | 스킬 | 짧은 요청 | 구분 |
 |---|---|---|
-| [API 인증·권한 검증](../skills/api-authz-probe/SKILL.md) `api-authz-probe` | 이 API가 익명이나 다른 조직 계정에도 열리는지 확인해줘 | 보안 신규·우선 시험 |
-| [개인정보 로그 노출 점검](../skills/privacy-log-audit/SKILL.md) `privacy-log-audit` | 개인정보가 로그에 찍히는 경로와 불필요한 출력을 찾아줘 | 보안 신규·우선 시험 |
-| [입력 경로 보안 검토](../skills/source-sink-review/SKILL.md) `source-sink-review` | 외부 입력이 SQL·URL·파일 처리까지 도달하는지 봐줘 | 보안 신규·우선 시험 |
-| [라이브러리 취약점 영향 판정](../skills/dependency-advisory-triage/SKILL.md) `dependency-advisory-triage` | 이 보안 권고가 우리 라이브러리와 설정에 실제로 해당하는지 봐줘 | 보안 신규·우선 시험 |
-| [에이전트 입력 경계 검증](../skills/agent-boundary-check/SKILL.md) `agent-boundary-check` | Qwen이 문서나 API 응답의 가짜 지시를 따르는지 확인해줘 | 보안 신규 |
+| [API 인증·권한 검증](../skills/api-authz-probe/SKILL.md) `api-authz-probe` | 이 API가 익명이나 다른 조직 계정에도 열리는지 확인해줘 | 보안 1차·채택·적용 결정 |
+| [개인정보 로그 노출 점검](../skills/privacy-log-audit/SKILL.md) `privacy-log-audit` | 개인정보가 로그에 찍히는 경로와 불필요한 출력을 찾아줘 | 보안 1차·채택·적용 결정 |
+| [입력 경로 보안 검토](../skills/source-sink-review/SKILL.md) `source-sink-review` | 외부 입력이 SQL·URL·파일 처리까지 도달하는지 봐줘 | 보안 1차·채택·적용 결정 |
+| [라이브러리 취약점 영향 판정](../skills/dependency-advisory-triage/SKILL.md) `dependency-advisory-triage` | 이 보안 권고가 우리 라이브러리와 설정에 실제로 해당하는지 봐줘 | 보안 1차·채택·적용 결정 |
+| [에이전트 입력 경계 검증](../skills/agent-boundary-check/SKILL.md) `agent-boundary-check` | Qwen이 문서나 API 응답의 가짜 지시를 따르는지 확인해줘 | 보안 1차·채택·적용 결정 |
+| [세션·토큰 수명주기 검증](../skills/session-lifecycle-check/SKILL.md) `session-lifecycle-check` | 로그아웃과 토큰 회전 뒤 이전 증표가 다시 통하는지 확인하고 고쳐줘 | 보안 2차·검증 후보 |
+| [업무 순서·재전송 검증](../skills/workflow-abuse-test/SKILL.md) `workflow-abuse-test` | 승인 생략이나 중복·동시 요청으로 업무가 잘못 처리되는지 확인하고 고쳐줘 | 보안 2차·검증 후보 |
+| [파일 업로드 수명주기 검증](../skills/upload-lifecycle-test/SKILL.md) `upload-lifecycle-test` | 첨부파일이 검사 없이 저장·공개되는 경로가 있는지 확인하고 고쳐줘 | 보안 2차·검증 후보 |
+| [브라우저 출처 경계 검증](../skills/browser-origin-check/SKILL.md) `browser-origin-check` | 다른 웹 출처에서 이 사이트의 데이터·상태·WebSocket에 접근되는지 확인해줘 | 보안 2차·검증 후보 |
+| [배포 노출·기본 설정 점검](../skills/deployment-exposure-audit/SKILL.md) `deployment-exposure-audit` | 실제 배포 설정에서 관리 경로나 백엔드 우회 접근이 열리는지 확인하고 고쳐줘 | 보안 2차·검증 후보 |
 
 ## 90_doc · 문서·리포트
 
 | 스킬 | 짧은 요청 | 구분 |
 |---|---|---|
-| [리더용 요약](../skills/visual-brief/SKILL.md) `visual-brief` | 팀장님께 보여주게 한눈에 정리해줘 | 기존 |
-| [흐름과 관계](../skills/diagram-maker/SKILL.md) `diagram-maker` | 이 흐름 그림으로 보여줘 | 기존 |
-| [문서와 구현 대조](../skills/doc-drift/SKILL.md) `doc-drift` | 이 설명서 지금 코드랑 맞아? | 기존 |
-| [숫자 변동 분해](../skills/variance-bridge/SKILL.md) `variance-bridge` | 이번 숫자 왜 달라졌는지 풀어줘 | 기존 |
+| [리더용 요약](../skills/visual-brief/SKILL.md) `visual-brief` | 팀장님께 보여주게 한눈에 정리해줘 | 기존·반영 완료 |
+| [흐름과 관계](../skills/diagram-maker/SKILL.md) `diagram-maker` | 이 흐름 그림으로 보여줘 | 기존·반영 완료 |
+| [문서와 구현 대조](../skills/doc-drift/SKILL.md) `doc-drift` | 이 설명서 지금 코드랑 맞아? | 기존·반영 완료 |
+| [숫자 변동 분해](../skills/variance-bridge/SKILL.md) `variance-bridge` | 이번 숫자 왜 달라졌는지 풀어줘 | 기존·반영 완료 |
 | [실제 코드 경로 안내](../skills/code-path-tour/SKILL.md) `code-path-tour` | 이 조회가 화면부터 SQL까지 어떻게 이어지는지 보여줘 | 3차 신규 |
 | [장애 증거 타임라인](../skills/incident-evidence/SKILL.md) `incident-evidence` | 로그와 조치 기록으로 장애 순서 정리해줘 | 3차 신규 |

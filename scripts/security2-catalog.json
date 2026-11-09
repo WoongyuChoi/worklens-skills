@@ -1,0 +1,7 @@
+[
+  {"name":"session-lifecycle-check","category":"40_security","title":"세션·토큰 수명주기 검증","prompt":"로그아웃과 토큰 회전 뒤 이전 증표가 다시 통하는지 확인하고 고쳐줘","priority":true},
+  {"name":"workflow-abuse-test","category":"40_security","title":"업무 순서·재전송 검증","prompt":"승인 생략이나 중복·동시 요청으로 업무가 잘못 처리되는지 확인하고 고쳐줘","priority":true},
+  {"name":"upload-lifecycle-test","category":"40_security","title":"파일 업로드 수명주기 검증","prompt":"첨부파일이 검사 없이 저장·공개되는 경로가 있는지 확인하고 고쳐줘","priority":true},
+  {"name":"browser-origin-check","category":"40_security","title":"브라우저 출처 경계 검증","prompt":"다른 웹 출처에서 이 사이트의 데이터·상태·WebSocket에 접근되는지 확인해줘","priority":false},
+  {"name":"deployment-exposure-audit","category":"40_security","title":"배포 노출·기본 설정 점검","prompt":"실제 배포 설정에서 관리 경로나 백엔드 우회 접근이 열리는지 확인하고 고쳐줘","priority":true}
+]

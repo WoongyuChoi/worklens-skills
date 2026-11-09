@@ -1,0 +1,4 @@
+interface:
+  display_name: "파일 업로드 수명주기 검증"
+  short_description: "파일의 저장·검사·공개·압축 해제 경계를 실제 소스와 대조합니다"
+  default_prompt: "첨부파일이 검사 전에 공개되거나 저장 경계를 벗어나는지 $upload-lifecycle-test로 확인하고 고쳐줘"

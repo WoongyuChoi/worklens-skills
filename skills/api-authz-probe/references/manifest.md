@@ -72,10 +72,10 @@ Report `worklens-security-report/v1` with Korean text, runtime observations and 
 ```text
 node scripts/probe.cjs --manifest manifest.json --plan --out api-plan.json
 node scripts/probe.cjs --manifest manifest.json --execute --out api-report.json
-node scripts/render-report.cjs api-report.json api-report.html
+node scripts/write-report.cjs api-report.json api-report.md
 node scripts/demo.cjs --out-dir api-demo-results
 ```
 
 The default action is `--plan`. Output files must be new. Keep credential provisioning out of transcripts and manifest files. Do not put token values directly in a shell command. The demo uses only its own synthetic in-memory identities.
 
-When no suitable shell/HTTP capability exists, deliver a static source-policy matrix, a draft manifest, a non-executed test procedure and `unknown` runtime coverage. Do not install Node, a scanner or dependencies just to avoid stating this limitation. Open `assets/report.html` locally to view a supplied JSON report without a server or external library.
+When no suitable shell/HTTP capability exists, deliver a static source-policy matrix, a draft manifest, a non-executed test procedure and `unknown` runtime coverage. Do not install Node, a scanner or dependencies just to avoid stating this limitation. Write a finished Markdown report using `references/report-blueprint.md`; no viewer, server or user-prepared JSON is needed.

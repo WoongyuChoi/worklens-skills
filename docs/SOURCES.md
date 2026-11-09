@@ -72,3 +72,21 @@ Impeccable의 바이너리, SQL Server 대조 스킬의 Python/Arrow, Redacta의
 공개 SKILL 조사에서 OpenAI `security-scan`의 plugin manifest가 Proprietary임을 확인했습니다. Trail of Bits `vulnerability-triage-brocards`와 `agentic-actions-auditor`는 CC-BY-SA-4.0입니다. 원문을 변환·번역해 배포하지 않고 공개된 일반 방법론을 참고해 별도로 작성했습니다. 문서화된 동작이나 수정 비용만으로 사내의 유효한 보안 문제를 기각하는 규칙은 채택하지 않았습니다. `dkleptsov/skill-security-review`(Apache-2.0)는 반입 심사 목적의 참고 후보로 검토했으며 이번 팩에 포함하지 않았습니다.
 
 사용자 캡처의 실제 로그·개인정보 값·사내 서버 경로·시스템명은 저장소에 복사하지 않았습니다. 테스트 자산에는 새로 만든 합성 자료만 들어 있습니다.
+
+## 5차 보안 5개 — 2026-11-09
+
+`session-lifecycle-check`, `workflow-abuse-test`, `upload-lifecycle-test`, `browser-origin-check`, `deployment-exposure-audit`를 `40_security`에 추가했습니다. 기존 5개도 Markdown 기본 보고서로 전환했습니다. [상세 조사·날짜·선정 판단](SECURITY-RESEARCH-2026-11-09.md)에 최신 원자료와 적용 조건을 모았습니다.
+
+| 자료 | 실제 형식·관련 변경 | 독립 작성에 반영한 내용 |
+|---|---|---|
+| [Trail of Bits patching-bugs](https://github.com/trailofbits/skills/blob/e4dd0bb5b15535f7c5a0834187dffba6ac37e4ff/plugins/patching-bugs/skills/patching-bugs/SKILL.md) | SKILL.md, 2026-10-20 UTC 추가, CC-BY-SA-4.0 | 수정 전 증거와 수정 후 같은 재현·회귀 |
+| [ToB post-patch-validation](https://github.com/trailofbits/skills/blob/e4dd0bb5b15535f7c5a0834187dffba6ac37e4ff/plugins/post-patch-validation/skills/post-patch-validation/SKILL.md) | SKILL.md, 2026-09-14 UTC 관련 수정, CC-BY-SA-4.0 | 변형·회귀·검증 공백의 명시 |
+| [Strix coding-agent skills](https://github.com/usestrix/strix/blob/215482eb2204cd30ac6b87520e3f5c6511e2e2e8/docs/integrations/coding-agents.mdx) | 실제 SKILL.md 묶음, 2026-09-01 UTC 관련 수정, Apache-2.0 | 소스와 PoC 연결, 원인 수정 후 재검증 |
+| [Shannon 3.0](https://github.com/KeygraphHQ/shannon/tree/4cef63e5900c9eda0b259a44f89458c7f8b1e10d/apps/worker/prompts) | 실행 프롬프트, 2026-09-02 구조 변경, AGPL-3.0 | 상태·증표 재사용·업무 효과 중심 질문 |
+| [OWASP Business Logic Security](https://cheatsheetseries.owasp.org/cheatsheets/Business_Logic_Security_Cheat_Sheet.html) | 2026-10-04 UTC 멱등성·경합·재시도 내용 보완 | 호출자·작업·매개변수 결합, 원자성, 외부 결과 불명확 상태 |
+| [Keycloak 재사용 보호](https://github.com/keycloak/keycloak/security/advisories/GHSA-xpwp-2pcm-8xq3) | 2026-09-16 공개, 특정 모드·DB 조건 | 실제 두 번째 소비와 서버 무효화 확인 |
+| [Appium 보안 공지](https://github.com/appium/appium/security/advisories) | 2026-10-27 ZIP 및 WebSocket 관련 공개 | 파일시스템 해석·출처별 경계 |
+| [Chrome LNA](https://developer.chrome.com/docs/modern-web-guidance/guides/security/local-network-access) | 2026-10-07 갱신된 AI Agent용 공식 문서 | localhost 실험의 관찰 범위 |
+| [Tomcat 보안 설정](https://tomcat.apache.org/tomcat-11.0-doc/security-howto.html) | 11.0.27 / 2026-10-06 문서 버전 | 활성 설정·proxy/backend·관리면 |
+
+외부 본문·스크립트·공격 payload·라이선스된 fixture를 복사하지 않았습니다. 공개된 방법론과 제조사 사실을 바탕으로 지침, Markdown/선택 HTML 설계와 합성 소스를 독립 작성했습니다. 특정 회사 대상·계정·로그·내부 주소를 포함하지 않습니다. 원본 플랫폼이 폐쇄망에서 절대 동작하지 않는다는 판단도 하지 않습니다. 플랫폼 설치 부담과 현재 사내 Agent 재사용성을 비교하여 필수 의존성에서 제외했습니다.

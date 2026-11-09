@@ -242,12 +242,12 @@ test('invalid generalized ranges and duplicate records fail with a useful input 
   assert.throws(() => run(input), /중복 없는 id/);
 });
 
-test('real CLI writes a common report offline, refuses overwrite, and renders standalone HTML', t => {
+test('real CLI writes a common report offline, refuses overwrite, and writes finished Markdown', t => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'worklens-dependency-'));
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
   const input = path.join(dir, 'input.json');
   const output = path.join(dir, 'report.json');
-  const html = path.join(dir, 'report.html');
+  const markdown = path.join(dir, 'report.md');
   fs.writeFileSync(input, JSON.stringify(fixture));
   const args = [path.join(skill, 'scripts/triage.cjs'), '--input', input, '--out', output, '--as-of', AS_OF];
   const result = spawnSync(process.execPath, args, { encoding: 'utf8' });
@@ -258,11 +258,11 @@ test('real CLI writes a common report offline, refuses overwrite, and renders st
   const rerun = spawnSync(process.execPath, args, { encoding: 'utf8' });
   assert.equal(rerun.status, 2);
   assert.equal(fs.readFileSync(output, 'utf8'), original);
-  const rendered = spawnSync(process.execPath, [path.join(skill, 'scripts/render-report.cjs'), output, html], { encoding: 'utf8' });
+  const rendered = spawnSync(process.execPath, [path.join(skill, 'scripts/write-report.cjs'), output, markdown], { encoding: 'utf8' });
   assert.equal(rendered.status, 0, rendered.stderr);
-  const document = fs.readFileSync(html, 'utf8');
+  const document = fs.readFileSync(markdown, 'utf8');
   assert.match(document, /CVE-2026-59280/);
-  assert.match(document, /REACHABILITY_REBUTTED/);
+  assert.match(document, /REACHABILITY.*REBUTTED/);
   assert.doesNotMatch(document, /<script[^>]+src\s*=/i);
   assert.doesNotMatch(document, /<link[^>]+href\s*=\s*["']https?:/i);
 });
@@ -273,6 +273,6 @@ test('supplied runtime evidence renders as evidence review, without implying thi
   const snapshot = JSON.parse(fs.readFileSync(path.join(__dirname, '../skills/dependency-advisory-triage/assets/advisory-snapshot.json'), 'utf8'));
   const report = triage(input, snapshot);
   assert.equal(report.mode, 'evidence-review');
-  const renderer = require('../skills/dependency-advisory-triage/scripts/render-report.cjs');
+  const renderer = require('../skills/dependency-advisory-triage/scripts/write-report.cjs');
   assert(renderer.render(report).includes('제공된 실행 기록 검토'));
 });

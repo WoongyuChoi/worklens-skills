@@ -24,7 +24,7 @@ description: "Assess whether a dated offline security advisory applies to the ac
 
    ```sh
    node scripts/triage.cjs --input local-input.json --out new-report.json
-   node scripts/render-report.cjs new-report.json new-report.html
+   node scripts/write-report.cjs new-report.json new-report.md
    ```
 
    Resolve paths relative to this skill or use absolute paths. Use `--snapshot` for a supplied normalized local snapshot. Never feed arbitrary OSV records directly into this smaller schema. The helpers create new output files and refuse overwrite.
@@ -50,4 +50,9 @@ Every impact statement must cite the dependency basis, advisory and applicable c
 - `assets/example-input.json`: synthetic worked input for agent adaptation.
 - `assets/report-template.md`: useful manual fallback without a runtime.
 - `scripts/triage.cjs`: local matching and common report JSON; no external dependencies.
-- `scripts/render-report.cjs`, `assets/report.html`: standalone presentation resources.
+- `scripts/write-report.cjs`: optional Markdown writer for helper output.
+- `references/report-blueprint.md`: Markdown structure and optional complete HTML source; generate a populated document only when useful.
+
+## Report delivery
+
+Use `references/report-blueprint.md` for the finished Korean Markdown report. Keep helper JSON internal unless requested. HTML is optional: create a completed report from the full source in that Markdown reference, with the findings already inserted and escaped. No viewer, JSON upload, package installation or external resource is required. Keep execution limitations and zero-finding coverage visible.
