@@ -1,21 +1,48 @@
-# 공통 보안 보고서 형식
+# 보안 보고서 형식
 
-다섯 스킬은 `worklens-security-report/v1` JSON을 만들고, 각 폴더에 포함된 `assets/report.html`에서 열 수 있습니다. HTML은 네트워크 요청을 하지 않습니다. 이미 설치된 Node가 있으면 `node scripts/render-report.cjs report.json new-report.html`로 데이터가 내장된 단일 HTML을 만듭니다. 명령은 스킬 폴더에서 실행하며 기존 출력 파일을 덮어쓰지 않습니다.
+기준일: 2026-11-09. 보안 10종의 기본 산출물은 **Agent가 완성한 Markdown 보고서**입니다. 파일 선택·JSON 업로드·별도 뷰어 단계는 없습니다.
 
-| 필드 | 내용 |
+## 사람에게 전달할 내용
+
+1. 가장 중요한 결론, 대상과 관찰 위치, 실제 실행 수준.
+2. 검사한 경계와 기대 정책, 실행·생략·미확정·해당 없음 표.
+3. 발견별 성립 조건과 소스 위치, 정상 대조군, 수정 전 관측.
+4. 근본 원인과 실제 변경 파일, 수정 또는 제안의 구분.
+5. **동일 사례 / 원인에 맞는 변형 / 정상 경로**의 재검증과 근거.
+6. 확인하지 못한 환경과 다음에 필요한 관측, 원자료의 정확한 날짜.
+
+실행 수준은 정적 검토, 로컬 합성, 프로젝트 처리 경로와 테스트 대역, 실제 브라우저, 통합 환경 등을 구분합니다. `HTTP 200`, 테스트 종료 코드 0, 화면 이동, 오류 발생만으로 보안 성과를 확정하지 않습니다. 발견 0건이어도 검사 범위와 누락을 남깁니다.
+
+## Markdown에 들어 있는 HTML 설계와 전체 소스
+
+각 스킬의 `references/report-blueprint.md`에 Markdown 틀과 완전한 HTML 소스가 있습니다. Agent는 필요한 경우에만 실제 결과를 채워 단일 HTML을 생성합니다. 사용자에게 JSON을 요구하지 않습니다.
+
+- 밝은 배경, 남색 제목, 청록 강조, 근거·수정·재검증 표, 좁은 화면과 인쇄 대응.
+- JavaScript·CDN·외부 폰트·네트워크 요청·파일 업로드 없음.
+- 결과 텍스트를 HTML escape하고 텍스트 위치에만 삽입. 원문 소스의 HTML/SVG는 실행하지 않음.
+- 미검증 범위와 근거 수준을 제목 근처에 유지. 색상만으로 상태를 구분하지 않음.
+- 브라우저가 있으면 실제 결과 파일을 열어 확인하고, 없으면 렌더링 미확인을 기록.
+
+보고서에 실제 토큰, 쿠키, 개인정보, 응답 원문, 민감한 내부 주소를 복사하지 않습니다. 관측한 상태·횟수·통제된 합성 마커·소스 위치를 사용합니다.
+
+## 기존 5개 보조도구의 JSON
+
+`worklens-security-report/v1`은 기존 보조도구의 **중간 형식**으로 유지합니다. 사람이 입력하거나 뷰어에 업로드할 형식은 아닙니다. Agent가 직접 Markdown을 작성해도 됩니다.
+
+이미 설치된 Node가 있으면 스킬 폴더에서 다음과 같이 결과를 변환합니다.
+
+```sh
+node scripts/write-report.cjs report.json new-report.md
+```
+
+입력은 4MiB 이하의 UTF-8 JSON이며, 보고서 1~20개 또는 배열을 받습니다. 기존 출력 파일을 덮어쓰지 않습니다. 값에 포함된 HTML·Markdown 이미지·링크는 실행되지 않는 텍스트로 처리합니다. 발견, 근거, 조건, 수정, 재검증, 전체 coverage, 한계를 남깁니다. 확장 메타데이터 원본은 중간 JSON에 보존됩니다.
+
+| JSON status | 해석 |
 |---|---|
-| title / skill / generatedAt | 보고서 제목·작성 스킬·생성 시각 |
-| mode | static(정적 검토), local-demo(합성 예제), authorized-live(지정 범위 직접 실행), evidence-review(제공된 실행 기록 검토) |
-| scope | description, targets 문자열 배열, vantage 관측 위치, limitations 문자열 배열 |
-| findings | id, title, severity, status, summary, evidence, conditions, fix, retest, flow |
-| evidence | kind(source/runtime/trace/advisory), location, detail |
-| coverage | target, status, detail. 성공 사례뿐 아니라 미실행 대상·이유도 포함 |
-| sources | title, url, publishedAt, retrievedAt |
+| confirmed | 실행 또는 제공된 trace의 근거가 있음. 실제 실행 위치·시점·범위는 mode와 evidence에 명시 |
+| suspected | 정적 근거가 있으나 실행 재현 전 |
+| not-reproduced | 실행한 특정 사례에서 재현되지 않음 |
+| unknown | 데이터·도구·정책·관측이 부족함 |
+| not-applicable | 필요한 적용 조건이 근거를 갖고 불성립 |
 
-`status`는 confirmed / suspected / not-reproduced / unknown / not-applicable 중 하나입니다. confirmed에는 runtime 또는 trace 근거와 실행 모드가 필요합니다. **local-demo의 confirmed는 예제에서 관측한 사실**이며 실제 사내 취약점을 의미하지 않습니다. 정적 적용 조건이 성립한 dependency AFFECTED는 suspected와 별도 triageState로 표시합니다. 결과가 없다는 사실을 전체 안전 판정으로 바꾸지 않습니다.
-
-심각도와 확인 상태는 서로 다릅니다. high + suspected는 잠재 영향이 크지만 실행 검증이 부족한 항목입니다. 숫자 CVSS는 해당 근거와 범위가 있을 때만 별도로 기록하며 이 뷰어가 임의 계산하지 않습니다.
-
-여러 보고서는 JSON 배열로 묶거나 파일을 함께 선택해 볼 수 있습니다. 검색·판정 필터를 적용해도 전체 집계와 coverage를 숨기지 않습니다. JSON 저장 시 추가 메타데이터를 보존합니다. 입력은 총 4MB, 최대 20개 보고서, 보고서당 1000개 finding으로 제한합니다.
-
-보고서에 실제 토큰·cookie·개인정보 원문을 넣지 않습니다. evidence에는 파일/줄, 통제된 마커의 관측 여부, 상태·조건·차단 사유를 기록합니다. HTML은 문자열을 텍스트로 표시하며 source 링크도 HTTP(S)만 허용합니다. 입력 보고서의 사실관계까지 자동 검증하는 도구는 아닙니다.
+`mode=static`에 confirmed 또는 not-reproduced를 넣을 수 없습니다. 두 판정에는 비어 있지 않은 위치·관측 내용을 갖춘 runtime 또는 trace 증거가 필요합니다. 실행하지 않은 사례는 unknown으로 남깁니다. 이 구조 검사는 입력 보고서의 사실성이나 trace 진위를 인증하는 기능이 아닙니다. 이번 신규 5개는 이 JSON 스키마에 맞춰 작성할 필요 없이 Markdown 절차를 그대로 사용합니다.

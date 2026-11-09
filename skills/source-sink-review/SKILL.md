@@ -27,7 +27,7 @@ For “현재 폴더에서 입력 경로 보안 검토해줘”, inspect the cur
 5. **Choose a small witness.** Prefer an existing isolated test with synthetic input, after reading its setup. Otherwise derive an inert local witness that observes the value delivered to the operation. Inspect and isolate any adapted target code before executing it. Do not run a whole application, installation hook, build or arbitrary target script as a shortcut. Record exactly which original functions were reused and which were replaced by mocks.
 6. **Observe, do not overclaim.** SQL text construction without a database proves text construction. A URL plan without an HTTP client proves destination selection. A fixture file read proves access to that fixture. None proves a live CVE, production reachability, database-specific parsing, a successful network request or code execution. Keep `static`, `local-demo` and `authorized-live` separate. Use live evidence only when the target, operation and existing authorization are explicit; this skill has no generic live attack runner.
 7. **Propose the smallest effective correction.** Preserve legitimate input semantics. Fix the missing boundary in the application, not every search match. Add the negative case and at least one valid control case to the retest plan. Consider the deployed framework's supported update separately from an application-level defense.
-8. **Report the evidence and gaps.** Use `assets/review-template.md` and the shared JSON contract below. Include rejected lookalikes, unreviewed wrappers and missing runtime/configuration evidence in coverage. Finish with the strongest supported findings, the next exact observation needed and an honest execution level.
+8. **Report the evidence and gaps.** Use `assets/review-template.md` and `references/report-blueprint.md` to write the Markdown report. Helper JSON below is optional. Include rejected lookalikes, unreviewed wrappers and missing runtime/configuration evidence in coverage. Finish with the strongest supported findings, the next exact observation needed and an honest execution level.
 
 Read `references/recent-advisories.md` only when Spring Data JPA Sort/native SQL, Gateway resource descriptors or Spring FreeMarker view resolution occur in scope. These are condition-driven examples from advisories retrieved on 2026-11-03, not a complete or automatically refreshed vulnerability database.
 
@@ -49,12 +49,12 @@ If Node is already available, use these commands from this skill's folder. Choos
 
 ```bash
 node scripts/local-demo.cjs --out source-demo.json
-node scripts/render-report.cjs source-demo.json source-demo.html
+node scripts/write-report.cjs source-demo.json source-demo.md
 ```
 
 `local-demo.cjs` executes only the bundled `assets/demo-flow.cjs`. It creates a fresh temporary directory, reads its own synthetic canary, compares vulnerable/fixed SQL and URL builders, removes the temporary directory, and emits `worklens-security-report/v1`. It has no target-path argument, SQL connection, HTTP client, shell execution or external dependency. The example inputs are fixed; it is not a repository scanner. The demo reports three observed mechanisms and the corresponding fixed-case observations, not three vulnerabilities in the user's project.
 
-Without Node or a JDK, complete the source evidence table and mark execution as not performed. Use `assets/report.html` to open an already prepared JSON file locally, or deliver the Markdown report. Do not install a runtime or claim an unexecuted demonstration passed. The shared HTML renderer treats reviewed text as data and uses no CDN.
+Without Node or a JDK, complete the Markdown source evidence table and mark execution as not performed. Use `references/report-blueprint.md`; do not install a runtime or claim an unexecuted demonstration passed. If HTML materially helps, generate one populated document from the complete HTML source in that Markdown reference. Do not provide a blank viewer or JSON-upload step.
 
 ## Output contract
 
@@ -73,3 +73,7 @@ Each finding contains `id`, `title`, `severity`, `status`, `summary`, `evidence`
 ## Completion boundary
 
 Deliver a bounded trace with explicit control evidence and an executable or unexecuted witness. State which security property was checked, what was observed, and what remains unknown. Do not describe an incomplete source walk, generic string search or a successful bundled demo as a completed security audit of the repository.
+
+## Report delivery
+
+Use `references/report-blueprint.md` for the finished Korean Markdown report. Keep helper JSON internal unless requested. HTML is optional: create a completed report from the full source in that Markdown reference, with the findings already inserted and escaped. No viewer, JSON upload, package installation or external resource is required. Keep execution limitations and zero-finding coverage visible.

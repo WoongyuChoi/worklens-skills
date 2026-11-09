@@ -1,9 +1,12 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path');
 const root=path.resolve(__dirname,'..'),source=path.join(__dirname,'security-tool-sources');
-const core=fs.readFileSync(path.join(source,'report-core.cjs'),'utf8');
-const html=fs.readFileSync(path.join(source,'report.html'),'utf8').replace('__CORE__',()=>core);
-for(const name of ['api-authz-probe','source-sink-review','dependency-advisory-triage','agent-boundary-check','privacy-log-audit']){
- const skill=path.join(root,'skills',name);fs.writeFileSync(path.join(skill,'assets/report.html'),html);for(const file of ['report-core.cjs','render-report.cjs'])fs.copyFileSync(path.join(source,file),path.join(skill,'scripts',file));
+const original=['api-authz-probe','source-sink-review','dependency-advisory-triage','agent-boundary-check','privacy-log-audit'];
+const added=['session-lifecycle-check','workflow-abuse-test','upload-lifecycle-test','browser-origin-check','deployment-exposure-audit'];
+for(const name of original){
+ const skill=path.join(root,'skills',name);
+ for(const file of ['report-core.cjs','write-report.cjs'])fs.copyFileSync(path.join(source,file),path.join(skill,'scripts',file));
+ for(const file of ['assets/report.html','scripts/render-report.cjs'])fs.rmSync(path.join(skill,file),{force:true});
 }
-console.log('Built five portable security report viewers and renderers.');
+for(const name of [...original,...added])fs.copyFileSync(path.join(source,'report-blueprint.md'),path.join(root,'skills',name,'references/report-blueprint.md'));
+console.log('Built Markdown writers for five existing skills and report blueprints for ten security skills.');

@@ -1,0 +1,20 @@
+# Source context
+
+Research date: **2026-11-09**. The procedures and synthetic fixture are independently written for Worklens. No upstream code, prompt or scanner is bundled. Links are provenance, not runtime dependencies. Dates below distinguish publication, a specific file change and a documentation retrieval; a recent repository push is not the age of a security method.
+
+| Primary source | Precise date and scope | Use in this skill |
+|---|---|---|
+| [Trail of Bits insecure-defaults command](https://github.com/trailofbits/skills/blob/e4dd0bb5b15535f7c5a0834187dffba6ac37e4ff/plugins/insecure-defaults/commands/audit.md), [method description](https://github.com/trailofbits/skills/blob/e4dd0bb5b15535f7c5a0834187dffba6ac37e4ff/plugins/insecure-defaults/README.md), [conversion commit](https://github.com/trailofbits/skills/commit/82e8e0ad7791805662aa5570230c64c8b8b9ee16) | Command last changed **2026-08-05 12:21 UTC** when the skill became a dynamic workflow; this is not a new vulnerability class. The inspected main no longer contains an insecure-defaults SKILL.md. | 기본값이 실제 보안 결정까지 도달하는지, 활성 배포에서 쓰이는지를 구분하는 참고. 현재 upstream의 전용 Workflow·모델 지정은 도입하지 않으며, 불완전한 추적은 반증 대신 미확인으로 남김. |
+| [Trail of Bits post-patch-validation](https://github.com/trailofbits/skills/blob/e4dd0bb5b15535f7c5a0834187dffba6ac37e4ff/plugins/post-patch-validation/skills/post-patch-validation/SKILL.md), [change commit](https://github.com/trailofbits/skills/commit/027bc47a69a276c340717bafdc3708263094b9a4) | SKILL last changed **2026-09-14 22:58 UTC** to replace grades with findings and gaps. | 동일 취약 사례·원인 기반 변형·정상 대조·검증 공백을 분리하는 참고. Python/uv runner, Git worktree 및 전용 Workflow 의존은 반입하지 않음. |
+| [Trail of Bits patching-bugs](https://github.com/trailofbits/skills/blob/e4dd0bb5b15535f7c5a0834187dffba6ac37e4ff/plugins/patching-bugs/skills/patching-bugs/SKILL.md), [addition commit](https://github.com/trailofbits/skills/commit/a3131740a39291e42fd15b9eac07e0b393ad71b1) | New plugin added **2026-10-20 20:16 UTC**. | 재현 가능한 문제를 먼저 고정하고, 수정 뒤 별도 증거로 확인하는 최신 Agent 작업 구조 참고. 다중 Agent를 필수로 만들지 않음. |
+| [Spring Security CVE-2026-59270 advisory](https://spring.io/security/cve-2026-59270/) | Published **2026-08-20**. Embedded UnboundID use and listener reachability are explicit preconditions. | 라이브러리 포함 여부와 실제 기능 사용·리스너 접근 가능성을 분리해야 한다는 최근 사례. 일반 HTTP 관리 경로나 모든 Spring 서비스에 같은 CVE가 있다고 주장하지 않음. |
+| [Spring Boot endpoint documentation](https://docs.spring.io/spring-boot/reference/actuator/endpoints.html), [management HTTP mapping](https://docs.spring.io/spring-boot/reference/actuator/monitoring.html) | Rolling official documentation inspected **2026-11-09**; not a dated incident or a universal contract for older versions. | endpoint 접근 수준, transport 노출, URL prefix·별도 관리 포트를 분리하는 구체 예시. 적용 시 현재 프로젝트 버전과 실효 설정을 먼저 확인. |
+| [OWASP ASVS 5.0.0](https://asvs.owasp.org/) | Stable version published **2025-05-30**. | 검증 범위와 근거를 정리하는 기존 기준. 최신 사고 자료로 포장하지 않음. 특정 요구사항 번호를 쓸 때 버전도 함께 고정. |
+
+## License and adaptation boundary
+
+Trail of Bits identifies the repository license as **CC-BY-SA-4.0** in its [README](https://github.com/trailofbits/skills/blob/e4dd0bb5b15535f7c5a0834187dffba6ac37e4ff/README.md). The links above credit the procedural inspiration; this skill does not redistribute that implementation or translate its prompts. If future contributors import or adapt upstream text/code, preserve its applicable attribution and license obligations rather than assuming this original implementation covers the imported material.
+
+The vendor advisory and framework documentation are cited as technical facts, not copied templates. The local fixture demonstrates an application-level management boundary; it does **not** reproduce CVE-2026-59270 or establish that any company environment is affected.
+
+Offline use requires no browsing. State the retrieval date and any missing local version/configuration evidence. Fresh advisory matching belongs to `dependency-advisory-triage` with an approved offline advisory snapshot; do not claim current vulnerability-feed coverage from these fixed references.

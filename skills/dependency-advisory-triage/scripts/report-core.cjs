@@ -16,7 +16,7 @@
    obj(f,'finding');const id=str(f.id,'finding.id',150);if(!id||ids.has(id))throw Error('finding ID가 비어 있거나 중복입니다.');ids.add(id);
    if(!Object.hasOwn(STATES,f.status)||!Object.hasOwn(SEVERITIES,f.severity))throw Error('finding 상태/심각도가 올바르지 않습니다.');
    const evidence=arr(f.evidence||[],'evidence',1000).map(e=>{obj(e,'evidence');return {kind:str(e.kind,'evidence.kind',100),location:str(e.location,'evidence.location',1000),detail:str(e.detail,'evidence.detail')};});
-   if(f.status==='confirmed'&&(raw.mode==='static'||!evidence.some(e=>['runtime','trace'].includes(e.kind))))throw Error('실행 근거 있음에는 실행 모드와 runtime/trace 근거가 필요합니다.');
+   if(['confirmed','not-reproduced'].includes(f.status)&&(raw.mode==='static'||!evidence.some(e=>['runtime','trace'].includes(e.kind)&&e.location.trim()&&e.detail.trim())))throw Error('실행 근거 있는 판정에는 실행 모드와 비어 있지 않은 runtime/trace 위치·관측이 필요합니다.');
    return {...f,id,title:str(f.title,'finding.title',1000),severity:f.severity,status:f.status,summary:str(f.summary,'finding.summary'),evidence,conditions:strings(f.conditions,'conditions'),fix:strings(f.fix,'fix'),retest:strings(f.retest,'retest'),flow:arr(f.flow||[],'flow',20).map(v=>({label:str(v.label,'flow.label',200),detail:str(v.detail,'flow.detail',2000)})),triageState:typeof f.triageState==='string'?str(f.triageState,'triageState',100):'',boundaryState:typeof f.boundaryState==='string'?str(f.boundaryState,'boundaryState',100):''};
   });
   const sources=arr(raw.sources||[],'sources',200).map(s=>({title:str(s.title,'source.title',1000),url:str(s.url,'source.url',2000),publishedAt:str(s.publishedAt||'','source.publishedAt',100),retrievedAt:str(s.retrievedAt||'','source.retrievedAt',100)}));

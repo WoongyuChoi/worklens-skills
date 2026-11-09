@@ -94,10 +94,10 @@ Preserve publishedAt, actual modifiedAt (null if unavailable), withdrawnAt, sour
 
 Deduplicate identity aliases, not related/upstream/downstream CVEs. Hold conflicting version conditions, withdrawal or fix records instead of selecting a convenient alias. A withdrawn source and an active alias require reconciliation.
 
-Output is worklens-security-report/v1, mode static: the helper reads observations and runs no active checks. Keep extra triageState, versionMatch, conditionEvidence, dependency basis, availableFixes, dates and provenance in JSON. Common evidence also contains condition anchors for HTML. Critical publisher severity is mapped to high in the four-level display and retained in advisorySeverity.
+Output is worklens-security-report/v1, mode static: the helper reads observations and runs no active checks. Keep extra triageState, versionMatch, conditionEvidence, dependency basis, availableFixes, dates and provenance in JSON. Common evidence also contains condition anchors for the Markdown report. Critical publisher severity is mapped to high in the four-level display and retained in advisorySeverity.
 
 No matching entry means this curated snapshot did not cover the dependency. Without Node, apply this contract manually using the template. Unknown states and the next decisive checks remain useful deliverables.
 
 ## 실행 근거가 반입된 보고서
 
-정적 조건만 판정하면 mode=static입니다. 제공된 runtime 기록을 근거로 confirmed/not-reproduced를 기록한 보고서는 mode=evidence-review로 구분합니다. 이 분석기가 직접 실행했다는 뜻이 아닙니다. JSON·HTML에 제공된 근거의 위치와 한계를 함께 남깁니다.
+정적 조건만 판정하면 mode=static입니다. 제공된 runtime 기록을 근거로 confirmed/not-reproduced를 기록한 보고서는 mode=evidence-review로 구분합니다. 이 분석기가 직접 실행했다는 뜻이 아닙니다. JSON·Markdown에 제공된 근거의 위치와 한계를 함께 남깁니다.
